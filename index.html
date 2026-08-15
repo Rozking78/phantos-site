@@ -35,46 +35,13 @@
   .cta:hover{filter:brightness(1.1);text-decoration:none}
   .cta.ghost{background:transparent;color:var(--cy);border:1px solid var(--cy);margin-left:14px}
   .sub{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:14px}
-  /* console abstraction — drawn from the real Command 1.9 main screen */
-  .console{margin:56px 0 0;background:#0A0D11;border:1px solid var(--rule);padding:10px;font-family:var(--mono);user-select:none}
-  .c-top{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-  .c-chip{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border:1px solid var(--rule);padding:4px 8px;background:#10151B}
-  .c-chip.on{color:var(--cy);border-color:rgba(63,216,200,.45)}
-  .c-main{display:grid;grid-template-columns:minmax(150px,190px) 1fr minmax(84px,110px);gap:10px}
-  .c-pool{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;align-content:start}
-  .c-tile{border:1px solid #232C35;background:#12181F;padding:6px 6px 5px;font-size:8.5px;line-height:1.35}
-  .c-tile .n{color:var(--mute);font-size:8px}
-  .c-tile .nm{color:var(--dim);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .c-tile .at{display:block;letter-spacing:.14em;font-size:7px;margin-top:2px}
-  .at i{font-style:normal}.at .a1{color:#EAF0EE}.at .a2{color:#B48CFF}.at .a3{color:#3FD8C8}.at .a4{color:#7BD88F}
-  .at .a5{color:#5AA9FF}.at .a6{color:#E8A13C}.at .a7{color:#FF6B81}.at .a8{color:#9FB0B4}
-  .c-tile.vid{border-color:rgba(255,107,129,.35)} .c-tile.cam{border-color:rgba(90,169,255,.35)}
-  .c-tile.net{border-color:rgba(123,216,143,.4)} .c-tile.node{border-color:rgba(232,161,60,.45)}
-  .c-tile.sel{border-color:var(--cy);box-shadow:0 0 0 1px rgba(63,216,200,.35)}
-  .c-canvas{position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#1A1020 0%,#0A0710 55%,#06080B 100%);border:1px solid #232C35;min-height:250px}
-  .ring{position:absolute;border-radius:50%;border:2px solid rgba(232,161,60,.75);filter:blur(.4px) drop-shadow(0 0 14px rgba(232,161,60,.5))}
-  .ring.r1{width:58%;aspect-ratio:1;left:8%;top:50%;transform:translateY(-50%)}
-  .ring.r2{width:58%;aspect-ratio:1;right:8%;top:50%;transform:translateY(-50%)}
-  .ring.r3{width:38%;aspect-ratio:1;left:31%;top:50%;transform:translateY(-50%);border-color:rgba(180,140,255,.5);filter:blur(1px) drop-shadow(0 0 22px rgba(180,140,255,.5))}
-  .c-selrect{position:absolute;left:22%;top:18%;width:56%;height:62%;border:1px solid var(--cy)}
-  .c-selrect b{position:absolute;left:0;top:0;transform:translateY(-100%);font-size:8px;font-weight:400;letter-spacing:.1em;color:#06231F;background:var(--cy);padding:2px 6px}
-  .c-canvas .out{position:absolute;left:8px;bottom:6px;font-size:8px;color:var(--mute);letter-spacing:.08em}
-  .c-exec{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-content:start}
-  .c-ex{border:1px solid #232C35;background:#12181F;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px;color:var(--dim)}
-  .c-ex s{text-decoration:none;font-size:14px;color:var(--mute)}
-  .c-ex.live{background:rgba(232,161,60,.18);border-color:var(--am);color:var(--am)} .c-ex.live s{color:var(--am)}
-  .c-cli{display:flex;align-items:center;gap:10px;margin-top:10px;border:1px solid var(--rule);background:#0D1218;padding:8px 12px;font-size:clamp(9px,1.3vw,12px);color:var(--mute);overflow:hidden;white-space:nowrap}
-  .c-cli b{color:var(--cy);font-weight:400}
-  .c-cli .caret{display:inline-block;width:7px;height:13px;background:var(--cy);animation:blink 1.1s steps(1) infinite;flex:none}
-  @keyframes blink{50%{opacity:0}}
-  @media (prefers-reduced-motion:reduce){.c-cli .caret{animation:none}}
-  .c-cap{font-family:var(--mono);font-size:11px;color:var(--mute);margin-top:10px}
-  .console{overflow:hidden}
-  .c-main > *{min-width:0} .c-tile{min-width:0}
+  /* real-surface shots */
+  .shots{display:grid;gap:14px;grid-template-columns:2fr 1fr;margin:56px 0 0;align-items:stretch}
+  .shot{margin:0;border:1px solid var(--rule);background:#0A0D11;padding:10px;display:flex;flex-direction:column;gap:8px}
+  .shot img{display:block;width:100%;height:100%;object-fit:cover;min-height:0}
+  .shot figcaption{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.04em}
+  @media (max-width:700px){.shots{grid-template-columns:1fr}}
   @media (max-width:700px){
-    .c-main{grid-template-columns:1fr}
-    .c-pool{grid-template-columns:repeat(4,minmax(0,1fr))} .c-pool .c-tile:nth-child(n+9){display:none}
-    .c-exec{grid-template-columns:repeat(4,minmax(0,1fr))} .c-ex{aspect-ratio:auto;padding:8px 4px}
     header .wrap{flex-wrap:wrap;gap:8px 0}
     nav a{margin-left:0;margin-right:18px}
     .cta{margin:0 12px 12px 0} .cta.ghost{margin-left:0}
@@ -139,42 +106,16 @@
   <a class="cta ghost" href="#founding">Founding programme</a>
   <div class="sub">macOS · Apple Silicon · running real shows in beta now — public release coming soon</div>
 
-  <div class="console" aria-hidden="true">
-    <div class="c-top">
-      <span class="c-chip on">Fixtures</span><span class="c-chip">Prog</span><span class="c-chip">Patch</span>
-      <span class="c-chip">Undo</span><span class="c-chip">Redo</span><span class="c-chip">Clear</span>
-      <span class="c-chip">Media</span><span class="c-chip">Universe&nbsp;Monitor</span><span class="c-chip">Exec&nbsp;Time</span>
-    </div>
-    <div class="c-main">
-      <div class="c-pool">
-        <div class="c-tile vid sel"><span class="n">1</span><span class="nm">vid 1</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a4">G</i><i class="a5">B</i><i class="a6">E</i><i class="a7">S</i><i class="a8">V</i></span></div>
-        <div class="c-tile vid sel"><span class="n">2</span><span class="nm">vid 2</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a4">G</i><i class="a5">B</i><i class="a6">E</i><i class="a7">S</i><i class="a8">V</i></span></div>
-        <div class="c-tile vid"><span class="n">3</span><span class="nm">vid 3</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a4">G</i><i class="a5">B</i><i class="a6">E</i><i class="a7">S</i><i class="a8">V</i></span></div>
-        <div class="c-tile"><span class="n">4</span><span class="nm">spot 1</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a4">G</i><i class="a6">E</i></span></div>
-        <div class="c-tile"><span class="n">5</span><span class="nm">spot 2</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a4">G</i><i class="a6">E</i></span></div>
-        <div class="c-tile"><span class="n">6</span><span class="nm">wash 1</span><span class="at"><i class="a1">I</i><i class="a3">C</i><i class="a4">G</i><i class="a5">B</i></span></div>
-        <div class="c-tile net"><span class="n">7</span><span class="nm">switcher</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a8">X</i></span></div>
-        <div class="c-tile cam"><span class="n">8</span><span class="nm">cam 1</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a5">B</i><i class="a6">E</i><i class="a8">V</i></span></div>
-        <div class="c-tile cam"><span class="n">9</span><span class="nm">cam 2</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a5">B</i><i class="a6">E</i><i class="a8">V</i></span></div>
-        <div class="c-tile cam"><span class="n">10</span><span class="nm">cam 3</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a3">C</i><i class="a5">B</i><i class="a6">E</i><i class="a8">V</i></span></div>
-        <div class="c-tile node"><span class="n">11</span><span class="nm">output 17</span><span class="at"><i class="a1">I</i><i class="a2">P</i><i class="a5">B</i><i class="a7">S</i></span></div>
-        <div class="c-tile node"><span class="n">12</span><span class="nm">master</span><span class="at"><i class="a1">I</i><i class="a8">X</i></span></div>
-      </div>
-      <div class="c-canvas">
-        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
-        <div class="c-selrect"><b>OUT&nbsp;17</b></div>
-        <div class="out">CANVAS PREVIEW · 1920×1080 · NDI</div>
-      </div>
-      <div class="c-exec">
-        <div class="c-ex"><s>⏻</s>video A</div>
-        <div class="c-ex"><s>⏻</s>spiny</div>
-        <div class="c-ex"><s>⏻</s>stars</div>
-        <div class="c-ex live"><s>⏻</s>nebula</div>
-      </div>
-    </div>
-    <div class="c-cli"><span class="caret"></span><span><b>1 thru 5 @ 50</b> · preset 3 · go 2 · color red · gm 80</span></div>
+  <div class="shots">
+    <figure class="shot">
+      <img src="img/command-ui.jpg" alt="The Phantos Command surface running a live stained-glass show — outputs, preset pools, gobos, groups, canvas preview and the command line" loading="eager">
+      <figcaption>THE REAL SURFACE — Command running a live show: outputs · presets · gobos · groups · canvas preview · one command line.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/foh-decks.jpg" alt="A front-of-house desk running Phantos: laptop, two Stream Deck control surfaces and a monitor, mid-show" loading="lazy">
+      <figcaption>FOH, MID-SHOW — one laptop, two key decks. That's the rig.</figcaption>
+    </figure>
   </div>
-  <div class="c-cap">Abstracted from the live Command 1.9 surface — fixture pool · canvas preview · executors · one command line.</div>
 
   <div class="merge"><b>CONSOLE</b> ── programmer · presets · executors · FX ──┐
 <b>MEDIA</b> ──── canvas · gobos · NDI · edge-blend ──────┤──▶ <i>ONE PRIORITY MERGE</i> ──▶ DMX · sACN · Art-Net · ATEM · VISCA · PJLink
@@ -184,12 +125,15 @@
 <section id="what">
   <div class="wrap">
     <div class="eyebrow">What it is</div>
-    <h2>Five categories that are normally five purchases</h2>
+    <h2>Everything that&rsquo;s normally a separate purchase</h2>
     <div class="grid">
       <div class="card"><h3>Lighting console</h3><p>Programmer, presets, groups, executors, FX, align and fan, per-channel priority merge. DMX, sACN, Art-Net.</p></div>
       <div class="card"><h3>Media server</h3><p>Renders canvas to displays and NDI. Content, gobos, crossfades, warp and edge-blend, multi-node.</p></div>
       <div class="card"><h3>Camera + switcher control</h3><p>VISCA and PTZ, Panasonic AW, ATEM, Roland, PJLink — with a dedicated camera priority tier.</p></div>
       <div class="card"><h3>Voice control — works offline</h3><p>Speak console commands and they execute — on-device speech, no internet required, gated by an explicit safe word. Natural-language asks and deeper AI faculties are in development. AI never sits in the render path.</p></div>
+      <div class="card"><h3>Call it on comms</h3><p>Phantos rides its own intercom channel. Key the channel from your beltpack, call the cue like you&rsquo;d call it to an operator — end with the safe word and it executes. The headset you already wear is the console.</p></div>
+      <div class="card"><h3>Key decks + game controllers</h3><p>Stream Deck surfaces run native — command keypads, executor grids, encoder dials with live feedback. Pair a game controller and drive positions, PTZ and zoom with your thumbs.</p></div>
+      <div class="card"><h3>3D visualiser</h3><p>Physically-modelled beams, haze and fixtures rendered from your patch — programme the show before the truck arrives. In development; arrives after v1.</p></div>
     </div>
     <p class="punch">The defensible part isn’t any one faculty. It’s <strong>one merge arbitrating
       lights, media and cameras together</strong> — which nobody else does.</p>
