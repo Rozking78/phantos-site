@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Apply to test Phantos before release. Small closed beta, by approval.">
+<title>Phantos — Become a beta tester</title>
+<style>
+  :root{
+    --ground:#0B0E12; --panel:#12171D; --ink:#EAF0EE; --dim:#9FB0B4;
+    --rule:#1E262E; --cy:#3FD8C8; --am:#E8A13C; --mute:#6B7A80; --bad:#E86B5E;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+       -webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:var(--cy);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy)}
+  header{padding:26px 0;border-bottom:1px solid var(--rule)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between}
+  .logo{font-family:var(--mono);font-weight:700;font-size:19px;letter-spacing:.06em;color:var(--ink)}
+  .logo b{color:var(--cy)}
+  nav a{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-left:26px}
+  nav a:hover{color:var(--cy);text-decoration:none}
+
+  .hero{padding:clamp(52px,9vh,96px) 0 40px}
+  h1{font-family:var(--mono);font-weight:700;letter-spacing:-.02em;font-size:clamp(34px,6vw,62px);
+     line-height:1.04;margin:14px 0 20px;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--cy)}
+  .lede{font-size:clamp(17px,2vw,21px);color:var(--dim);max-width:62ch;margin:0 0 28px}
+  .lede strong{color:var(--ink)}
+
+  section{padding:44px 0;border-top:1px solid var(--rule)}
+  h2{font-family:var(--mono);font-size:clamp(19px,2.4vw,26px);letter-spacing:-.01em;margin:0 0 8px}
+  h2 .n{color:var(--cy);margin-right:12px;font-size:.72em;vertical-align:2px}
+  .sect-lede{color:var(--dim);max-width:64ch;margin:0 0 24px}
+
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{border:1px solid var(--rule);background:var(--panel);padding:18px 20px}
+  .card h3{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+           margin:0 0 8px;color:var(--cy)}
+  .card.warn h3{color:var(--am)}
+  .card p{margin:0;color:var(--dim);font-size:15px}
+  .card p strong{color:var(--ink)}
+
+  .doc{border:1px solid var(--rule);background:var(--panel);margin:0 0 12px}
+  .doc-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+            padding:13px 18px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+  .doc-head b{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+  .doc-head span{font-family:var(--mono);font-size:11px;color:var(--mute)}
+  .scroll{height:340px;overflow-y:auto;padding:20px 22px;font-size:14.5px;line-height:1.62;color:var(--dim)}
+  .scroll h1{font-size:20px;color:var(--ink);margin:0 0 12px;font-family:var(--mono);letter-spacing:0}
+  .scroll h2{font-size:15px;color:var(--ink);margin:24px 0 8px;font-family:var(--mono);
+             padding-top:12px;border-top:1px solid var(--rule)}
+  .scroll h3{font-size:14px;color:var(--ink);margin:16px 0 6px;font-family:var(--mono)}
+  .scroll h4{font-size:13px;color:var(--ink);margin:14px 0 4px}
+  .scroll strong{color:var(--ink)}
+  .scroll code{font-family:var(--mono);font-size:.88em;background:#0A0D11;padding:1px 5px;color:var(--ink)}
+  .scroll ul,.scroll ol{padding-left:20px;margin:0 0 12px} .scroll li{margin:0 0 5px}
+  .scroll table{border-collapse:collapse;width:100%;font-size:13px;margin:0 0 12px}
+  .scroll th,.scroll td{border-bottom:1px solid var(--rule);padding:6px 9px;text-align:left;vertical-align:top}
+  .scroll hr{border:0;border-top:1px solid var(--rule);margin:18px 0}
+  .twrap{overflow-x:auto}
+  .readmark{padding:11px 18px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:11.5px;
+            letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+  .readmark.done{color:var(--cy)}
+
+  form{margin-top:8px}
+  fieldset{border:0;padding:0;margin:0 0 22px}
+  .fields{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+        color:var(--dim);margin:0 0 6px}
+  label .req{color:var(--am)}
+  input[type=text],input[type=email],input[type=tel],textarea{
+    width:100%;background:#0A0D11;border:1px solid var(--rule);color:var(--ink);
+    font-family:var(--sans);font-size:15px;padding:11px 13px}
+  input:focus,textarea:focus{outline:2px solid var(--cy);outline-offset:-2px;border-color:var(--cy)}
+  textarea{min-height:88px;resize:vertical}
+  .hint{font-size:13px;color:var(--mute);margin:6px 0 0}
+
+  .agree{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--rule);
+         background:var(--panel);margin:0 0 10px;cursor:pointer}
+  .agree input{margin:3px 0 0;width:17px;height:17px;accent-color:var(--cy);flex:0 0 auto;cursor:pointer}
+  .agree span{font-size:14.5px;color:var(--dim)}
+  .agree span b{color:var(--ink)}
+  .agree.locked{opacity:.45;cursor:not-allowed}
+  .agree.locked input{cursor:not-allowed}
+
+  .cta{display:inline-block;font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;
+       background:var(--cy);color:#06231F;font-weight:700;padding:15px 30px;border:0;cursor:pointer}
+  .cta:hover{filter:brightness(1.1);text-decoration:none}
+  .cta:disabled{background:var(--rule);color:var(--mute);cursor:not-allowed;filter:none}
+  .cta:focus-visible{outline:2px solid var(--am);outline-offset:3px}
+  .formnote{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:14px}
+
+  .msg{border:1px solid var(--rule);background:var(--panel);padding:18px 20px;margin:18px 0 0;display:none}
+  .msg.on{display:block}
+  .msg.bad{border-color:var(--bad)} .msg.bad b{color:var(--bad)}
+  .msg.good{border-color:var(--cy)} .msg.good b{color:var(--cy)}
+  .msg b{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:7px}
+  .msg p{margin:0 0 8px;color:var(--dim);font-size:15px} .msg p:last-child{margin:0}
+
+  footer{border-top:1px solid var(--rule);padding:30px 0 56px;color:var(--mute);font-size:13px}
+  footer .wrap{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  @media (max-width:640px){ .scroll{height:260px} }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <a class="logo" href="/">PHAN<b>TOS</b></a>
+  <nav><a href="/">Home</a><a href="#apply">Apply</a></nav>
+</div></header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Closed beta · by approval</div>
+    <h1>Become a <em>beta tester</em></h1>
+    <p class="lede">Phantos is a show-control console for macOS — lights, media and cameras through one
+    merge. Before it ships, a small group of people run it on real rigs. <strong>If you work shows and
+    you are willing to tell us what breaks, apply below.</strong></p>
+  </div>
+
+  <section>
+    <h2><span class="n">01</span>What you are signing up for</h2>
+    <p class="sect-lede">Read these four before you fill anything in. If any of them is a problem, this
+    is not the right time to join — and that is a perfectly good answer.</p>
+    <div class="grid">
+      <div class="card warn">
+        <h3>It is unfinished</h3>
+        <p>Pre-release software with <strong>known and unknown defects</strong>. It will misbehave.
+        Never put it in front of an audience without a tested fallback you can switch to.</p>
+      </div>
+      <div class="card warn">
+        <h3>Never for anything that can hurt someone</h3>
+        <p>No rigging, hoists, automation, flying, pyro, lasers or life-safety systems —
+        <strong>ever</strong>, and that is a condition of using it, not advice.</p>
+      </div>
+      <div class="card">
+        <h3>Data sharing is required</h3>
+        <p>Testing sends us a log of the commands you issue — <strong>including ones you speak
+        aloud</strong>. It is how the beta works, so it is not optional. You can see exactly what
+        would be sent before it goes.</p>
+      </div>
+      <div class="card">
+        <h3>You can say you are testing</h3>
+        <p>Tell people you are a Phantos beta tester if you like. <strong>What stays private</strong>
+        is the software itself — builds, screenshots, video, defects, roadmap and pricing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">02</span>How it works</h2>
+    <p class="sect-lede">Four steps. Nothing is automatic — a person reads every application.</p>
+    <div class="grid">
+      <div class="card"><h3>1 · You apply</h3><p>Accept the agreements below and send us your details.</p></div>
+      <div class="card"><h3>2 · We review</h3><p>We read it and decide. You will hear back either way.</p></div>
+      <div class="card"><h3>3 · You get a key</h3><p>Approved testers get a licence key and an invitation
+        to a private folder with the build in it.</p></div>
+      <div class="card"><h3>4 · You install</h3><p>Up to <strong>three machines</strong>. Enter the same
+        key on each. Phantos Launcher goes on every Mac you use.</p></div>
+    </div>
+  </section>
+
+  <section id="apply">
+    <h2><span class="n">03</span>The agreements</h2>
+    <p class="sect-lede">Both apply. Read each one to the end — the checkbox unlocks when you reach the
+    bottom. They are not long, and they are written to be read.</p>
+
+    <div class="doc">
+      <div class="doc-head"><b>Non-Disclosure Agreement</b><span>Version 0.1</span></div>
+      <div class="scroll" id="s-nda" tabindex="0"><hr>
+<h1 id="smutual-obligation-non-disclosure-agreement">MUTUAL-OBLIGATION NON-DISCLOSURE AGREEMENT</h1>
+<h2 id="sphantos-closed-beta-programme">Phantos closed beta programme</h2>
+<p><strong>Version:</strong> 0.1 · <strong>Effective:</strong> the date the Recipient accepts it electronically (§14).</p>
+<h3 id="sparties">Parties</h3>
+<p><strong>Discloser</strong> — jointly and together:</p>
+<ul><li><strong>Roswell King</strong>, an individual, of 33 White Street, Mount Holly, New Jersey 08060; and</li><li><strong>Harmonious Technical Designs LLC</strong>, a New Jersey limited liability company, of 33 White Street, Mount Holly, New Jersey 08060 ("HTD").</li></ul>
+<p>Each is an owner of, or holds rights in, the Confidential Information described below. They act together as one "Discloser" for this Agreement. <strong>Either may enforce it alone</strong>, and an obligation owed to "the Discloser" is owed to both.</p>
+<p><strong>Recipient</strong> — the individual identified in the acceptance record (§14): legal name, postal address, email address and telephone number.</p>
+<hr>
+<h2 id="s1-purpose">1. Purpose</h2>
+<p>The Discloser is developing <strong>Phantos</strong>, a modular show-control system for lighting, video and camera. The Discloser wishes to give the Recipient access to <strong>pre-release</strong> software and materials so the Recipient can evaluate and test them and give feedback (the <strong>"Purpose"</strong>). This Agreement governs that access. It grants no other rights.</p>
+<h2 id="s2-confidential-information">2. Confidential Information</h2>
+<p><strong>"Confidential Information"</strong> means anything the Discloser makes available to the Recipient in connection with the Purpose, in any form, whether or not marked confidential, including:</p>
+<ol type="a"><li>the <strong>Software</strong> — any pre-release build of Phantos (Launcher, Command, Babel, Light, Previz, Vision, Translator and any component or tool), and any licence key, credential or installer;</li><li>its <strong>behaviour and performance</strong> — features, designs, architecture, protocols, file formats, screenshots, video, and measured performance;</li><li><strong>defects</strong> — bugs, crashes, limitations and unreleased fixes;</li><li><strong>plans</strong> — roadmaps, release timing, pricing, and business plans;</li><li>the <strong>fixture profiles, gobo/media library, and language corpus</strong> supplied with the Software;</li><li>the Discloser's <strong>feedback and correspondence</strong> with the Recipient about any of the above; and</li><li><strong>the contents of this Agreement</strong>.</li></ol>
+<h2 id="s2-1-permitted-statement-the-recipient-may-say-th">2.1 ★ Permitted statement — the Recipient MAY say they are a tester</h2>
+<p><strong>Notwithstanding §2 and §4, the Recipient may state publicly that they are a Phantos beta tester, and may state their own opinion of the Software in general terms</strong> (for example, that they like it).</p>
+<p>That permission does <strong>not</strong> extend to anything else. The Recipient may not disclose, and this permission does not cover: builds or access to them; features, designs, protocols or architecture; defects, crashes or limitations; <strong>screenshots, video, screen-sharing or live demonstration</strong>; roadmaps, release timing or pricing; the fixture, gobo/media or corpus libraries; or <strong>the terms of this Agreement</strong>.</p>
+<p>If in doubt, the Recipient asks first. A statement that goes beyond this section is a disclosure and §4 applies to it.</p>
+<h2 id="s3-exclusions">3. Exclusions</h2>
+<p>Confidential Information does <strong>not</strong> include information the Recipient can show:</p>
+<ol type="a"><li>was public when disclosed, or became public later through no act or omission of the Recipient;</li><li>the Recipient already lawfully knew, free of any duty of confidence, before disclosure;</li><li>the Recipient lawfully received from a third party with the right to disclose it; or</li><li>the Recipient independently developed without use of or reference to the Confidential Information.</li></ol>
+<p><strong>Compelled disclosure.</strong> If law, subpoena or court order requires disclosure, the Recipient may disclose only what is required, and — unless legally prohibited — shall notify the Discloser promptly and in advance so the Discloser can seek protection.</p>
+<h2 id="s4-what-the-recipient-must-do">4. What the Recipient must do</h2>
+<p>The Recipient shall:</p>
+<ol type="a"><li>use the Confidential Information <strong>only for the Purpose</strong>;</li><li><strong>not disclose it to anyone</strong>, other than to the Recipient's own employees or contractors who need it for the Purpose and are bound by written obligations at least as protective as these — for whose compliance the Recipient remains responsible;</li><li>protect it with at least <strong>reasonable care</strong>, and no less care than the Recipient uses for their own confidential information;</li><li><strong>not publish, post, stream, demonstrate publicly, screenshot or record</strong> the Software, or any part of its interface or output, without the Discloser's prior written consent — <strong>subject only to the permitted statement in §2.1</strong>;</li><li><strong>not publish benchmarks, reviews or comparisons</strong> of the Software;</li><li><strong>not reverse engineer, decompile or disassemble</strong> the Software, or attempt to derive its source code, protocols or file formats, except to the extent that restriction is unenforceable by law;</li><li><strong>not remove or alter</strong> any notice, mark or credential in the Software;</li><li><strong>not transfer, sub-licence, rent, sell or share</strong> the Software or any Licence Key (see §4.1), and not install it on machines outside the Recipient's control; and</li><li>notify the Discloser <strong>promptly</strong> on discovering any loss, unauthorised access or disclosure.</li></ol>
+<h2 id="s4-1-one-signature-many-installations-and-your-ke">4.1 ★ One signature, many installations — and your Key</h2>
+<p>The Recipient signs <strong>this Agreement once</strong>, as a person. The Software is then installed on <strong>every Mac in the Recipient's rig</strong>, because Phantos Launcher must be present on each machine for the rig to start together.</p>
+<ol type="a"><li><strong>On approval the Discloser issues the Recipient a Licence Key.</strong> It identifies the Recipient personally as an approved participant. The Key covers <strong>up to three (3) machines</strong>, which may be in different rigs — a beta tester is a person, not a room.</li><li><strong>The Recipient enters the same Key on each of their machines</strong>, and <strong>accepts the end-user licence terms presented at each installation.</strong> Signing this Agreement once does not remove that step — this Agreement governs confidentiality; the licence terms govern the Software on the machine in front of you.</li><li><strong>★ The Key must not be shared with anyone, or used outside the Recipient's own rig.</strong> It is the only thing standing between an approved tester and an unapproved one: builds are delivered through a shared folder, and folder links travel further than the people they were sent to. Sharing a Key is a material breach and ends access immediately under §7.</li><li>The Recipient shall tell the Discloser promptly if a Key is lost, or if a machine holding one leaves the Recipient's control.</li></ol>
+<h2 id="s5-no-licence-no-obligation">5. No licence, no obligation</h2>
+<p>The Software is licensed, not sold. This Agreement grants the Recipient a <strong>personal, non-exclusive, non-transferable, revocable</strong> permission to install and use the pre-release Software <strong>solely for the Purpose</strong>, for the term, and nothing more. All right, title and interest in the Software and the Confidential Information remain with the Discloser. The Discloser has <strong>no obligation</strong> to release any product, to keep any feature, to continue the beta, or to enter any further agreement.</p>
+<h2 id="s6-feedback">6. Feedback</h2>
+<p>The Recipient may give feedback, bug reports, suggestions and ideas ("<strong>Feedback</strong>"). The Recipient <strong>assigns to HTD all right, title and interest in Feedback</strong>, and waives any claim to compensation, attribution or ownership in it. The Discloser may use Feedback for any purpose without restriction. Feedback is Confidential Information until the Discloser makes it public.</p>
+<h2 id="s7-term-and-survival">7. Term and survival</h2>
+<p>This Agreement starts on the Effective Date and the beta access continues until the Discloser ends it, which the Discloser may do <strong>at any time, for any reason, without notice</strong>.</p>
+<p>The confidentiality obligations in §4 survive for <strong>three (3) years</strong> after the beta access ends — except for anything that is a <strong>trade secret</strong>, for which they survive <strong>as long as it remains a trade secret</strong> under applicable law.</p>
+<h2 id="s8-return-and-destruction">8. Return and destruction</h2>
+<p>On the Discloser's request, or when beta access ends, the Recipient shall promptly <strong>stop using and delete or destroy</strong> all Confidential Information in their possession, including every copy of the Software, and confirm in writing that they have done so. The Recipient may retain one copy to the extent required by law or by an automatic backup system, which remains subject to §4 for as long as it is retained.</p>
+<h2 id="s9-data-the-software-sends-back-required-for-test">9. ★ Data the Software sends back — REQUIRED for testers, and fully disclosed</h2>
+<p>This section exists because the Phantos website states that the shipping product performs <strong>no automatic telemetry</strong>. The beta is a <strong>named exception</strong>: joining it is a deliberate act, and this section is what the Recipient agrees to when they join — which is what makes both statements true at once.</p>
+<ol type="a"><li><strong>★ REPORTING IS A CONDITION OF PARTICIPATION, NOT AN OPTION.</strong> The beta exists to produce evidence; a tester who sends none provides nothing the programme is for. The Recipient therefore <strong>must enable reporting and keep it enabled</strong> for the duration of their participation. Turning it off, or preventing it from working, ends the Recipient's access under §7 and the Recipient shall stop using the Software and delete it under §8.</li></ol>
+<p>a-bis. <strong>It is still never silent.</strong> The Recipient switches it on <strong>knowingly</strong>, having read this section, and the Software continues to show what it would send (§9(f)). "Required" means the Recipient cannot participate without it — <strong>it does not mean collection happens without the Recipient's knowledge</strong>, and the Discloser will not make it so.</p>
+<ol type="a"><li>It writes a report into a <strong>Google Drive folder shared with the Recipient</strong>, which Drive then syncs. The Software makes no upload of its own.</li><li>The routine report contains the Recipient's <strong>intent log</strong> — a structured record of the commands issued to the console, including <strong>commands spoken aloud</strong>, together with the outcome — plus a small event stream (crash, session join/leave, network change, refusal).</li><li><strong>★ The Recipient acknowledges that voice-derived records contain what the Recipient SAID</strong>, and consents to their collection and use for developing and improving the Software.</li><li>Raw application logs are sent <strong>only</strong> when the Recipient presses "Report a problem", or on a crash.</li><li>Before any report is sent, the Software can display <strong>exactly what would be sent</strong>, and the Recipient is encouraged to look.</li><li><strong>★ RETENTION — the two clocks are separate, and deliberately so.</strong></li></ol>
+<ul><li><strong>Beta-programme DATA</strong> (intent logs, event streams, any raw logs sent) is retained for <strong>six (6) months</strong> from receipt, then deleted.</li><li><strong>The ACCEPTANCE RECORD</strong> under §14 — the Recipient's name, postal address, email, telephone, the version accepted, timestamp and IP — is <strong>NOT beta data and is not deleted at six months</strong>. It is the evidence that this Agreement exists, so it is retained for the term and for <strong>six (6) years</strong> afterwards. <em>(Six years matches the New Jersey limitation period for written contracts; confirmed on approval.)</em></li></ul>
+<p>Deleting the acceptance record on the telemetry clock would destroy the proof of the agreement while the confidentiality obligations in §7 are <strong>still running</strong> — the record must outlive the data it authorises.</p>
+<h2 id="s10-pre-release-software-as-is">10. Pre-release software — AS IS</h2>
+<p><strong>The Software is pre-release, unfinished, and expected to contain defects.</strong> It is provided <strong>"AS IS" and "AS AVAILABLE", without warranty of any kind</strong>, express or implied, including any implied warranty of merchantability, fitness for a particular purpose, or non-infringement.</p>
+<p><strong>The Recipient must not rely on the Software for any live event, paid engagement, or production of value without an independent, tested fallback.</strong></p>
+<p>To the maximum extent permitted by law, the Discloser is <strong>not liable</strong> for any indirect, incidental, special, consequential or punitive damages, or for lost profits, lost bookings, lost data, or business interruption, arising from the Software or this Agreement — and the Discloser's total aggregate liability shall not exceed <strong>US $100</strong>. Nothing in this Agreement limits liability that cannot be limited by law, including for death or personal injury caused by negligence, or for fraud.</p>
+<h2 id="s11-safety-what-phantos-must-never-control" class="danger">11. ⛔ Safety — what Phantos must never control</h2>
+<p><strong>Phantos is a lighting, video and camera control tool. It must NOT be used for rigging, hoists, stage automation, moving scenery, performer flying, pyrotechnics, life-safety or emergency systems, or ANY task where a failure could endanger a person or damage property.</strong> It is not safety-rated and has no emergency stop. <strong>This is a condition of the Recipient's permission to use the Software</strong>, and it applies with more force to a pre-release build than to a released one.</p>
+<p>The Recipient shall not connect the Software to any such system, and shall be responsible for ensuring the rigs on which they test it are safe to operate under the control of unfinished software.</p>
+<h2 id="s12-remedies">12. Remedies</h2>
+<p>The Recipient agrees that a breach of §4 would cause the Discloser harm that money cannot adequately repair, and that the Discloser is entitled to seek <strong>injunctive relief</strong> in addition to any other remedy, without needing to post a bond.</p>
+<h2 id="s13-governing-law-and-venue">13. Governing law and venue</h2>
+<p>This Agreement is governed by the laws of the <strong>State of New Jersey</strong>, without regard to its conflict of law rules. The parties submit to the exclusive jurisdiction of the state and federal courts located in <strong>Burlington County, New Jersey</strong>.</p>
+<h2 id="s14-electronic-acceptance-and-the-acceptance-reco">14. Electronic acceptance and the acceptance record</h2>
+<p>The Recipient accepts this Agreement electronically, by entering their details and affirmatively indicating acceptance. <strong>That act is the Recipient's signature</strong> and has the same effect as a handwritten one.</p>
+<p>The Discloser records, and the Recipient agrees is accurate evidence of acceptance: the Recipient's <strong>legal name, postal address, email address and telephone number</strong>; the <strong>version of this Agreement</strong> accepted; the <strong>date and time</strong>; and the <strong>IP address</strong> from which acceptance was made.</p>
+<h2 id="s14-1-notices">14.1 Notices</h2>
+<p>Notices to the Discloser go to <strong>support@rocshopav.com</strong>. Notices to the Recipient go to the email address in the acceptance record (§14).</p>
+<h2 id="s15-general">15. General</h2>
+<ol type="a"><li><strong>Entire agreement.</strong> This is the entire agreement about its subject and supersedes prior discussions. Where the Recipient also accepts the Phantos EULA, the two are read together; <strong>if they conflict about pre-release software, this Agreement governs.</strong></li><li><strong>Amendment.</strong> Only in writing, or by the Recipient accepting a new version.</li><li><strong>Assignment.</strong> The Recipient may not assign this Agreement. <strong>The Discloser may assign it, and specifically may assign it from Roswell King to HTD LLC, or between them, without the Recipient's consent</strong> — including in any reorganisation, financing or sale of the business.</li><li><strong>No waiver.</strong> A failure to enforce is not a waiver.</li><li><strong>Severability.</strong> If a provision is unenforceable, it is limited to the minimum extent necessary and the rest stands.</li><li><strong>No partnership.</strong> Nothing here creates an employment, partnership, agency or joint venture relationship, and the Recipient is <strong>not entitled to any compensation</strong> for testing.</li><li><strong>Counterparts.</strong> May be accepted in counterparts, including electronically.</li></ol>
+<hr>
+<h2 id="sacceptance">Acceptance</h2>
+<p><strong>DISCLOSER</strong></p>
+<p>Roswell King, individually _______________________________  Date: ____________</p>
+<p>Harmonious Technical Designs LLC By: Roswell King, [Managing Member] _______________________________  Date: ____________</p>
+<p><strong>RECIPIENT</strong></p>
+<p>Legal name: ______________________________________ Postal address: __________________________________ Email: ___________________________________________ Telephone: _______________________________________</p>
+<p>☐ I have read and agree to this Non-Disclosure Agreement (v0.1). ☐ I understand the Software is pre-release, is provided AS IS, and must never control rigging, pyrotechnics, or any life-safety system (§11). ☐ <strong>I understand that data sharing is REQUIRED to take part</strong>, and that the reports include a log of the commands I issue — <strong>including commands I speak aloud</strong> (§9).</p>
+<p>_______________________________  Date: ____________</p>
+<hr></div>
+      <div class="readmark" id="m-nda">Scroll to the end to continue</div>
+    </div>
+
+    <div class="doc">
+      <div class="doc-head"><b>End User Licence Agreement</b><span>Version 2.0</span></div>
+      <div class="scroll" id="s-eula" tabindex="0"><p>Clauses marked <strong>★ NDI-REQUIRED</strong> are mandated by the NDI SDK licence and may not be removed or weakened.</p>
+<p><strong>What is new in v0.2 (the "deep" pass).</strong> v0.1 covered licence, safety, warranty, liability and refunds well. It was silent on everything that makes <em>this</em> product unusual, and each of those is a real exposure: <strong>§7 AI features · §8 voice capture · §9 cameras and video · §10 fixture profiles · §11 your network and other people's equipment · §12 generated gobo content · §13 data</strong>. Those are the sections to read first if you are re-reading a document you have seen before.</p>
+<hr>
+<h1 id="send-user-licence-agreement-phantos">END USER LICENCE AGREEMENT — PHANTOS</h1>
+<p><strong>Licensor:</strong> Harmonious Technical Designs LLC, a New Jersey limited liability company ("<strong>HTD</strong>", "we", "us"), 33 White Street, Mount Holly, New Jersey 08060. <strong>Version:</strong> 2.0 · <strong>Last updated:</strong> 21 August 2026 · <strong>Effective:</strong> on installation or use.</p>
+<p>By installing or using Phantos you agree to this Agreement. If you do not agree, do not install or use it. If you are agreeing on behalf of an organisation, you represent that you have authority to bind it, and "you" means that organisation.</p>
+<hr>
+<h2 id="s1-definitions">1. Definitions</h2>
+<ul><li><strong>"Software"</strong> — the Phantos suite: Phantos Launcher, Command, Babel, Light, Previz, Vision, Translator, and any component, tool, runtime, update, or documentation we supply.</li><li><strong>"System"</strong> — one production rig: the set of Macs running the Software together as a single show system (one Babel hub plus the consoles and renderers joined to its session).</li><li><strong>"Licence Key"</strong> — the credential we issue that activates the Software.</li><li><strong>"Your Content"</strong> — show files, patches, presets, cues, media, and other material you create or supply.</li><li><strong>"Controlled Equipment"</strong> — any fixture, camera, switcher, projector, node, or other device the Software addresses or influences.</li><li><strong>"AI Features"</strong> — the features described in §7.</li><li><strong>"Documentation"</strong> — the user-facing materials we publish for the Software.</li></ul>
+<h2 id="s2-licence-grant">2. Licence grant</h2>
+<p>Subject to <strong>payment of the applicable fee (if any)</strong> and to this Agreement, HTD grants you a <strong>non-exclusive, non-transferable, revocable</strong> licence, granted to <strong>one (1) named person (a "Seat")</strong>, to install and use the Software on <strong>up to three (3) machines</strong>, for that person's production use, for the term of §16.</p>
+<p><strong>The three machines need not be one rig.</strong> A Seat may run several rigs — a venue console, a touring renderer, a Mac at home for pre-programming — and may spread the three installs across them however suits. The licence follows the <strong>person</strong>, not the room.</p>
+<h3 id="s2-1-three-machines-any-rigs-and-the-launcher-goe">2.1 ★ Three machines, any rigs — and the Launcher goes on every one</h3>
+<p><strong>Phantos Launcher must be installed on every Mac you use</strong>, because the Launcher is what starts and coordinates the suite on each machine — a node without it cannot be brought up with the rest of a rig. That is why the licence counts <strong>machines</strong> rather than rigs: a modular rig is several Macs, and each one needs the Launcher.</p>
+<p>Under one Seat you may:</p>
+<ol type="a"><li>install the Software on <strong>up to three (3) machines</strong>, in any combination of rigs;</li><li>install every component the topology requires on those machines; and</li><li>keep <strong>one backup copy</strong>.</li></ol>
+<p><strong>Each installation presents this Agreement and must be accepted on that machine.</strong> One person, one signed agreement — but <strong>acceptance is recorded per installation</strong>, because that is where the Software is actually being installed and run.</p>
+<p>★ <strong>A Seat is one person.</strong> It is not a company, a department, or a rig that several people use in turn. <strong>If more than one person operates Phantos, each needs a Seat.</strong></p>
+<h3 id="s2-2-licence-keys">2.2 ★ Licence Keys</h3>
+<ol type="a"><li>We issue you a <strong>Licence Key</strong> on approval. The Key identifies <strong>you</strong> — the Seat — and, in a testing programme, identifies you as the approved participant.</li><li><strong>Enter the same Key on each of your machines</strong>, whichever rig each one belongs to.</li></ol>
+<p>b-bis. <strong>★ One Key covers up to three (3) machines.</strong> If you need more, tell us and we will licence them — we would rather size it correctly than have you working around a limit.</p>
+<p>⚠️ <strong>How the limit is handled, stated honestly.</strong> There is no activation server (§2.2d), and your three machines may sit in <strong>different rigs on different networks that never meet</strong> — so the Software cannot see them all, and does not pretend to. It counts what it can actually account for, and <strong>undercounts rather than accuse you</strong>. <strong>Exceeding the number never stops the Software, never affects your output, and never touches your show</strong> — at most it shows a message asking you to get in touch. We are relying on you here, deliberately.</p>
+<ol type="a"><li><strong>The Key is confidential and must not be shared</strong> outside your System. Sharing it is a material breach and we may revoke it.</li><li><strong>★ Validation is entirely local and works offline, forever.</strong> The Software does not contact HTD to check your Key, at install or at run time. See §17.3 — this is an architectural commitment, not a convenience.</li><li>We may issue a replacement Key if yours is lost, and may refuse to issue Keys where a Key is being shared in breach of this Agreement.</li><li>In a testing programme, a Key <strong>may be time-limited</strong>, and the Software may stop running when it expires. That is specific to pre-release builds and does not apply to a purchased licence, which is perpetual under §17.3.</li></ol>
+<h2 id="s3-restrictions">3. Restrictions</h2>
+<p>You may not, and may not permit others to:</p>
+<ol><li><strong>Reverse engineer, decompile or disassemble</strong> the Software, except to the extent that right cannot lawfully be excluded; <strong>★ NDI-REQUIRED</strong></li><li><strong>Modify, adapt or create derivative works</strong> of the Software or any bundled runtime; <strong>★ NDI-REQUIRED</strong></li><li><strong>Circumvent</strong> any licensing, security, or technical protection measure; <strong>★ NDI-REQUIRED</strong></li><li>rent, lease, lend, sublicense, resell, or provide the Software <strong>as a service</strong> to third parties;</li><li>remove or obscure any copyright, trademark or other proprietary notice; <strong>★ NDI-REQUIRED</strong></li><li>use the Software in violation of applicable law or export control (see §21); <strong>★ NDI-REQUIRED</strong></li><li>use the Software to build or train a competing product, or to extract its <strong>fixture profile library, language corpus, or protocol implementations</strong> for use outside the Software;</li><li>publish <strong>benchmarks or performance comparisons</strong> without our prior written consent; or</li><li>use the Software for any purpose prohibited by <strong>§5.1</strong>.</li></ol>
+<p>If you make the Software available to any third-party developer or integrator, you must impose these same obligations on them. <strong>★ NDI-REQUIRED (flow-down)</strong></p>
+<h2 id="s4-no-warranty-show-critical-use">4. ★★ NO WARRANTY — SHOW-CRITICAL USE</h2>
+<p>THE SOFTWARE IS PROVIDED <strong>"AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY KIND</strong>, express or implied, including the implied warranties of <strong>merchantability, fitness for a particular purpose, title and non-infringement</strong>. HTD does not warrant that the Software will be uninterrupted or error-free, or that it will operate correctly with any particular hardware, network, fixture, camera, switcher, or third-party system.</p>
+<p><strong>YOU ACKNOWLEDGE THAT THE SOFTWARE CONTROLS STAGE LIGHTING, VIDEO AND CAMERA EQUIPMENT IN LIVE PRODUCTION, WHERE FAILURE CAN CAUSE A SHOW TO STOP, EQUIPMENT TO BEHAVE UNEXPECTEDLY, OR A VENUE TO GO DARK.</strong> You are solely responsible for:</p>
+<ul><li>maintaining <strong>independent means of controlling and shutting down your rig</strong>, including manual house lighting control and a means of removing power;</li><li><strong>testing the Software with your actual equipment before any live use</strong>;</li><li>appropriate rehearsal, redundancy, and operator supervision at all times.</li></ul>
+<p>Warranty disclaimers extend to <strong>HTD's licensors, including NDI</strong>, on their behalf. <strong>★ NDI-REQUIRED</strong></p>
+<p>Some jurisdictions do not allow the exclusion of implied warranties; there, the exclusions apply to the maximum extent permitted and any implied warranty is limited to <strong>thirty (30) days</strong> from purchase.</p>
+<h2 id="s5-safety">5. Safety</h2>
+<h3 id="s5-1-prohibited-uses-rigging-automation-and-anyth" class="danger">5.1 ⛔ PROHIBITED USES — RIGGING, AUTOMATION, AND ANYTHING THAT CAN HURT SOMEONE</h3>
+<p><strong>THE SOFTWARE MUST NOT BE USED TO CONTROL, TRIGGER, SEQUENCE, MONITOR, INTERLOCK, OR INFLUENCE — DIRECTLY OR INDIRECTLY, ALONE OR AS PART OF ANY LARGER SYSTEM — ANY OF THE FOLLOWING:</strong></p>
+<ol><li><strong>RIGGING AND LIFTING</strong> — hoists, winches, chain motors, line sets, counterweight or motorised fly systems, trusses, lifts, or any equipment that raises, lowers, suspends or supports a load.</li><li><strong>STAGE AUTOMATION AND MACHINERY</strong> — moving scenery, wagons, turntables, revolves, elevators, traps, curtains, or any powered mechanism that moves.</li><li><strong>PERFORMER FLYING</strong> or any system that carries, restrains or supports a person.</li><li><strong>PYROTECHNICS, FLAME, LASERS</strong>, or any effect regulated for safety.</li><li><strong>LIFE-SAFETY AND EMERGENCY SYSTEMS</strong> — emergency or egress lighting, fire detection or suppression, alarms, evacuation, or house-light control required for safe egress.</li><li><strong>MEDICAL, AVIATION, MARINE, AUTOMOTIVE, NUCLEAR, OR INDUSTRIAL PROCESS CONTROL.</strong></li><li><strong>ANY OTHER APPLICATION IN WHICH FAILURE, DELAY, INCORRECT OUTPUT, OR UNINTENDED OUTPUT COULD RESULT IN DEATH, PERSONAL INJURY, OR DAMAGE TO PROPERTY.</strong></li></ol>
+<p><strong>Phantos is not safety-rated, not fail-safe, not redundant, and carries no functional-safety certification.</strong> It has no certified watchdog, no guaranteed timing, no emergency-stop function, and no assurance that a command will arrive, arrive once, or arrive in order. <strong>Equipment that can move, lift, burn or fall must be operated by systems designed and certified for that purpose, with independent emergency stop and physical safeguards that do not depend on this Software.</strong></p>
+<p><strong>THIS PROHIBITION IS A CONDITION OF THE LICENCE, NOT A RECOMMENDATION.</strong> Any use within §5.1 is <strong>outside the scope of the licence granted in §2</strong>, terminates it immediately under §16, is entirely at your own risk, and you indemnify HTD for it under §15.</p>
+<h3 id="s5-2-photosensitivity-and-audience-safety">5.2 Photosensitivity and audience safety</h3>
+<p>The Software can produce <strong>strobing, rapid intensity changes, and flashing output</strong>. You are solely responsible for compliance with venue rules, applicable guidance on photosensitive epilepsy, and audience warnings. <strong>Do not use strobe or rapid-flash effects without appropriate assessment.</strong></p>
+<h3 id="s5-3-optical-radiation">5.3 Optical radiation</h3>
+<p>The Software controls fixtures and lasers-adjacent equipment that can emit <strong>intense light</strong>. You are responsible for safe beam angles, focus, and eye-safety distances in your venue.</p>
+<h2 id="s6-ownership">6. Ownership</h2>
+<p>The Software is <strong>licensed, not sold</strong>. HTD and its licensors retain all right, title and interest, including all intellectual property rights. Nothing here transfers ownership.</p>
+<p><strong>Your Content remains yours.</strong> We claim no ownership of your show files, patches, presets, cues, or media. You grant us only the limited rights needed to provide the Software and any support you request.</p>
+<h2 id="s7-ai-features-what-they-are-and-what-they-are-no">7. ★ AI FEATURES — what they are, and what they are not</h2>
+<p>The Software includes features that use <strong>artificial intelligence and language models</strong> to interpret instructions, propose actions, describe what a camera or renderer sees, generate content, or assist with configuration.</p>
+<ol type="a"><li><strong>AI output is probabilistic and may be wrong.</strong> It may misinterpret an instruction, propose an action you did not intend, describe something inaccurately, or produce output that is plausible and incorrect. <strong>It carries no warranty of any kind</strong> and §4 applies to it in full.</li><li><strong>★ You remain the operator.</strong> AI Features may <em>propose</em>; you are responsible for what the rig actually does. Where the Software requires an explicit confirmation step before an AI-proposed action takes effect, <strong>you must not disable, bypass, or automate around that step</strong>, and doing so is a breach of this Agreement.</li><li><strong>AI Features must never be used within §5.1.</strong> No AI-proposed or AI-executed action may control, trigger or influence anything in that section.</li><li><strong>Third-party processing.</strong> Some AI Features send text — which may include the words you type or speak, and information about your rig and show — to <strong>third-party AI providers</strong> for processing. Those providers process it under their own terms. <strong>[Identify the providers used, and link their terms, before launch.]</strong></li><li><strong>Availability and cost.</strong> AI Features may depend on a network connection, a third-party service, or a key you supply. They may be <strong>changed, limited, or discontinued</strong>, and any provider fees are yours. <strong>The Software's core show-control functions are designed to work without them, and you should not build a show that depends on an AI Feature being available.</strong></li><li><strong>No professional advice.</strong> AI output is not engineering, safety, legal or design advice.</li></ol>
+<h2 id="s8-voice-and-microphone">8. ★ VOICE AND MICROPHONE</h2>
+<p>If you enable voice control or voice notes, the Software <strong>listens to a microphone</strong> and converts speech to text, locally and/or via a third-party service.</p>
+<ol type="a"><li><strong>You control when it listens</strong> and can disable it.</li><li><strong>★ OTHER PEOPLE MAY BE IN THE ROOM.</strong> A console microphone in a venue can capture the voices of performers, crew and members of the public. <strong>You are solely responsible for obtaining any consent or providing any notice required by law where you operate</strong> — including in jurisdictions that require the consent of <strong>all parties</strong> to a recording. HTD is not responsible for your compliance.</li><li>Voice-derived text may be <strong>stored locally</strong> as part of the command log so you can review what the system understood.</li><li>§13 governs anything that leaves your machine.</li></ol>
+<h2 id="s9-cameras-video-and-ndi">9. Cameras, video and NDI</h2>
+<ol type="a"><li>The Software can receive, route, record and display <strong>video from cameras, capture devices and NDI sources</strong>, and can send video onward.</li><li><strong>You are responsible for the rights and permissions</strong> in everything you capture, display, distribute or record — including performers' rights, venue rules, and the privacy of anyone in frame.</li><li><strong>NDI® is a registered trademark of Vizrt NDI AB.</strong> Use of the mark does not imply sponsorship or endorsement. <strong>★ NDI-REQUIRED (must follow the NDI Brand Guidelines)</strong></li><li>NDI and similar transports send video <strong>across your network in the clear</strong>. §11 applies.</li></ol>
+<h2 id="s10-fixture-profiles-and-device-data-verify-befor">10. ★ FIXTURE PROFILES AND DEVICE DATA — verify before you trust</h2>
+<p>The Software ships and generates <strong>fixture profiles</strong> — channel maps and attribute definitions describing how a given fixture responds. These come from manufacturer documentation, public libraries, and in some cases from <strong>measurement or automated discovery on your own rig</strong>.</p>
+<ol type="a"><li><strong>Profiles are provided WITHOUT WARRANTY OF ACCURACY.</strong> Manufacturer documentation is often wrong, incomplete, or does not match the firmware actually in the fixture.</li><li><strong>★ You must verify a profile against the actual fixture before relying on it</strong>, particularly for any attribute that moves, heats, or produces intense output.</li><li>An incorrect profile can cause a fixture to behave unexpectedly. <strong>This is exactly why §5.1 exists</strong> and why nothing that can hurt someone may be driven by this Software.</li><li>Where the Software <strong>derives</strong> a profile automatically, the result is an informed inference, not a specification, and (b) applies with more force.</li><li>Third-party fixture libraries are governed by their own terms; see the <strong>NOTICES</strong> file.</li></ol>
+<h2 id="s11-your-network-and-other-people-s-equipment">11. ★ YOUR NETWORK AND OTHER PEOPLE'S EQUIPMENT</h2>
+<ol type="a"><li>The Software <strong>discovers, addresses and controls equipment on the networks it is connected to</strong>, and sends unicast and multicast traffic to do so.</li><li><strong>You represent that you are authorised</strong> to operate the Software on those networks and to control the Controlled Equipment. <strong>Do not run it on a network, or against equipment, you are not authorised to control.</strong></li><li>Show-control protocols are <strong>not authenticated and not encrypted</strong> by design and by industry convention. Anyone on the same network can potentially observe or inject traffic. <strong>Run it on an isolated production network.</strong> HTD is not responsible for the security of your network.</li><li>Controlling equipment may affect that equipment's <strong>own warranty or support terms</strong>. That is between you and its manufacturer.</li><li>Manufacturer names and product names are used <strong>solely to identify compatibility</strong>. HTD is not affiliated with, endorsed by, or sponsored by them, and no compatibility is warranted.</li></ol>
+<h2 id="s12-generated-content">12. Generated content</h2>
+<p>Where the Software generates images or other content (for example gobos or textures) using generative models:</p>
+<ol type="a"><li><strong>You are responsible for how you use the output</strong>, including any third-party rights it may implicate.</li><li><strong>The model used for gobo generation is licensed under Apache 2.0 and places no restriction on commercial use of its output.</strong> You may use generated gobos in paid work. <em>(Verified 2026-08-21 against the exact model revision in use.)</em></li></ol>
+<p>b-bis. <strong>The model is not part of the Software and we do not supply it.</strong> Generation requires a separate, user-installed tool and a model you download yourself; where that is absent the feature simply reports it is unavailable. Your use of that tool and model is governed by their own licences, which are listed in the NOTICES file.</p>
+<ol type="a"><li>HTD makes <strong>no representation that generated output is original, non-infringing, or free for commercial use</strong>, and gives no indemnity for it.</li><li>Generative features may produce unexpected or unsuitable output. Review before use in front of an audience.</li></ol>
+<h2 id="s13-data-and-privacy">13. ★ DATA AND PRIVACY</h2>
+<ol type="a"><li><strong>The shipping Software performs no automatic telemetry.</strong> It does not send your show files, media, or usage data to HTD on its own.</li><li><strong>Optional features that do communicate</strong> are described where they appear, and include: checking whether an update exists; AI Features (§7); and any diagnostic report you choose to send.</li><li><strong>If you press "report a problem", or take part in a testing programme</strong>, the Software sends what that feature describes at the time — which may include a <strong>log of commands issued, including commands spoken aloud</strong>. Where a preview is offered, look at it. <strong>In a testing programme, that reporting may be a condition of taking part</strong> — see the agreement for that programme.</li><li><strong>Participants in a beta or testing programme</strong> are governed additionally by the applicable agreement for that programme, which prevails over this §13 for that programme's data.</li><li>Our handling of personal data is described in the <strong>Privacy Policy</strong>. Diagnostic and testing- programme data is retained for <strong>six (6) months</strong> and then deleted; records that evidence an agreement you accepted are kept for as long as that agreement and any claim under it can matter.</li><li><strong>Your Content is yours</strong> and is not collected by HTD except where you send it to us deliberately in support.</li></ol>
+<h2 id="s14-limitation-of-liability">14. Limitation of liability</h2>
+<p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, HTD AND ITS LICENSORS WILL NOT BE LIABLE FOR ANY <strong>INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY OR PUNITIVE DAMAGES</strong>, OR FOR <strong>LOST PROFITS, LOST REVENUE, LOST BOOKINGS, CANCELLED OR DISRUPTED PERFORMANCES, LOST OR CORRUPTED DATA, OR THE COST OF SUBSTITUTE GOODS, SERVICES OR PERSONNEL</strong>, however caused and on any theory of liability, even if advised of the possibility.</p>
+<p>HTD's <strong>total aggregate liability</strong> will not exceed <strong>the amount you actually paid for the Software in the twelve (12) months preceding the event</strong> giving rise to the claim.</p>
+<p>These limits apply even if a remedy fails of its essential purpose and are a fundamental basis of the bargain — the price reflects this allocation of risk. <strong>Nothing here limits liability that cannot be limited by law, including for death or personal injury caused by negligence, or for fraud.</strong></p>
+<h2 id="s15-indemnity">15. Indemnity</h2>
+<p>You will indemnify and hold harmless HTD, its members, and its licensors from any claim, loss or expense (including reasonable legal fees) arising from: your use of the Software in breach of this Agreement; any use within <strong>§5.1</strong>; your Content; your use of Controlled Equipment or networks; your compliance obligations under <strong>§8(b)</strong> and <strong>§9(b)</strong>; or your use of generated content under <strong>§12</strong>.</p>
+<h2 id="s16-term-and-termination">16. Term and termination</h2>
+<p>Effective until terminated. It terminates <strong>automatically</strong> on material breach, including any use within §5.1. On termination you must stop using the Software and remove all copies, except as §17.3 allows.</p>
+<p><strong>Survival: §§1, 3, 4, 5, 6, 7(a)–(c), 10, 11, 12, 13, 14, 15, 17.3, 19, 20, 21, 22.</strong></p>
+<h2 id="s17-payment-refunds-updates-and-what-happens-if-h">17. Payment, refunds, updates, and what happens if HTD stops</h2>
+<h3 id="s17-1-fees-and-refunds">17.1 Fees and refunds</h3>
+<p>Fees are as stated at purchase. <strong>All sales are final and licence fees are non-refundable</strong>, except where a refund is required by applicable law.</p>
+<h3 id="s17-2-updates-and-support">17.2 Updates and support</h3>
+<p>Maintenance and bug-fix updates for your licensed major version are included. <strong>New major versions may require a paid upgrade.</strong> Support is <strong>[describe: channel, hours, response target]</strong> and is provided on a commercially reasonable basis; it is not a guarantee of a fix or of availability during your show.</p>
+<h3 id="s17-3-if-htd-stops-your-licence-survives">17.3 ★ If HTD stops — your licence survives</h3>
+<p><strong>Your licence is perpetual for the version you purchased.</strong> If HTD ceases distribution, support or operations:</p>
+<ol><li><strong>your licence continues indefinitely</strong> and you may keep installing and using the Software on your licensed System;</li><li><strong>any activation, licence-server or online check will be released or disabled</strong> so the Software keeps working without HTD; and</li><li>you may keep and re-install your own archived copies.</li></ol>
+<p>HTD will not remotely disable, expire or revoke a validly purchased licence for any reason other than material breach.</p>
+<h3 id="s17-4-trial">17.4 Trial</h3>
+<p><strong>[Time-limited, full-function trial — recommended; state the period once decided.]</strong></p>
+<h2 id="s18-third-party-components">18. Third-party components</h2>
+<p>The Software includes third-party components governed by their own terms, listed in the <strong>NOTICES</strong> file supplied with the Software. This includes <strong>NDI®</strong>, and you agree to the NDI-related obligations in §§3, 4 and 9. <strong>★ NDI-REQUIRED</strong></p>
+<p>Where a third-party component is licensed under an open-source licence that grants you rights beyond this Agreement, <strong>that licence governs that component</strong>.</p>
+<h2 id="s19-trademarks">19. Trademarks</h2>
+<p><strong>PHANTOS</strong> and the Phantos logo are trademarks of HTD. This Agreement grants <strong>no right to use them</strong>, except to state factually that you use the Software. All other marks belong to their owners.</p>
+<h2 id="s20-beta-and-pre-release-software">20. Beta and pre-release software</h2>
+<p>Any build identified as beta, alpha, preview or pre-release is provided for evaluation only, is <strong>expected to contain defects</strong>, and is licensed under §4 and §14 with no support obligation. <strong>Where you have also accepted a beta agreement or NDA, that agreement prevails over this one for pre-release software</strong> (see §22(b)).</p>
+<h3 id="s20-1-the-beta-is-free-and-three-clauses-have-to">20.1 ★ The beta is free — and three clauses have to know that</h3>
+<p><strong>No fee is charged for a pre-release build</strong>, and none of §17 (fees, refunds, upgrades) applies to it. The consideration is not money: <strong>the tester receives the Software and gives feedback and confidentiality in return</strong>, under the beta agreement. So:</p>
+<ol type="a"><li><strong>§2 grants the beta licence without payment</strong> — the fee condition reads "if any" for exactly this reason.</li><li><strong>§17.1's no-refund term is inapplicable</strong> — there is nothing to refund.</li><li><strong>★ §14's liability cap resolves to ZERO for an unpaid tester</strong>, because it is measured by what you paid in the preceding twelve months. <strong>That is not the intended answer for a free beta.</strong> The beta agreement carries its own <strong>US $100</strong> cap, and under §22(b) that agreement prevails for pre-release software — so the tester's cap is $100, not nothing.</li></ol>
+<h2 id="s21-export-compliance-ndi-required">21. Export compliance <strong>★ NDI-REQUIRED</strong></h2>
+<p>You represent that you are not located in, and will not use or export the Software into, any country or to any party subject to United States export restrictions or sanctions, and that you will comply with all applicable export laws.</p>
+<p><strong>US Government end users:</strong> the Software is "commercial computer software" and "commercial computer software documentation" and is provided with only the rights granted here.</p>
+<h2 id="s22-general">22. General</h2>
+<ol type="a"><li><strong>Governing law and venue.</strong> New Jersey law, without regard to conflicts of law. Exclusive venue is the state and federal courts in <strong>Burlington County, New Jersey</strong>, and you consent to their jurisdiction.</li><li><strong>Order of precedence.</strong> (1) a signed written agreement with HTD; (2) an accepted beta agreement or NDA, for pre-release software; (3) this Agreement; (4) Documentation.</li><li><strong>Entire agreement</strong>, superseding prior discussions on its subject.</li><li><strong>Amendment.</strong> We may update this Agreement for new versions; the version you accepted governs the version you licensed. Continued use of an updated Software version after notice constitutes acceptance for that version.</li><li><strong>Assignment.</strong> You may not assign without our written consent. <strong>We may assign freely, including between HTD and its founder, and in any reorganisation, financing, merger or sale of assets.</strong></li><li><strong>No waiver</strong> by delay. <strong>Severability</strong> — an unenforceable term is limited or severed and the rest stands.</li><li><strong>Force majeure.</strong> Neither party is liable for failure caused by events beyond its reasonable control.</li><li><strong>Notices</strong> to <strong>support@rocshopav.com</strong>; to you, at the address or email associated with your licence.</li></ol>
+<ol type="a"><li><strong>Language.</strong> The English text governs.</li><li><strong>Electronic acceptance.</strong> You may accept electronically; that act is your signature. We record the version accepted, the date and time, and the identifying details you supply.</li></ol>
+<hr>
+<p><strong>Harmonious Technical Designs LLC</strong> 33 White Street, Mount Holly, New Jersey 08060 · support@rocshopav.com · phantos.io</p>
+<hr></div>
+      <div class="readmark" id="m-eula">Scroll to the end to continue</div>
+    </div>
+
+    <form id="f" novalidate>
+      <fieldset>
+        <label class="agree locked" id="a-nda-l">
+          <input type="checkbox" id="a-nda" disabled>
+          <span>I have read and agree to the <b>Non-Disclosure Agreement (v0.1)</b>.</span>
+        </label>
+        <label class="agree locked" id="a-eula-l">
+          <input type="checkbox" id="a-eula" disabled>
+          <span>I have read and agree to the <b>End User Licence Agreement (v2.0)</b>.</span>
+        </label>
+        <label class="agree">
+          <input type="checkbox" id="a-safe">
+          <span>I understand this is <b>pre-release software provided as is</b>, and that it must
+          <b>never</b> control rigging, automation, pyrotechnics, lasers or any life-safety system.</span>
+        </label>
+        <label class="agree">
+          <input type="checkbox" id="a-data">
+          <span>I understand <b>data sharing is required to take part</b>, and that the reports include
+          a log of the commands I issue — <b>including commands I speak aloud</b>.</span>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <div class="fields">
+          <div>
+            <label for="name">Full legal name <span class="req">*</span></label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+          </div>
+          <div>
+            <label for="email">Email <span class="req">*</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+          <div>
+            <label for="phone">Phone <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+          </div>
+          <div>
+            <label for="rig">What do you run shows on?</label>
+            <input type="text" id="rig" name="rig" placeholder="venue, touring, church, corporate…">
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <label for="address">Postal address <span class="req">*</span></label>
+          <textarea id="address" name="address" autocomplete="street-address" required></textarea>
+          <p class="hint">Required because the agreements are between named parties, and a party is
+          identified by name and address. It is not used for anything else.</p>
+        </div>
+      </fieldset>
+
+      <button class="cta" id="go" type="submit" disabled>Send application</button>
+      <p class="formnote" id="why">Read both agreements and tick all four boxes to continue.</p>
+
+      <div class="msg bad" id="err"><b>Not sent</b><p id="errtext"></p></div>
+      <div class="msg good" id="ok">
+        <b>Application received</b>
+        <p>Thank you — we have your application and a person will read it.</p>
+        <p>If you are approved you will get an email with a <b>licence key</b> and an invitation to a
+        private folder containing the build. If the beta is full, we will say so rather than leave you
+        wondering.</p>
+      </div>
+    </form>
+  </section>
+
+</div>
+
+<footer><div class="wrap">
+  <span>Harmonious Technical Designs LLC · Mount Holly, New Jersey</span>
+  <span><a href="mailto:support@rocshopav.com">support@rocshopav.com</a></span>
+</div></footer>
+
+<script>
+// ── WHERE APPLICATIONS GO ────────────────────────────────────────────────────────────────────────
+// phantos.io is a static site on GitHub Pages: there is no server here to receive a form. Point this
+// at a form endpoint that (a) emails support@rocshopav.com and (b) KEEPS A DURABLE RECORD.
+//
+// ★ The record is the point, not the email. An agreement nobody can prove was accepted — by whom, at
+// what time, against WHICH VERSION — is not enforceable in any practical sense. Whichever service is
+// used must retain: name, address, email, phone, the two version strings, the timestamp, and the IP.
+const FORM_ENDPOINT = "https://phantos-beta.rozking.workers.dev/api/apply";   // the beta Worker — live 2026-08-21
+
+const $ = id => document.getElementById(id);
+const boxes = ["a-nda", "a-eula", "a-safe", "a-data"].map($);
+const fields = ["name", "email", "phone", "address"].map($);
+
+// Unlock a checkbox only once its agreement has actually been scrolled to the end. Not a legal
+// requirement, but "I never saw it" is the first thing anyone says, and this is cheap to do honestly.
+function gate(scrollId, boxId, markId) {
+  const el = $(scrollId), box = $(boxId), mark = $(markId), lab = $(boxId + "-l");
+  const check = () => {
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) {
+      box.disabled = false;
+      lab.classList.remove("locked");
+      mark.textContent = "Read to the end \u2713";
+      mark.classList.add("done");
+      el.removeEventListener("scroll", check);
+    }
+  };
+  el.addEventListener("scroll", check, {passive: true});
+  check();   // short viewports may already be at the end
+}
+gate("s-nda", "a-nda", "m-nda");
+gate("s-eula", "a-eula", "m-eula");
+
+function ready() {
+  const agreed = boxes.every(b => b.checked && !b.disabled);
+  const filled = fields.every(f => f.value.trim().length > 1);
+  const email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($("email").value.trim());
+  $("go").disabled = !(agreed && filled && email);
+  $("why").textContent = !agreed ? "Read both agreements and tick all four boxes to continue."
+                       : !filled ? "Fill in your name, address, email and phone."
+                       : !email  ? "That email address does not look right."
+                       : "Ready to send.";
+}
+boxes.concat(fields).forEach(el => {
+  el.addEventListener("input", ready);
+  el.addEventListener("change", ready);
+});
+ready();
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("err").classList.remove("on");
+
+  // Never pretend. If no endpoint is configured the page says so plainly rather than showing a
+  // success message for a submission that went nowhere.
+  if (!FORM_ENDPOINT) {
+    $("errtext").textContent = "This form is not connected yet. Please email support@rocshopav.com "
+      + "and we will send you the application directly.";
+    $("err").classList.add("on");
+    return;
+  }
+
+  const payload = {
+    name: $("name").value.trim(),
+    address: $("address").value.trim(),
+    email: $("email").value.trim(),
+    phone: $("phone").value.trim(),
+    rig: $("rig").value.trim(),
+    accepted_nda_version: "0.1",
+    accepted_eula_version: "2.0",
+    accepted_safety: true,
+    accepted_data_sharing: true,
+    accepted_at: new Date().toISOString(),
+    page: location.href
+  };
+
+  $("go").disabled = true;
+  $("go").textContent = "Sending\u2026";
+  try {
+    const r = await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error("status " + r.status);
+    $("f").querySelectorAll("fieldset, .cta, .formnote").forEach(n => n.style.display = "none");
+    $("ok").classList.add("on");
+  } catch (err) {
+    $("errtext").textContent = "Something went wrong sending this. Please email "
+      + "support@rocshopav.com and we will pick it up from there.";
+    $("err").classList.add("on");
+    $("go").disabled = false;
+    $("go").textContent = "Send application";
+  }
+});
+</script>
+</body>
+</html>
