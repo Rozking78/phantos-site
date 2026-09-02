@@ -397,6 +397,10 @@
             <input type="tel" id="phone" name="phone" autocomplete="tel" required>
           </div>
           <div>
+            <label for="company">Company / organization <span class="req">*</span></label>
+            <input type="text" id="company" name="company" autocomplete="organization" required>
+          </div>
+          <div>
             <label for="rig">What do you run shows on?</label>
             <input type="text" id="rig" name="rig" placeholder="venue, touring, church, corporate…">
           </div>
@@ -497,6 +501,7 @@ $("f").addEventListener("submit", async e => {
     address: $("address").value.trim(),
     email: $("email").value.trim(),
     phone: $("phone").value.trim(),
+    company: $("company").value.trim(),
     rig: $("rig").value.trim(),
     accepted_nda_version: "0.1",
     accepted_eula_version: "2.0",
