@@ -179,6 +179,27 @@
         list, and your name when you’re happy.</p>
       <a class="cta" href="mailto:support@rocshopav.com?subject=Phantos%20founding%20customer">Talk to the builder</a>
       <div class="sub">You’ll be talking to the person who wrote it — a working LD who runs Phantos on real shows.</div>
+      <form id="fw" style="margin-top:26px;display:flex;gap:10px;flex-wrap:wrap" onsubmit="return fwSubmit(event)">
+        <input id="fw-email" type="email" required placeholder="you@venue.com"
+               style="flex:1;min-width:220px;padding:13px 14px;background:#0A0D11;border:1px solid var(--rule);color:var(--ink);font-family:var(--sans);font-size:15px">
+        <button class="cta ghost" style="margin-left:0" type="submit">Tell me when checkout opens</button>
+        <div id="fw-note" class="sub" style="width:100%;margin-top:8px">Founders checkout is opening soon — leave your email and you’ll hear the moment it does. Nothing else, ever.</div>
+      </form>
+      <script>
+      async function fwSubmit(e){
+        e.preventDefault();
+        const note = document.getElementById('fw-note'), email = document.getElementById('fw-email').value;
+        note.textContent = 'One second…';
+        try {
+          const r = await fetch('https://phantos-beta.rozking.workers.dev/api/notify-founders', {
+            method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({email, source:'founding-card'})});
+          const j = await r.json();
+          note.textContent = j.ok ? (j.state==='already-listed' ? 'You’re already on the list — you’ll hear from us.' : 'On the list. You’ll hear the moment founders checkout opens.') : ('Hmm: ' + (j.error||'try again'));
+          if (j.ok) document.getElementById('fw-email').value='';
+        } catch(_) { note.textContent = 'Could not reach the list just now — email support@rocshopav.com and we’ll add you by hand.'; }
+        return false;
+      }
+      </script>
     </div>
   </div>
 </section>
