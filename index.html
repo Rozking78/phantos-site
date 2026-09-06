@@ -80,6 +80,27 @@
     @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   }
 </style>
+<!-- Paddle checkout. phantos.io is the account's DEFAULT PAYMENT LINK: the Worker's /buy creates a transaction and
+     sends the buyer here with ?_ptxn=<id>; Paddle.js sees it and opens the checkout on arrival. The token below is a
+     Paddle CLIENT-SIDE token — public by design, safe in a static page. The secret API key never leaves the Worker. -->
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+  (function () {
+    try {
+      Paddle.Initialize({
+        token: 'live_acc6dc06d7dd5585fea5393025a',
+        checkout: { settings: { displayMode: 'overlay', theme: 'dark', variant: 'one-page', showAddDiscounts: true } },
+        eventCallback: function (ev) {
+          if (ev && ev.name === 'checkout.completed') {
+            var n = document.getElementById('buy-note');
+            if (n) n.textContent = 'Thank you. Your founding licence is on its way — a person mints it and emails it to you, usually within a day.';
+            if (history && history.replaceState) history.replaceState(null, '', '/#founding');
+          }
+        }
+      });
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
 
@@ -185,7 +206,7 @@
         In exchange: your feedback, your fixture list, and your name when you’re happy.</p>
       <a class="cta" href="https://phantos-beta.rozking.workers.dev/buy?src=site">Buy the founding licence — $299</a>
       <a class="cta ghost" href="mailto:support@rocshopav.com?subject=Phantos%20founding%20customer">Talk to the builder</a>
-      <div class="sub">Secure checkout by Paddle, our merchant of record — card, Apple Pay or PayPal. Your licence key is minted by a person and emailed to you, usually within a day. 30-day full refund if it is not for you.</div>
+      <div id="buy-note" class="sub">Secure checkout by Paddle, our merchant of record — card, Apple Pay or PayPal. Your licence key is minted by a person and emailed to you, usually within a day. 30-day full refund if it is not for you.</div>
       <div class="sub">You’ll be talking to the person who wrote it — a working LD who runs Phantos on real shows.</div>
       <form id="fw" style="margin-top:26px;display:flex;gap:10px;flex-wrap:wrap" onsubmit="return fwSubmit(event)">
         <input id="fw-email" type="email" required placeholder="you@venue.com"
