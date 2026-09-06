@@ -80,6 +80,35 @@
     @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   }
 </style>
+<!-- Paddle checkout (overlay). The token below is a Paddle CLIENT-SIDE token: public by design, safe in a static page.
+     The price id is the founders rung-1 price. Fulfilment stays manual (mint-founders-seat) until the webhook lands. -->
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+  const PADDLE_CLIENT_TOKEN = 'PADDLE_CLIENT_TOKEN_PLACEHOLDER';
+  const FOUNDERS_PRICE_ID   = 'pri_01m1hwvr3qmvgaf669c6n61jxv';   // $299 · rung 1 · one-time
+  let paddleReady = false;
+  try {
+    if (PADDLE_CLIENT_TOKEN && !PADDLE_CLIENT_TOKEN.includes('PLACEHOLDER')) {
+      Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN, eventCallback: (ev) => {
+        if (ev && ev.name === 'checkout.completed') {
+          const n = document.getElementById('buy-note');
+          if (n) n.textContent = 'Thank you. Your founding licence is on its way — a person mints it and emails it to you, usually within a day.';
+        }
+      }});
+      paddleReady = true;
+    }
+  } catch (_) {}
+  function buyFounders() {
+    const n = document.getElementById('buy-note');
+    if (!paddleReady) { if (n) n.textContent = 'Checkout is not live yet — email support@rocshopav.com and we will take it from there.'; return false; }
+    Paddle.Checkout.open({
+      items: [{ priceId: FOUNDERS_PRICE_ID, quantity: 1 }],
+      customData: { rung: 1, source: 'phantos.io/founding' },
+      settings: { displayMode: 'overlay', theme: 'dark', variant: 'one-page', successUrl: 'https://phantos.io/?founder=thanks#founding' }
+    });
+    return false;
+  }
+</script>
 </head>
 <body>
 
@@ -183,13 +212,15 @@
         The founding rate starts at <strong>$299</strong> and steps up as we get closer to release —
         every rise is announced a week ahead, and <strong>nobody who buys after you ever pays less than you did</strong>.
         In exchange: your feedback, your fixture list, and your name when you’re happy.</p>
-      <a class="cta" href="mailto:support@rocshopav.com?subject=Phantos%20founding%20customer">Talk to the builder</a>
+      <a class="cta" href="#founding" onclick="return buyFounders()">Buy the founding licence — $299</a>
+      <a class="cta ghost" href="mailto:support@rocshopav.com?subject=Phantos%20founding%20customer">Talk to the builder</a>
+      <div id="buy-note" class="sub">Card, Apple Pay or PayPal through Paddle, our merchant of record. Your licence key is minted by a person and emailed to you — usually within a day. 30-day full refund if it is not for you.</div>
       <div class="sub">You’ll be talking to the person who wrote it — a working LD who runs Phantos on real shows.</div>
       <form id="fw" style="margin-top:26px;display:flex;gap:10px;flex-wrap:wrap" onsubmit="return fwSubmit(event)">
         <input id="fw-email" type="email" required placeholder="you@venue.com"
                style="flex:1;min-width:220px;padding:13px 14px;background:#0A0D11;border:1px solid var(--rule);color:var(--ink);font-family:var(--sans);font-size:15px">
-        <button class="cta ghost" style="margin-left:0" type="submit">Tell me when checkout opens</button>
-        <div id="fw-note" class="sub" style="width:100%;margin-top:8px">Founders checkout at $299 is opening soon — leave your email and you’ll hear the moment it does, and a week before every price rise. Nothing else, ever.</div>
+        <button class="cta ghost" style="margin-left:0" type="submit">Tell me before the price rises</button>
+        <div id="fw-note" class="sub" style="width:100%;margin-top:8px">Not ready to buy today? Leave your email and you’ll hear a week before every price rise. Nothing else, ever.</div>
       </form>
       <script>
       async function fwSubmit(e){
