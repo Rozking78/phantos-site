@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Faders — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/faders/">
+<meta name="description" content="A fader is a workspace tile. Drop one in the grid, tell it what to drive, and it drives it — hand-tracked, with no crossfade lagging behind your fingers.">
+<meta property="og:title" content="Faders">
+<meta property="og:description" content="A fader is a workspace tile. Drop one in the grid, tell it what to drive, and it drives it — hand-tracked, with no crossfade lagging behind your fingers.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/faders/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Faders</p>
+  <main>
+
+<h2><span class="num">6</span>Faders</h2>
+
+<p class="lede">A fader is a workspace tile. Drop one in the grid, tell it what to drive, and it drives
+it — hand-tracked, with no crossfade lagging behind your fingers.</p>
+
+<div class="howto">
+<span class="q">How do I add a fader?</span>
+<ol>
+  <li>Drag down an empty column of the grid. A fader is always <strong>one column wide</strong> and as tall
+      as you dragged — drag across several columns and you lay down a whole bank in one gesture.</li>
+  <li>Pick <strong>Playback ▸ Fader</strong>.</li>
+  <li><strong>Long-press the LCD panel at the bottom of the fader</strong> to choose what it drives.</li>
+</ol>
+</div>
+
+<h3>Anatomy</h3>
+<p>Top to bottom: a <strong>read-out capsule</strong>, the <strong>throw</strong>, and an <strong>LCD panel</strong>
+carrying the name and a target badge. The LCD is also a button.</p>
+
+<div class="callout law">
+<h4>The track is only ever a level</h4>
+<p>A press anywhere on the <strong>throw</strong> is a level grab and nothing else — hold it still all day
+and no menu will appear. The <strong>configure</strong> long-press lives on the <strong>LCD</strong> alone (and
+on the whole face while the fader is unassigned). That is why a fine trim never opens a sheet mid-cue.</p>
+</div>
+
+<h3>What a fader can drive</h3>
+<div class="tablewrap">
+<table>
+  <tr><th>Target</th><th>What the fader becomes</th><th>Badge</th><th>The LCD button</th></tr>
+  <tr><td><code>exec &lt;n&gt;</code></td><td>That executor's master level.</td><td>E</td><td>The executor's touch mode — Go +, Go −, Toggle or Flash.</td></tr>
+  <tr><td><code>group &lt;n&gt;</code></td><td>That group's <em>programmer</em> level — the same write as <code>group n @ L</code>. Clear zeroes what it reads.</td><td>G</td><td>Recall the group.</td></tr>
+  <tr><td><code>transtime</code></td><td>The programmer fade time. Above zero it <em>arms</em> the fade switch; at the bottom it disarms.</td><td>T</td><td>Arm / disarm the programmer fade.</td></tr>
+  <tr><td><code>exectime</code></td><td>The GLOBAL Exec Time — the Exec Fade bezel as a fader, for all executors. No number.</td><td>X</td><td>Arm / disarm the exec fade (bottom of the throw disarms).</td></tr>
+  <tr><td><code>scrub &lt;slot&gt;</code></td><td>Scrubs that media slot's playhead.</td><td>M</td><td>Play / pause, Stop and <strong>Loop</strong> — three transport keys.</td></tr>
+  <tr><td><code>tbar [&lt;fix&gt;]</code></td><td>A T-bar on the patched ATEM.</td><td>TB</td><td>Cut, Auto or FTB.</td></tr>
+  <tr><td><code>atemtrans [&lt;fix&gt;]</code></td><td>The ATEM transition rate.</td><td>TR</td><td>Auto, Cut or FTB.</td></tr>
+  <tr><td><code>attribute &lt;fix&gt;</code><br><code>attribute group &lt;n&gt;</code></td><td>Any one attribute — Pan, Iris, Zoom, Red — on one fixture or on every member of a group.</td><td>F / G</td><td>Select the fixture, or recall the group.</td></tr>
+</table>
+</div>
+<p>Read-outs are in the target's own unit, never a bare percentage: 0–100 for an executor or group,
+seconds for a time fader (or the word <em>cue</em> when nothing overrides the cue), <em>m:ss / m:ss</em>
+for a scrub, frames for a transition rate.</p>
+<p>Time faders use a <strong>square-law throw</strong> — the bottom half of the travel is the first quarter
+of the range — so short times, where you actually work, get most of the fader. The top defaults to
+10 seconds; change it in the config sheet or with <code>max</code>.</p>
+
+<h3>Looping a scrub fader</h3>
+<p>A scrub fader's LCD area is a transport bar: <strong>play / pause</strong>, <strong>stop</strong> and
+<strong>↻ loop</strong>. Tap ↻ to loop the slot. You do not have to open anything — loop sits under the
+same thumb that works the throw, and you can arm it before or during playback.</p>
+<ul>
+  <li><strong>Lit ↻</strong> means the slot is looping on the wire, or is armed to loop the next time you
+      play it. The lamp reads the media node's own answer, so a loop armed from the Media window, from
+      another console or with <code>media 203 loop</code> lights this key too.</li>
+  <li><strong>Arming while it plays retunes it immediately</strong> — the clip you are already watching
+      starts looping, it does not wait for the end.</li>
+  <li><strong>Pause ends the loop mode; the arm survives it.</strong> A paused slot has no transport mode
+      running, but the key stays lit because your next play will start it looping again.</li>
+  <li><strong>Scrubbing never disarms loop.</strong> Drag the throw anywhere, as often as you like — a seek
+      changes <em>where</em>, never <em>how</em>. The same holds for bounce and reverse.</li>
+</ul>
+<p>Tapping a lit ↻ turns the loop off, including a loop somebody else armed. Off is play-without-loop,
+not a stop — the clip keeps rolling and simply ends when it ends.</p>
+
+<h3>Putting an attribute on a fader</h3>
+<p>Pick <strong>Attribute</strong> as the target and the sheet asks two questions. First
+<strong>what it drives</strong>: a <strong>fixture</strong> or a <strong>group</strong>, then its number.
+Then the <strong>tree</strong> — a row of <strong>feature groups</strong> (Intensity, Position, Colour,
+Beam, and whatever else the fixture actually has), and under the one you tap, its <strong>attributes</strong>.
+Tap one and the fader is that channel.</p>
+<p>The tree is the Programmer panel's own list, so a fader can never offer you a channel the panel does
+not. It shows only <strong>throw channels</strong>: gobo wheels, colour wheels, toggles and one-shot
+buttons are real, but they are not faders, and they stay on the Programmer panel where they are drawn as
+the control they are.</p>
+
+<div class="callout law">
+<h4>An attribute fader drives its own target, never your selection</h4>
+<p>Grabbing it does not select anything and does not change what you have selected. It writes straight
+to the fixture — or to every member of the group — that the LCD names. The throw is a
+<strong>hand</strong>: it lands instantly and cancels any fade running on that channel, so the light is
+always where your finger is. The <strong>LCD button</strong> is the one thing that touches the selection,
+and only because you pressed it: it puts you on the fixture, or recalls the group.</p>
+</div>
+
+<p>A group of mixed fixture types is fine. The menu is built from the <strong>first member's</strong>
+profile, the write is re-resolved on each member's own, and members that have no such channel are
+<strong>left alone</strong> — the fader says so on its face: <em>Iris (4/6)</em>. It never rounds that up
+to “fine”.</p>
+<p>The read-out is the channel's own <strong>DMX value</strong> — 0–255, or 0–65535 on a 16-bit channel —
+the same number the Programmer panel's slider shows for the same attribute. The cap picks up from what is
+already there: your programmer first, then what another console is holding, then the channel's default.
+It never snaps.</p>
+
+<h3>Configuring one</h3>
+<p>Long-press the LCD. The sheet gives you the target, the number (it <em>asks</em> — a fresh fader is
+never silently pointed at number 1), a name, twelve colours or &ldquo;by type&rdquo;, and whatever else that
+target needs: the button action, the top of a time range, loop for a scrub, the channel for a T-bar.
+Every assigned fader also gets a <strong>RESET</strong> row: a master gets a
+<strong>Reset to neutral</strong> button, and a fader that is not a master gets a line saying so and naming
+what does release it.
+Unassign asks twice. The sheet also prints its own command-line address, so you can script what you
+just built by hand.</p>
+<p><strong>Taking the tile off.</strong> The sheet's <strong>Remove tile</strong> button (it asks twice
+too) clears the fader off the workspace entirely. It is there because a fader is the one tile you cannot
+swipe over: a drag that starts on a fader belongs to the fader, so the marquee that re-assigns every other
+tile never begins on one. <em>Unassign</em> empties the target and leaves the empty fader standing;
+<em>Remove tile</em> takes the tile.</p>
+
+<h3>From the command line</h3>
+<p>Faders are addressed by their <strong>grid cell, counting from 1</strong> — <code>r1 c1</code> is the
+top-left cell.</p>
+<pre><code>fader                          list every fader tile, its target and its value
+fader 2 1 exec 3               row 2, column 1 drives executor 3
+fader 2 1 name Chorus          label it (blank restores the entity's own name)
+fader 2 1 color amber          tint it
+fader 2 1 button go+           what its LCD button does
+fader 2 1 max 10               top of the range, 0.1-600s (time faders)
+fader 2 1 loop on              loop (scrub faders) - same as the tile's loop key
+fader 2 1 attribute 12         drive an attribute on fixture 12
+fader 2 1 attribute group 3    …or on every member of group 3
+fader 2 1 scope group 4        re-point an attribute fader at group 4
+fader 2 1 attr &lt;name&gt;          which channel (attribute / T-bar / transition faders)
+fader 2 1 prog on|off          group fader: Prog Mode (on = programmer, off = master)
+fader 2 1 reset                put a master fader back to neutral
+fader 2 1 clear                unassign it (the empty tile stays)
+fader 2 1 remove               take the tile off the workspace</code></pre>
+<p>On an attribute fader, <code>attr</code> with a name it cannot find <strong>prints the tree</strong> —
+every feature group and its throw channels — and leaves the fader on the channel it already had. It never
+parks a tile on a name that does not exist.</p>
+<p>A bad address lists the real ones rather than failing quietly. Note that <code>fader</code> configures
+the <em>tile</em> — to move a level, use <code>exec 1 master 50</code> or <code>group 4 @ 50</code> (the programmer —
+what a Prog&nbsp;Mode fader writes). The group <em>master</em> — what the fader writes by default —
+has no typed form; it lives on the fader itself and on the group edit sheet.</p>
+
+<div class="callout">
+<h4>A group fader drives its group</h4>
+<p>Not “whatever happens to be selected”. By default it writes its group's <em>master</em> and never
+touches the selection at all. In <strong>Prog Mode</strong> grabbing it makes its group the selection,
+and if the selection drifts under you — a second fader, a peer console, a stuck grab — a fader
+labelled <em>G4</em> re-asserts group 4. That is deliberate.</p>
+</div>
+
+<h3>When a fader refuses</h3>
+<p>An assigned fader that cannot do its job replaces the throw with a warning triangle and the reason,
+and writes nothing. You will see it for an empty group, an empty or missing media slot, a clip whose
+duration is not known yet, no ATEM patched, or a profile with no T-bar channel. An attribute fader
+refuses for an unpatched fixture, an empty group, no attribute chosen yet, a profile that has no such
+channel, or a channel that is a dropdown or a button rather than a throw — and it names which. A refusing
+fader is telling you about the rig, not about itself. It also parks at zero and writes nothing: an
+attribute fader with nothing to drive never falls back to driving everything.</p>
+
+<h3>The grand master</h3>
+<p>Bottom right of the screen, on the bezel itself: a real fader with the level beside it. It is
+grab-relative — it moves from wherever you take hold, never jumping to the finger. The
+<strong>Grand Master</strong> window carries the same value again; so does <code>gm 80</code> from the
+command line, with <code>blackout</code> and <code>flash</code>.</p>
+<p>The grand master is the master of the <em>stage</em>, not of the programmer. It is the last word on
+intensity: it comes down on everything that is lighting the room &mdash; your programmer and every
+running executor, on this console and on every other console in the session. Blackout and Flash are
+the same control at its ends, so they take the executors with them too. It dims only intensity; a
+gobo, a colour wheel or a position never re-selects because you moved a master.</p>
+<p>That window carries three pages, picked from the tiles across the top:</p>
+<ul>
+  <li><strong>Master</strong> — the grand master fader, the lock, and the momentary Flash and BO.</li>
+  <li><strong>Program</strong> — five quick channel faders (Int, Pan, Tilt, Zoom, Focus), the colour
+      swatches, and Clear. They drive whatever is selected, or everything when nothing is.</li>
+  <li><strong>Rate / Width</strong> — the effect rate and width masters, live against running effects, with
+      <strong>TAP</strong> beating a tempo into Rate 1.</li>
+</ul>
+
+  </main>
+  <div class=pager><a href="/manual/presets/">← Presets &amp; executors</a><a href="/manual/media/">Media &amp; time →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

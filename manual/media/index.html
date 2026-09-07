@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Media & time — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/media/">
+<meta name="description" content="Media is patched like any other fixture and driven like any other fixture. The difference is that clips have a duration, and the desk shows you how much of it is left.">
+<meta property="og:title" content="Media &amp; time">
+<meta property="og:description" content="Media is patched like any other fixture and driven like any other fixture. The difference is that clips have a duration, and the desk shows you how much of it is left.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/media/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Media &amp; time</p>
+  <main>
+
+<h2><span class="num">7</span>Media &amp; time</h2>
+
+<p class="lede">Media is patched like any other fixture and driven like any other fixture. The
+difference is that clips have a duration, and the desk shows you how much of it is left.</p>
+
+<h3>Slots and transport</h3>
+<p>Media slots run <strong>201 to 255</strong>. Slots 191–200 are a read-only capture strip the render node
+owns. Open <strong>Media</strong> to see them: tap an occupied tile to select it <em>and</em> point your
+selection at it; tap an empty tile just to select the slot. <strong>Press and hold</strong> a tile — or
+right-click it — for Assign, Play/Pause, Stop, Loop, Clear and <strong>Copy CLI</strong>, which puts the
+exact command on your clipboard. The same press-and-hold opens the actions on a library tile, and in the
+Gobos window on a slot or a piece of art (there Assign, Unassign, <strong>Retire from library</strong>,
+Organize and Copy CLI). Every action list is reachable by finger; nothing needs a mouse button, and the
+list is <strong>flat</strong> — where an action has choices under it, such as <strong>Assign to</strong>,
+its slots are listed straight underneath rather than behind a second menu. One gesture, one layer.</p>
+<p><strong>Organize</strong> opens the slot grid. <strong>Press and hold</strong> a slot there — or
+right-click it — to <strong>Unassign</strong> it, to see what presets and executors still point at it, or
+to copy its CLI. Holding a slot that is live on air still lists Unassign, and still refuses it, saying so
+on the row. Drag a slot to move it; a press that moves is a drag, so only a press that stays put opens
+the list. An empty slot opens nothing, because there is nothing to do to it.</p>
+<pre><code>media 3 assign video &lt;source&gt;   put a clip in slot 3
+media 3 play                     roll it
+media 3 pause                    hold it
+media 3 stop                     stop it
+media 3 loop                     loop it
+media 3 seek 40                  jump to 40 seconds
+media 3 clear                    empty the slot
+media rescan                     re-read the library on every node
+media window                     open the Media window</code></pre>
+<p>You can use the slot's <strong>name</strong> instead of its number:
+<code>media Chorus play</code>. If the name is ambiguous the console lists the candidates rather than
+guessing. A number always wins over a name.</p>
+<p><code>media &lt;n&gt; clear</code> refuses while that slot is live on the canvas, in the same words the
+render node would use. <code>media rescan</code> asks every node and waits ten seconds; you get a green
+summary if they all answer, amber if some did, red if none did — it never claims a scan that did not
+happen.</p>
+<p>Uploading: <strong>＋ New ▸ Upload files</strong> in the Media window, up to 64 MB per file.
+<strong>＋ New</strong> opens a pop-out list you tap, in Media and in Gobos alike — the same list carries
+<strong>Rescan</strong>.</p>
+<p>Content slots — gobos, stills, generated images — are the <code>content</code> verb.
+<code>content 30</code> on its own points the current selection at slot 30, the same write as
+<code>gobo 30</code>. <code>content list</code>, <code>content info 30</code>,
+<code>content 30 assign &lt;asset&gt;</code>, <code>content move 30 40</code>,
+<code>content swap 30 40</code> and <code>content insert 30 40</code> manage the library — and all of
+them, except assign, refuse while a slot is live.</p>
+
+<h3>Time displays</h3>
+<p>Put a <strong>Time Display</strong> tile in the workspace. Each one shows one thing:</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Kind</th><th>Shows</th></tr>
+  <tr><td>Clock</td><td>Time of day.</td></tr>
+  <tr><td>Solar</td><td>Time to the next solar event, tinted by the phase — indigo at night through amber in the golden hour.</td></tr>
+  <tr><td>Video elapsed</td><td>How far into the clip you are.</td></tr>
+  <tr><td>Video remaining</td><td>Time to run.</td></tr>
+  <tr><td>Video duration</td><td>The clip's length.</td></tr>
+  <tr><td>Video countdown</td><td>Time to run, counting down.</td></tr>
+</table>
+</div>
+<p><strong>Tap the sliders button</strong> in the top-right corner of the label tile — or
+<strong>long-press the label tile</strong> anywhere — to configure it: what it shows, which slot it
+follows, whether it prints milliseconds, and whether it carries end-jump tiles. Both open the same
+sheet. A tile holds its last good reading rather than blanking, and shows a small orange dash when it
+has nothing.</p>
+
+<h4>Which clip is “Top Video”</h4>
+<p>Leave the target on <strong>Top Video</strong> and the display follows the playing slot with the
+<em>lowest number</em>, preferring one with a real known duration. That is deliberate: a still reports
+itself as playing with no duration, so without the preference a still would win and the countdown
+would read zero. Point a display at a specific slot instead if you want it pinned.</p>
+
+<h4>The countdown colours</h4>
+<div class="tablewrap">
+<table>
+  <tr><th>Time to run</th><th>Colour</th></tr>
+  <tr><td>more than 15 s</td><td>normal</td></tr>
+  <tr><td>15 s or less</td><td><span style="color:var(--yellow)">yellow</span></td></tr>
+  <tr><td>10 s or less</td><td><span style="color:var(--red)">red</span></td></tr>
+</table>
+</div>
+<p>The colour never carries the warning alone: while it is on, the label tile swaps its clock for a
+warning triangle and prints <strong>ENDING</strong>, so the state reads on a washed-out FOH monitor and
+to an operator who cannot separate the two hues.</p>
+<p>They only appear on a <strong>real</strong> countdown: a remaining or countdown display, following a slot
+that is actually playing, on a clip at least fifteen seconds long, with time still to run. A still, a
+parked slot, or a clip shorter than the warning window stays neutral — a tile that is always red tells
+you nothing.</p>
+
+<h3>End-jump tiles</h3>
+<p>A video time display can carry three jump buttons — <strong>−30</strong>, <strong>−15</strong> and
+<strong>−10</strong>, each labelled <em>GO TO</em>. One tap seeks that clip to that many seconds
+<em>before its end</em>. It is the “get to the button” control: when a song is called early, tap
+<strong>−15</strong> and the video is at its last fifteen seconds.</p>
+<div class="howto">
+<span class="q">How do I turn the end-jump tiles on?</span>
+<ol>
+  <li>Open the time display's config: tap the sliders button on its label tile, or long-press the tile.</li>
+  <li>Set the display to a video kind if it is not already.</li>
+  <li>Switch <strong>End-jump tiles</strong> ON.</li>
+</ol>
+</div>
+<ul>
+  <li>A tap <strong>seeks only</strong>. It does not start playback — a paused clip simply relocates.</li>
+  <li>A tile whose jump would land before the start of the clip is <strong>greyed out and does not
+      fire</strong>. On a twelve-second clip, −30 and −15 are dead and −10 seeks to two seconds.</li>
+  <li>They act on the clip the display is following.</li>
+</ul>
+
+<h3>Video on screen</h3>
+<ul>
+  <li><strong>Video Viewer</strong> tile — one live source in a workspace cell. Each tile remembers its own
+      source across relaunches. Opened from the bezel it fills the screen and carries the PTZ pad.</li>
+  <li><strong>Multi-View</strong> — up to sixteen sources at once, in eight shapes, with merge and
+      <strong>A</strong>–<strong>G</strong> layout slots. Opened on a display it goes full screen;
+      <kbd>Esc</kbd> comes back.</li>
+  <li><strong>Canvas Preview</strong> — the output canvas, at three sizes.</li>
+  <li><strong>DOOM is off in this beta.</strong> There is no game fixture in the patch browse, no Play
+      DOOM / Exit DOOM key in the pickers, no DOOM gamepad layout, and the <code>doom</code> verb answers
+      that it is off. To switch it on for a night, run
+      <code>defaults write com.phantos.command phantos.doom.enabled -bool YES</code> in Terminal and
+      relaunch Command; run <code>defaults delete com.phantos.command phantos.doom.enabled</code> and
+      relaunch to put it away again. A saved show that already holds a DOOM fixture keeps it — the
+      fixture just has no profile until the switch is on.</li>
+</ul>
+
+  </main>
+  <div class=pager><a href="/manual/faders/">← Faders</a><a href="/manual/patch/">Patch &amp; devices →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Session & network — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/session/">
+<meta name="description" content="A show is a session: one Babel hub, and every console, media node and display node that joins it. Command talks only to Babel. Babel talks to the gear.">
+<meta property="og:title" content="Session &amp; network">
+<meta property="og:description" content="A show is a session: one Babel hub, and every console, media node and display node that joins it. Command talks only to Babel. Babel talks to the gear.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/session/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Session &amp; network</p>
+  <main>
+
+<h2><span class="num">9</span>Session &amp; network</h2>
+
+<p class="lede">A show is a session: one Babel hub, and every console, media node and display node that
+joins it. Command talks only to Babel. Babel talks to the gear.</p>
+
+<h3>Am I in?</h3>
+<p>The lamp at the top left of the screen. Green and <em>Broker</em> means you are in a session; red and
+<em>offline</em> means you are alone. <strong>Sessions</strong> shows the detail — Babel's address and
+identity, this console's operator name, role and domain, and how many apps and devices are in the
+session. <strong>Settings ▸ Comms</strong> is the same panel from the settings side.</p>
+
+<div class="callout warn">
+<h4>The desk is standalone until it joins</h4>
+<p>Nothing leaves this machine before a session forms. If a light is not moving, check the lamp first:
+an offline console is doing everything you asked, locally, to nobody.</p>
+</div>
+
+<div class="howto">
+<span class="q">How do I get this console into the show?</span>
+<ol>
+  <li>Open <strong>Sessions</strong>.</li>
+  <li>Type <strong>Babel's LAN address</strong> into the Babel IP field and press <strong>Connect</strong>.
+      Get the address off Babel's own Sessions window; there is no discovery to wait for and it is
+      never a loopback address.</li>
+  <li>Fill in your <strong>Operator</strong> name so the rest of the session knows whose values are whose.</li>
+  <li>That is all. There is <em>no Join button</em> — once you reach Babel, every console on that Babel
+      converges on the same session by itself. <strong>Create Session</strong> is there for naming one;
+      <strong>Leave Session</strong> steps out.</li>
+</ol>
+</div>
+<p>Each domain gets an <strong>output priority</strong>, 0 to 200, default 100: higher wins, and equal
+priorities merge — highest-takes-precedence on intensity, latest-takes-precedence on everything else.</p>
+
+<h4>Executors in a session</h4>
+<p>In a session, <strong>Babel runs the executors</strong>. Tapping an executor tile, <code>go</code> or
+<code>release</code> sends Babel a request; the tile lights or clears when Babel reports that the executor is
+running or idle — not when you tapped. If Babel refuses the request (another console holds that executor),
+the status line says so and the tile stays exactly as it was. Undoing a go or a master move in a session
+never rewrites the session's playback state either: what Babel reports is what every tile shows. Offline,
+the desk runs its own executors and the tiles follow them directly.</p>
+
+<h3>Two consoles, two different shows</h3>
+<p class="lede">Values merge. <strong>Patches never do.</strong> A session runs one show, and joining a
+session can never blend your patch with somebody else's.</p>
+<p>When you reach a Babel that is already running a <em>different</em> show from the one loaded here,
+the console seals the show document in both directions and tells you on the status line. While it is
+sealed, nothing crosses: no fixture, preset, group or executor comes in from the session, and none of
+yours goes out. Your patch stays exactly as you left it, and so does theirs. Values, executors and
+everything else on the wire keep running normally — only the show document is held.</p>
+<p>You have three ways out, and the console will not choose for you:</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Choice</th><th>What it does</th></tr>
+  <tr><td><code>show adopt</code></td><td>Take the session's show. The host serves it, the console verifies it and replaces what is loaded here. Once you are on the same show, the seal lifts by itself and the two consoles resync normally.</td></tr>
+  <tr><td><code>show push</code></td><td>Keep yours and publish it into the session anyway. This does <em>not</em> remove the session's fixtures — no console can withdraw another console's rows — so the session then holds both. Use it when you know that is what you want.</td></tr>
+  <tr><td><code>session leave</code></td><td>Step out of the session. Nothing was exchanged.</td></tr>
+</table>
+</div>
+<p><code>show gate</code> reads the state back at any time — which show the session runs, which one is
+loaded here, and whether the seal is on.</p>
+<p>It does not matter which console joined which. Every console on a session says which show it is
+running, so both machines make the same check and reach the same answer — neither can be pulled into
+the other's show by the other's behaviour.</p>
+<p>An <strong>empty</strong> console is not sealed: with no show loaded there is nothing to blend, so it
+simply takes the session's show, as it always has.</p>
+
+<h3>Two consoles, the <em>same</em> show</h3>
+<p class="lede">Same show, one rig. A fixture belongs to the show once, and joining a session can never
+give you a second copy of it.</p>
+<p>When both consoles are on the same show the seal is off and they resync normally — that is the whole
+point of running two of them. What the console will <em>not</em> do is take a fixture it already has.
+Every patched fixture carries a permanent identity of its own, kept through renumbering, readdressing
+and renaming, and the console matches on that rather than on the fixture number. So if the two copies
+of the show have drifted apart — one machine renumbered, or was edited while the other was offline —
+the session's copy of a fixture you already hold is simply not taken, and your rig does not appear
+twice. A fixture the other operator genuinely <em>added</em> still arrives as normal.</p>
+<p>The status line says how many rows were held, and <code>show gate</code> reads it back.</p>
+
+<h3>A console that takes the show from the session (RFR)</h3>
+<p class="lede">An RFR console is a second pair of hands on somebody else's show. It never contributes
+show data to the session — not its patch, not its presets, groups, executors or timecode presets.</p>
+<p>Launch a machine as <strong>Command RFR</strong> and it takes the show from the session and leaves it
+there. Whatever show that machine happened to have open stays on its own disk and never reaches the
+session: it cannot publish it, cannot re-publish it on reconnect, and cannot withdraw anybody's rows.
+<code>show push</code> does not apply — there is no override, because there is no case where an RFR
+should be pushing a show at anyone.</p>
+<p>Everything you actually use it for works normally: selecting fixtures, running the programmer,
+recording and playing back through the session, and all the live control. <code>show gate</code> says
+plainly that the console is an RFR and how many rows it has held. To own a show on that machine,
+relaunch it as a full Command.</p>
+<p>An RFR comes up <strong>blank</strong> — no fixtures, no presets, groups or executors of its own, whatever
+that machine held last time — and takes the host's show whole the moment it joins. It never writes a
+show file: nothing it adopts is saved under the host's name on its own disk, and it never mints an
+<em>Untitled</em> of its own. Your grand master and programmer are live control, not show data, and
+come back as they were.</p>
+<p><strong>Your tile layout and bezels are yours, on every machine.</strong> They live with the console,
+not with the show you happen to join: join a show, do it, come back and join again, and your tiles,
+bezel keys and saved layouts are exactly where you left them, whether or not the LD changed the file
+in between. A machine that has never had a layout — a fresh install — takes the host's tiles and
+bezels along with the show, and from then on they are its own. A show you open yourself from
+<strong>Load Show</strong> still brings back the views it was saved with.</p>
+
+<h3>Which network card</h3>
+<p><strong>Settings ▸ Comms ▸ Network</strong> lists the machine's live interfaces; pick the one the show
+rides on. That choice governs where this console <em>sends</em>. The wire never uses a loopback
+address — that is a hard rule, not a preference.</p>
+<div class="callout warn">
+<h4>Moved the console to a different network?</h4>
+<p>A console remembers the address it last talked to Babel on, so carrying it to a new network leaves
+it calling an address that no longer exists. <strong>New Show</strong> re-anchors it: it re-reads the
+chosen interface's live address, leaves the old session and reconnects. If the interface has no real
+address it changes nothing and says so, rather than falling back to loopback. After a network change,
+restart the whole stack rather than switching interfaces live.</p>
+</div>
+
+<h3>Getting light out of the building</h3>
+<p>Physical lighting output — sACN and Art-Net — is Babel's job, not the console's. You configure and
+arm it either from <strong>Settings ▸ Comms ▸ Babel Protocols ▸ Lighting Egress</strong> or from the
+command line; the page composes the very same line, so the two are one route. Babel validates and answers
+either way, and the page prints that answer under the buttons.</p>
+<p>On the page, pick the protocol, then work through the three groups — <strong>Output</strong> (which
+output and which universes), <strong>Destination</strong> (where the frames land, on which wire, at what
+priority) and <strong>Options</strong> (enabled, fan-out). The composed line, <strong>Apply</strong>,
+<strong>Arm</strong> and <strong>Disarm</strong> stay below the groups at all times, so you always see the
+command before you send it. The page is the two egress folds and nothing else — the session picture
+lives on its own tab, <strong>Babel Map</strong>, next door.</p>
+<h3>Babel Map</h3>
+<p><strong>Settings ▸ Comms ▸ Babel Map</strong> is the map Babel itself draws, on the console: the
+<strong>broker</strong> at the centre, every connected <strong>app</strong> (Command, Light, Babel) on the
+inner ring with its name, role, domain and PNCLI / PN ports, and every piece of <strong>gear</strong>
+(ATEM, VISCA cameras…) on the outer ring with its address and universe. Solid links are apps, dashed links
+are devices. Pinch to zoom (40 % to 600 %), drag to pan, or use <strong>−</strong>, <strong>+</strong> and
+<strong>Reset</strong> above the map. With no session joined the map says so and waits — it fills from
+Babel's roster the moment a session forms. Two things Babel's own map shows are <em>not</em> drawn here yet,
+because the wire does not carry them: the green/red device liveness dot and the render frame-rate line.</p>
+<pre><code>egress sacn 1 map=1:1 mode=multicast prio=100 nic=en9 enabled=1
+arm sacn 1
+disarm sacn 1</code></pre>
+<p>The number is the <strong>output</strong>, not a universe. Configuring an output that does not exist
+<em>creates</em> it — <strong>disarmed</strong> — so follow it with <code>arm</code>. Leave the protocol word
+out and the console assumes sACN; give it a word it does not know and it refuses rather than guess,
+because guessing wrong configures the wrong wire.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Key</th><th>Meaning</th></tr>
+  <tr><td><code>map=&lt;in&gt;:&lt;out&gt;,…</code></td><td>Which console universes go out as which wire universes. Up to 1024 pairs, each input and output used once. This wins over the block form below.</td></tr>
+  <tr><td><code>in=</code> <code>count=</code> <code>out=</code></td><td>The same thing as a contiguous block. <code>count</code> must be 1–1024.</td></tr>
+  <tr><td><code>mode=</code></td><td><code>multicast</code> or <code>unicast</code> for sACN; <code>broadcast</code> or <code>unicast</code> for Art-Net.</td></tr>
+  <tr><td><code>dest=&lt;ipv4&gt;</code></td><td>The receiver's address, when unicast. A loopback or all-zeros address is refused as you type it.</td></tr>
+  <tr><td><code>prio=&lt;1-200&gt;</code></td><td>sACN priority. Art-Net has no priority field and will tell you so.</td></tr>
+  <tr><td><code>nic=</code></td><td>Which interface to send on — a name, a role or an address. Node-local; it never travels in a show file.</td></tr>
+  <tr><td><code>enabled=0|1</code> · <code>fanout=0|1</code></td><td>On or off; fan the same universe to several destinations.</td></tr>
+</table>
+</div>
+<p>Mistype a key and the console suggests the right one rather than silently ignoring it —
+<code>host</code> points at <code>dest</code>, <code>universe</code> at <code>map</code>,
+<code>priority</code> at <code>prio</code>.</p>
+<p><code>arm</code> starts the stream; <code>disarm</code> stops it cleanly — sACN sends three
+stream-terminated packets so receivers do not sit on the last frame.</p>
+<div class="callout gap">
+<h4>No armed lamp yet</h4>
+<p>Command has no indicator showing which outputs are armed. Babel's answer to your
+<code>arm</code> lands on the status line, and Babel's own window is where the armed state is visible.</p>
+</div>
+
+<h3>Shows</h3>
+<pre><code>show new [&lt;name&gt;]     start empty, under that name
+show save            save the current show
+show list            what is saved
+show load &lt;name&gt;     load one
+show export          export it, media included</code></pre>
+<p><strong>New Show</strong>, <strong>Save Show</strong> and <strong>Load Show</strong> exist as bezel and tile
+actions too, and all three sit on the Show card in Settings &#9656; Comms. Your detached windows and your
+workspace layouts travel with the show; a window pinned to a monitor that this machine does not have
+stays configured and closed.</p>
+<h4>Starting a new show</h4>
+<p>Press <strong>New Show</strong> — the bezel key, the tile, or <strong>New Show&#8230;</strong> on the Show
+card. A sheet asks for a name (already filled in with the next free <em>Untitled</em>) and tells you what
+will happen before anything happens. Confirm and Command <strong>saves the show you are leaving first</strong>,
+then clears the patch, the presets, groups, executors, timecodes and FX pools, the programmer, and your
+tiles, screens and bezel assignments — the same clean start the launcher gives you. The new show is written
+to <code>~/Phantos/Shows</code> straight away, so it is on disk before you patch a single fixture.</p>
+<p><strong>Light's outputs stay as they are.</strong> A new show clears this console's document; it does not
+touch a Light node's outputs, and it will not open or close anything on a display. If you want an output
+gone, remove it on Light.</p>
+
+<h3>Settings, category by category</h3>
+<p><strong>Comms ▸ Session</strong> has Broker, Session, Identity, Network, Priorities, Show, Launch
+and Install tabs. These also appear in the Sessions bezel window. Tabs remain available when the
+window is locked; changing a setting still requires unlocking it. In Priorities, choose a domain
+to inspect or adjust its priority. Choosing a tab or domain does not change a setting.</p>
+<p>In <strong>Comms ▸ Babel Protocols ▸ Lighting Egress ▸ Output</strong>, map a sequential block
+with <strong>PN start universe</strong>, <strong>Quantity</strong> and <strong>Target start</strong>.
+For example, PN 7, quantity 16, target 401 maps PN 7–22 to sACN 401–416. sACN targets start at 1;
+Art-Net targets start at 0. Apply validates the block before sending it. Leaving all three blank
+keeps the existing mapping; for a partial block, omitted values use PN 1, quantity 1 and target 1
+(sACN) or 0 (Art-Net). Nonsequential mappings remain available through the lighting egress CLI.</p>
+
+<p>Every Settings page is built the same way. The six categories are tiles across the top. Below
+them, each subject is a card: a choice is a row that lights green when it is the one in force, a
+number has a <strong>−</strong> / <strong>+</strong> pair, a value you type opens the on-screen keypad
+when you tap it, and read-outs sit in dark capsules. Everything is a full-size touch target.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Category</th><th>What is in it</th></tr>
+  <tr><td><strong>Comms</strong></td><td>Which network interface to send on, the remote command-line switch, the show file (Save, Save As, Rename, Load), the session panel (Babel address, operator name, roles, domains, per-domain output priority, Create / Leave Session), the folders the gobo and media libraries are scanned from, the Babel Map (the session as Babel draws it), and Babel Protocols — the two egress folds.</td></tr>
+  <tr><td><strong>Deck</strong></td><td>Connected Stream Decks — XL, XL V2, Plus, Mini, Pedal, Neo — detected live. Two panes: the decks, brightness and the LAYOUT tiles on the left; tap a layout and its configuration fills the right pane. See below.</td></tr>
+  <tr><td><strong>Gamepad</strong></td><td>One setup page per pad, with per-control bindings and a reset. Nothing else: voice settings live under Audio, and the Operator Focus window's row is under Screen with the other detached windows.</td></tr>
+  <tr><td><strong>Audio</strong></td><td>What the console hears and speaks through, with a live input meter. Push-to-talk versus comms-channel listening, spacebar push-to-talk, spoken replies, spoken confirmation, and the comms silence timeout and sensitivity.</td></tr>
+  <tr><td><strong>Screen</strong></td><td>Attached displays, the detached windows described in <a href="/manual/screen/#screen">The screen</a> — including the Operator Focus row — where the two docked panes open, solar location for time triggers, the touchscreen driver and calibration, and monitor lock for the main window.</td></tr>
+</table>
+</div>
+
+<h3>Stream Deck</h3>
+<p>Plug one in; it is detected live, and <strong>Settings ▸ Deck</strong> shows the model, its key count and
+its serial. The last key or pedal you pressed is shown live, so you can prove a surface is talking
+before you map it. Brightness is a fader with a <strong>−</strong> / <strong>+</strong> pair beside it.</p>
+<p>A key deck runs in one of four layouts — tap the one you want in the left pane and configure it on the right:</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Mode</th><th>Layout</th></tr>
+  <tr><td><strong>Programmer</strong></td><td>Each row is a kind of thing — presets, groups, fixtures, tools — one item per column, with paging when a row overflows.</td></tr>
+  <tr><td><strong>Playback</strong></td><td>Each column is an executor, each row an action: Go +, Go −, Toggle, Flash, Release. Flash holds while the key is down.</td></tr>
+  <tr><td><strong>ATEM</strong></td><td>Each row is a bus — program, preview, the auxes — with direct input selects, plus downstream and upstream key rows. Keys light from real tally.</td></tr>
+  <tr><td><strong>Keypad</strong></td><td>A command keypad with a live banner showing the line you are typing.</td></tr>
+</table>
+</div>
+<p>Keys are assigned in <strong>Settings ▸ Deck</strong>, not on the deck itself: choose Keypad mode and tap
+a key in the on-screen grid to pick what it does. The deck repaints as you go. Named layouts can be
+saved, loaded and reset to factory.</p>
+<p>A <strong>Stream Deck Plus</strong> is different: its eight keys are the attribute-group bank mirroring
+the on-screen Programmer panel, and its four dials are per-attribute faders for the group you picked.
+Pressing a dial holds fine mode; tapping a segment of the touch strip homes that attribute to its
+profile default. Switch it to <strong>Playback</strong> in <strong>Settings ▸ Deck</strong>, or hold the
+first and fourth dials together (the second and third bring Programmer back), and it becomes the playback
+desk: four keys pick a Rate/Width pair, the first dial sets that pair's rate and the second its width, the
+third dial is the programmer fade, the fourth is the Grand Master. <strong>SPLIT</strong> lets fade-out
+differ from fade-in (hold it and turn the fourth dial), <strong>FADE</strong> toggles the fade override,
+<strong>FULL</strong> restores the Grand Master, and <strong>FLASH</strong> is full while held. Press the
+first dial to tap a tempo into the pair; hold the fourth dial down for a blackout.</p>
+<p>On a key deck, a row whose pool is empty names itself on its first key — <em>no presets</em>,
+<em>no groups</em>, <em>no fixtures</em>, <em>no execs</em>, <em>no ATEM</em> — instead of a wall of
+black keys that reads like a dead deck.</p>
+<p>A <strong>foot pedal</strong> has three switches — left, middle, right — and each fires a command line of
+your choosing on the press. They start as <code>go 1</code>, <code>release</code> and <code>clear</code>.
+Bind one to <code>shift</code> and it holds fine mode instead of running anything. A binding must be a
+command line the console recognises — a sentence for the mind is refused with the console's own hint and
+the switch keeps its previous binding; a pedal never talks to the mind. Your <code>clear</code>,
+<code>release</code>, <code>undo</code> and <code>redo</code> act on this console only — only
+<code>mclear</code> / Master Release cross to every console.</p>
+<p>If a deck will not open, macOS is the usual reason: System Settings ▸ Privacy &amp; Security ▸
+<strong>Input Monitoring</strong>, enable Phantos, relaunch. The console prints exactly that when it
+happens.</p>
+<div class="callout gap">
+<h4>Deck limits worth knowing</h4>
+<ul>
+  <li>The keypad grid is laid out for an <strong>XL</strong> (eight by four). A smaller deck will not match it.</li>
+  <li>First-generation Stream Decks and the Minis dispatch correctly but their <strong>key images stay
+      black</strong>.</li>
+  <li>What you type on an XL keypad is its own buffer — it does not appear in the on-screen command line.</li>
+</ul>
+</div>
+
+<h3>Talking to the desk</h3>
+<p>Tap the microphone beside the command line and speak; tap again to send. Hold the pad's
+push-to-talk button, or speak on an armed comms channel, and it is the same path. A spoken ask goes
+to the AI lane, which answers with a <strong>proposal</strong> — the exact commands it would run, shown to
+you verbatim.</p>
+<div class="callout law">
+<h4>Nothing runs unconfirmed</h4>
+<p>A proposal sits there until you accept it — <code>proposal run</code>, the Run button, or ending the
+spoken sentence with the word <em>engage</em>. <code>proposal dismiss</code> throws it away, and keying
+the microphone again dismisses it too. There is deliberately no keyboard shortcut on Run: a stray
+<kbd>Return</kbd> must never put a proposal on stage.</p>
+</div>
+<p>On a comms channel the console cannot hear you key up or key down — it hears only sound starting
+and stopping — so it waits out a silence before deciding you have finished. Say <em>engage</em> and it
+stops waiting: the word ends the sentence, so the desk submits the moment you stop talking rather than
+sitting through the pause. The desk hears the word through its usual mishearings, so <em>gauge</em> or
+<em>engaged</em> still close the sentence. Anything you say WITHOUT that last word is a proposal and
+nothing more, and it still gets the full silence window — think mid-sentence for as long as you like.
+Set that window, and the channel's sensitivity, in <strong>Settings ▸ Audio</strong>.</p>
+
+  </main>
+  <div class=pager><a href="/manual/patch/">← Patch &amp; devices</a><a href="/manual/gpw/">GPW timeline →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

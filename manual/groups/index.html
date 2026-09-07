@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Groups & masters — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/groups/">
+<meta name="description" content="A group is a named set of fixtures. It is also, when you want it to be, a master that rides above everything else in the desk.">
+<meta property="og:title" content="Groups &amp; masters">
+<meta property="og:description" content="A group is a named set of fixtures. It is also, when you want it to be, a master that rides above everything else in the desk.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/groups/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Groups &amp; masters</p>
+  <main>
+
+<h2><span class="num">4</span>Groups &amp; masters</h2>
+
+<p class="lede">A group is a named set of fixtures. It is also, when you want it to be, a master that
+rides above everything else in the desk.</p>
+
+<h3>Making and using groups</h3>
+<div class="howto">
+<span class="q">How do I make a group?</span>
+<ol>
+  <li>Select the fixtures you want.</li>
+  <li>Type <code>record group 4</code> — or tap <strong>Record</strong>, then a group tile.</li>
+  <li><code>label group 4 Backlight</code> gives it a name.</li>
+</ol>
+</div>
+<ul>
+  <li><code>group 4</code> selects its members. <code>group next</code> / <code>group prev</code> walk the pool.</li>
+  <li><code>group 4 @ 60</code> sets its members to 60%.</li>
+  <li><code>group 4 +</code> adds it to the current selection instead of replacing it.</li>
+  <li><code>merge group 4</code> adds the current selection to the group; <code>update group 4</code> replaces
+      its members with the current selection.</li>
+</ul>
+
+<h3>The group fader is the master</h3>
+<div class="callout law">
+<h4>The group fader lives outside the programmer</h4>
+<p>A <strong>group fader tile</strong> in the workspace is the group's <strong>master</strong> — the same
+level as the group edit sheet's <strong>Level</strong> fader. It is not programmer
+content: <strong>Clear never moves it</strong>, so a spot held on a performer survives Clear and
+Release&nbsp;All. Moving the level of a group that has no master mode yet arms it
+<em>inhibitive</em> and the console says so on the status line &mdash; and it does that from
+<em>every</em> level surface: the fader tile, the group sheet's <strong>Level</strong> fader, the
+group tile's <strong>Masters</strong> menu and <code>group 4 level 50</code> all behave the same way. Its LCD glows while the master is actually in force: an
+inhibitive master below full, or an additive master above zero. Its LCD also <strong>names the mode</strong>
+next to the group number &mdash; <code>INHIB</code>, <code>ADD</code>, <code>MASTER OFF</code> or
+<code>PROG</code> &mdash; so a fader that is doing nothing tells you why.</p>
+<p><strong>Putting a master back.</strong> Because Clear cannot touch it, a master needs an explicit
+release, and the fader carries one: long-press the LCD and press <strong>Reset to neutral</strong> (or type
+<code>fader 2 1 reset</code>). Neutral is the position at which the master stops changing the output &mdash;
+<strong>full</strong> for an inhibitive group or an executor master, the <strong>bottom of the throw</strong>
+for an additive group. The same row tells you when a fader is <em>not</em> a master, and which key does clear
+it, so you never have to guess which of your faders answers Clear.</p>
+<p><strong>Prog Mode</strong> (optional, per tile — long-press the tile, MODE row): the fader becomes a
+<strong>programmer</strong> control instead. Grabbing it recalls the group and drives member intensity —
+exactly <code>group N @ L</code> written as a fader — so <strong>Clear zeroes what it reads</strong> and
+typed landings fade when the fade is armed.</p>
+</div>
+<p>Reach the master by holding a group tile — or right-clicking it, or arming <strong>Edit</strong> and
+tapping it; all three open the same sheet in one step:
+<strong>Mode</strong>, <strong>Level</strong> (0–255) and <strong>Priority</strong> live on that sheet, as a
+row of mode capsules and two faders you can grab with a glove on.</p>
+
+<h3>Master modes</h3>
+<div class="tablewrap">
+<table>
+  <tr><th>Mode</th><th>What it does to its members' intensity</th></tr>
+  <tr><td><strong>None</strong></td><td>The master is <strong>off</strong>. The level does nothing and the group is just a selection shortcut. A group fader tile says <code>MASTER OFF</code> on its LCD so you can see it from across the stage &mdash; and moving any level surface arms <strong>Inhibitive</strong>.</td></tr>
+  <tr><td><strong>Inhibitive</strong></td><td>A sub-master. Scales member intensity by the level — at half, the group can never exceed half of whatever the rest of the desk asks for. At 0 it holds them out.</td></tr>
+  <tr><td><strong>Additive</strong></td><td><em>Pins</em> member intensity to the level. It does not add — it overwrites, whatever the programmer or playback asked for.</td></tr>
+</table>
+</div>
+<p>Masters touch <strong>intensity only</strong>, and only for the fixtures in the group. They are applied
+at the very end of every frame, to both the programmer and the playback layer, so they are the last
+thing between your desk and the rig. Level runs 0–255, where 255 means <em>no effect</em>.</p>
+<div class="callout gap">
+<h4>Not built yet</h4>
+<p><strong>Assertion</strong> is <strong>refused</strong>, not offered: its tab on the mode row is drawn
+inert with the reason on it, and <code>group 4 mode assertion</code> is turned away on the command line with
+the same sentence. It needs its own priority source and arbitration between overlapping masters, and
+neither is built. Its neighbour <strong>Priority</strong> is stored but not yet consulted either. Use
+additive if you need a group to hold a value against the rest of the desk.</p>
+</div>
+
+<h3>When a fixture is in two master groups</h3>
+<p>There is no arbitration between masters — they apply <strong>in group-number order</strong>, lowest first,
+and each one acts on what the previous one left:</p>
+<ul>
+  <li>Two inhibitive groups multiply — half of a half is a quarter.</li>
+  <li>An additive group <strong>wipes</strong> any scaling a lower-numbered group applied, because it pins.</li>
+  <li>An inhibitive group <strong>scales</strong> a pin set by a lower-numbered group.</li>
+</ul>
+<p>In short: the <em>highest-numbered</em> master has the last word. If a rig is behaving oddly, look for a
+high-numbered master group before you look anywhere else.</p>
+
+<h3>The move this is for</h3>
+<div class="howto">
+<span class="q">How do I keep a spot on a performer through the end-of-song blackout?</span>
+<ol>
+  <li>Make a group containing the followspot.</li>
+  <li>Open its properties and set its mode to <strong>Additive</strong>.</li>
+  <li>Set its <strong>Level</strong> to where you want the performer lit.</li>
+  <li>At the button: <strong>Clear</strong> (twice) and <strong>Release All</strong>.</li>
+  <li>The programmer and every executor let go. The additive master keeps the spot on the performer
+      through the blackout.</li>
+</ol>
+</div>
+<p>An additive group still holding light after a full clear is <strong>correct</strong> — that is the
+feature, not a stuck value. A master is rig configuration, so neutralising it is a deliberate act:
+change its Level or its mode from the group's own surfaces. No clear, release or master release will
+do it for you.</p>
+
+<h3>The Grid — where the group physically hangs</h3>
+<p>A group's <strong>Grid</strong> is graph paper. Drag its members into the shape they hang in — a wall, an
+arch, a truss line — and the console stops guessing. Two things then read the layout instead of the fixture
+numbers: the <strong>Align</strong> fan on its <strong>X</strong> and <strong>Y</strong> axes, and effect
+spread. Fan a pan across a wall and it runs left to right across the <em>real</em> wall.</p>
+<p>The layout belongs to the group. It travels in the show file, it follows the group when you reorder the
+pool, and it follows the fixtures through a renumber.</p>
+<ul>
+  <li><strong>Recall a group and the Grid is already laid out</strong> — one row, left to right, in the
+      group's member order. You are re-arranging a layout, never starting from blank paper.</li>
+  <li>Tap a fixture, then tap a cell to place it. For a staggered rig, the <strong>PLACE INTO</strong> row
+      appears the moment something is selected: choose <em>Whole cell</em>, <em>Right half</em>,
+      <em>Bottom half</em> or <em>Corner</em>, and the next cell you tap takes the fixture in that slot.
+      Lasso to select several; hold an empty cell to add it to a batch (⇧-click does the same with a
+      mouse), and <strong>Fill</strong> drops the unplaced ones into the cells you selected.</li>
+  <li>Hold a placed fixture — or right-click it — to remove it from the grid, or to remove the whole
+      selection at once.</li>
+  <li><strong>Update Grid</strong> saves. <strong>Reset</strong> reflows everything into a square by
+      ascending fixture number.</li>
+  <li>The grid selection is the programmer selection, and it carries the order you can <em>see</em> — reading
+      order across the layout, not fixture number. Save that as a group and it fans in that order.</li>
+  <li><strong>No group recalled?</strong> The Grid opens on scratch paper holding your selection — or the
+      whole patched rig when nothing is selected. Drag it into shape and press <strong>Save as Group</strong>:
+      the fixtures you can see become the group, in the order they read across the paper, and the arrangement
+      is saved onto the group with them. With nothing to save the console says so rather than recording an
+      empty group.</li>
+  <li><strong>Tap a scratch cell to select the fixture in it</strong>, the same as on a group's grid — tap
+      again to drop it. The selection fans in the order the paper reads, so a column you dragged fans as a
+      column. Selecting narrows what you send to the programmer; it does not narrow the paper.</li>
+  <li><strong>The scratch arrangement stays where you put it.</strong> Selecting, deselecting or editing the
+      patch no longer re-flows the paper: a fixture that leaves the patch leaves the paper, a fixture that
+      arrives takes a free cell, and everything you dragged stays dragged. It lives for as long as the Grid
+      is open — <strong>Save as Group</strong> is what makes it permanent, and the layout then travels in the
+      show file on that group.</li>
+</ul>
+<p>The Grid's selection <strong>is</strong> the programmer's selection, both ways. Select on the paper and
+the console follows; select on a pad, a tile or the command line with the Grid open and the paper follows
+back. A Clear anywhere drops the highlight everywhere. You will never lose a selection to a stale one the
+Grid was still holding.</p>
+<h3>Auto Array — lay a rig out over the canvas</h3>
+<p><strong>Auto Array</strong> in the Grid header positions media fixtures and cameras across the canvas, or
+across one patched output, in a single move. It works on the recalled group; with no group recalled it takes
+your selection, and failing that the whole rig — you do not have to build a group first.</p>
+<ul>
+  <li><strong>Grid</strong> best-fits everything into rows and columns that match the target's shape.
+      <strong>Liner</strong> spreads them evenly around its perimeter.</li>
+  <li>Pick the <strong>target</strong>: the canvas, or any patched Phantos Output. An output target is the
+      region that output is <em>looking at</em> — its position and scale on the canvas — so the array lands
+      on the part of the wall that output actually shows, not on the canvas at large.</li>
+  <li><strong>Zoom</strong> optionally scales each fixture's content to fit its cell — by width, by height,
+      or fill.</li>
+  <li>The popover tells you how many fixtures it is about to position and draws them before you commit.
+      One Undo reverts the whole array.</li>
+  <li><strong>Auto Array moves fixtures on the canvas, not on the graph paper.</strong> It writes the
+      programmer's Pan/Tilt (and Zoom) so the rig lands in shape on the wall; the grid you pressed the
+      button on is deliberately left exactly as you arranged it. Use <strong>Update Grid</strong> or
+      <strong>Straighten</strong> to change the paper.</li>
+  <li>When it is done it reports what it <em>wrote</em> beside the button — not how many fixtures it
+      was offered. A fixture whose profile is not loaded is skipped, and the count says
+      "3 of 5" rather than pretending all five moved.</li>
+  <li>On the command line: <code>grid auto</code> (grid + fill), or
+      <code>grid auto liner none</code> and friends.</li>
+</ul>
+<h3>Straighten — when the grid comes out sideways</h3>
+<p>A layout that arrived rotated or mirrored is one tap from straight. <strong>Straighten</strong> in the Grid
+header opens the whole set as a pop-out list, and each one has a command-line twin:</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Do this</th><th>Command line</th></tr>
+  <tr><td>Rotate the layout 90° clockwise / anticlockwise / 180°</td><td><code>grid rotate cw</code> · <code>grid rotate ccw</code> · <code>grid rotate 180</code></td></tr>
+  <tr><td>Mirror it left-to-right or top-to-bottom</td><td><code>grid mirror h</code> · <code>grid mirror v</code></td></tr>
+  <tr><td>Swap rows and columns</td><td><code>grid transpose</code></td></tr>
+  <tr><td>Pull half-cell placements back onto whole cells</td><td><code>grid snap</code></td></tr>
+  <tr><td>Close up empty rows and columns</td><td><code>grid compact</code></td></tr>
+  <tr><td>Start again: one row, left to right</td><td><code>grid reseed ltr</code></td></tr>
+  <tr><td>Start again: a square</td><td><code>grid reseed square</code></td></tr>
+</table>
+</div>
+<p>Every one of these changes the layout only — no fixture moves, no value is written.</p>
+<p>The grid verbs <strong>refuse rather than pretend</strong>. <code>grid save</code> needs a recalled group
+to save the layout onto and says so when there is none — the layout lives on the group, so with no group
+there is nowhere to put it. <code>grid place</code> refuses a fixture number that is not patched instead of
+storing a cell no fixture will ever stand on. <code>grid load</code> refuses a group that does not exist
+rather than leaving the console holding one. And <code>align axis x</code> (or <code>y</code>/<code>xy</code>)
+tells you when there is no grid to fan along: it still sets the axis, and warns that the fan will run in
+selection order until the selection has a layout.</p>
+<h3>Align follows the grid of the group you are holding</h3>
+<p>The Align window's <strong>X</strong> and <strong>Y</strong> axes fan along the grid. They light up when the
+selection actually has a layout, and stay dim when it does not — the console will not pretend to fan along
+geometry it does not have. <strong>#</strong> is the honest axis with no grid: it fans in selection order.</p>
+<p>You do not have to recall a group to get its grid. Select a group's fixtures any way you like — the tiles,
+a command-line range, a pad — and if that selection <em>is</em> a group, Align picks up that group's layout.
+Select something that is not a group and the X/Y axes go dim rather than fanning along a stale layout.</p>
+<p><strong>Fan per group</strong>, the switch between the mode pads and the axis pads, decides what a fan
+spreads across. On: a selection holding several groups fans each group over its own range. Off: one fan
+runs across the whole selection.</p>
+
+<h3>An armed fan says so, and a fan never spreads a discrete value</h3>
+<p>A fan is a mode, not a window. Arm one and it keeps spreading every value you set long after you have
+closed the Align window and moved on — which is how a fan turns into a mystery: a spread you did not ask
+for that reads on stage as extra beams.</p>
+<p>So the console says it. Whenever a fan mode is armed <em>and</em> more than one fixture is selected, an
+amber <strong>FAN</strong> chip appears on the Programmer header and beside the command line, naming the
+mode, the axis and how many fixtures the spread lands on — <em>FAN &lt;&gt; · X — 6 fixtures</em>. The
+<strong>Align</strong> bezel button wears the same thing on its face and goes green. Tap <strong>○</strong>
+on the Align strip in the Programmer to disarm, and every chip clears at once.</p>
+<p><strong>A fan spreads levels, positions and colours. It never spreads a discrete value.</strong> A
+dropdown, a button row, a toggle, a latch and a one-shot button are lists of named states — Blend Mode,
+Gobo, Focus Mode, Freeze, Cut — not scales, so there is nothing between two of their options to spread
+across. Pick one with a fan armed and it is a <em>destination</em>: every selected fixture lands on the
+value you picked, exactly as it would with the fan off. That includes the one-shot buttons — a Take or a
+One Push AF fires on every selected fixture, and an armed fan can never swallow it.</p>
+<p>So every row stays live under a fan. You do not have to disarm anything to change a gobo, flip a
+freeze or hit a cut; the chip is there to tell you the <em>faders</em> are still spreading, which is the
+thing you can otherwise forget.</p>
+<p>Two things deliberately do <em>not</em> count as a fan: <strong>Equal</strong>, which lands every fixture
+on one value rather than spreading them, and a single-fixture selection, which has nothing to spread across.
+Both leave the chip hidden.</p>
+
+  </main>
+  <div class=pager><a href="/manual/programmer/">← Programmer &amp; Clear</a><a href="/manual/presets/">Presets &amp; executors →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

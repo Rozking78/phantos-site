@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Presets & executors — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/presets/">
+<meta name="description" content="Presets are looks by type . Executors are cue lists that play them back.">
+<meta property="og:title" content="Presets &amp; executors">
+<meta property="og:description" content="Presets are looks by type . Executors are cue lists that play them back.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/presets/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Presets &amp; executors</p>
+  <main>
+
+<h2><span class="num">5</span>Presets &amp; executors</h2>
+
+<p class="lede">Presets are looks by <em>type</em>. Executors are cue lists that play them back.</p>
+
+<h3>Recording a preset</h3>
+<div class="howto">
+<span class="q">How do I save the look I have in the programmer?</span>
+<ol>
+  <li>Build it. Select, set values.</li>
+  <li>Type <code>record preset</code> on its own — the type menu opens — or name the type directly:
+      <code>record preset colour</code> lands in the next free colour slot.</li>
+  <li>Or aim at a slot: <code>record preset 5.1</code>. The pool that slot belongs to decides the type.</li>
+  <li><code>label preset 5.1 Warm Wash</code> names it.</li>
+</ol>
+</div>
+<p>Presets are numbered <code>pool.slot</code>: the whole number is the pool, the decimal is the slot inside
+it. Each pool holds <strong>nine</strong> slots, 1 through 9, and a new record takes the lowest free one, so
+gaps get reused. If you give both a slot and a type word, they have to agree; the console refuses rather
+than guess, and tells you where it <em>would</em> have filed the preset.</p>
+<div class="callout warn">
+<h4>Write the decimal</h4>
+<p><code>preset 3</code> is not pool 3 — it is the raw number 3, which shows on a tile as <strong>0.3</strong>.
+You almost always want the decimal form: <code>preset 3.1</code>.</p>
+</div>
+<p>Recording <em>onto an occupied slot</em> is refused on purpose. Use <code>update preset 5.1</code> to
+fold what you are holding into it, or <code>merge preset 5.1</code> — they are the same merge. Tapping an
+occupied tile while Record is armed asks whether you meant Merge or Overwrite.</p>
+<p>Preset types are Intensity, Position, Colour, Gobo, Beam, Effects, Shaper, Video, Time, Control,
+Layouts and Timecode. A typed record captures only that type — a colour preset stores colour, and
+refuses rather than quietly saving a whole look. <code>record preset all</code> takes everything.</p>
+<p>Every one of those types can also be <strong>combined</strong> — Presets &#9656; Combos lists each
+feature, and under it the pairs it makes. Control combines like the rest of them; its combination pools are
+numbered from 1000 up, stacked above the single and combination pools so that adding it moved nothing that
+was already numbered.</p>
+
+<h3>Recalling</h3>
+<ul>
+  <li><code>preset 3.1</code> or <code>recall preset 3.1</code>, or tap the tile in a preset pool.</li>
+  <li><code>preset 3.1 out</code> — release what that preset put in.</li>
+  <li><code>preset 3.1 mask ic</code> — take only some attribute families from it (intensity and colour
+      here). Letters are the type initials.</li>
+  <li>Recall obeys the fade switch, so a preset crossfades in over the Prog Fade time.</li>
+</ul>
+<p>A preset asserts above playback, and the console remembers <em>which</em> preset owns each attribute —
+that is what puts the green ring on a pool tile.</p>
+
+<h4>Where a preset lands: the three recall modes</h4>
+<div class="tablewrap">
+<table>
+  <tr><th>Mode</th><th>What it does</th></tr>
+  <tr><td><strong>Selective</strong> (default)</td><td>Uses the values as recorded. If you recall it onto a <em>different number</em> of fixtures, the console lays the recorded values out as a line across the new selection and samples along it — so a five-lamp colour spread stretches sensibly onto eight lamps. Continuous values blend; gobo slots and other switched values snap to the nearest recorded one, because halfway between two gobos is a different gobo.</td></tr>
+  <tr><td><strong>Fixture</strong></td><td>Applies to fixtures of the same profile — your selection if you have one, otherwise every fixture of that profile.</td></tr>
+  <tr><td><strong>World</strong></td><td>Applies across profiles by attribute name — your selection if you have one, otherwise the whole rig. Fixtures without that attribute are skipped.</td></tr>
+</table>
+</div>
+<p>Set it with <code>preset 3.1 mode selective|fixture|world</code>, or tap the <strong>S / F / W</strong> badge
+in the corner of the pool tile to cycle it. To pick a mode outright rather than cycling, open the preset's
+<strong>edit sheet</strong> — the three modes are the capsule row at the top of it.</p>
+<p>That sheet is where a preset is changed: recall mode, update (merge the programmer in), overwrite,
+rename or delete. <strong>Every pool tile opens its sheet the same two ways — right-click it, or hold it
+for half a second</strong> (the one exception is a Flash executor, whose hold is the flash itself). Each is one gesture and one stage: nothing pops up in between asking which
+command you meant. Arming <strong>Edit</strong> and tapping is the third way in, and all three land on the
+same sheet. This is true of every preset tile, in a preset zone on the main screen and in the Preset Pool
+window alike — and of group and executor tiles too.</p>
+<p>With nothing selected, a preset re-selects the group it was recorded from, if it had one — so
+recalling a preset can bring its fixtures back with it.</p>
+<p>An empty slot in the <strong>Preset Pool</strong> is a live target: tapping it arms a record there. A pool
+tile shows only presets whose type matches the pool <em>exactly</em>, so a colour-and-position preset lives
+in the colour+position pool, not in the colour pool.</p>
+<p>The Preset Pool window itself reads top to bottom: the pool and its tiles, the <strong>feature</strong>
+filters (All, then one chip per type), <strong>Prog Time</strong> for the recall fade, the grand
+master with Flash and Blackout, and the quick-programmer channel faders. <strong>Pool…</strong> at the top
+right opens the drill-down that picks which pool you are looking at — All, All-in-One, one type, or a
+combination, and the capsule beside it names the pool you are in — <em>Pool 24</em> over tiles that read
+24.0 to 24.9.</p>
+<p><strong>Prog Time</strong> here is the same control as the Prog Fade bezel, so it carries the same
+<strong>Link / Unlink</strong>: linked is one time, unlink splits it and the <strong>Fade Out</strong>
+fader seeds itself from Fade In. The card's capsule reads <em>2s</em> linked, <em>2s/5s</em> split, and
+<em>snap</em> with Prog Time off — the same words the bezel button wears.</p>
+
+<h3>Executors and cues</h3>
+<div class="howto">
+<span class="q">How do I build a cue list?</span>
+<ol>
+  <li>Build your first look in the programmer.</li>
+  <li><code>record exec 1</code> — the look becomes executor 1, cue 1.</li>
+  <li>Build the next look, then <code>record exec 1 cue</code> to add it as the next cue.</li>
+  <li>Open <strong>Cue Lists</strong> to see, name, retime and reorder them.</li>
+  <li><code>go 1</code> runs it. <code>back 1</code> steps back. <code>release 1</code> lets it go.</li>
+</ol>
+</div>
+<ul>
+  <li><code>update exec 1 cue 2</code> folds what you are holding into that cue.
+      <code>merge exec 1 cue 2</code> adds to it while keeping what it already had; add
+      <code>refs</code> to fold in live preset references rather than baked values.</li>
+  <li><code>goto cue 3 exec 2</code> jumps without walking the list. <em>Name the executor</em> — with no
+      <code>exec</code>, <code>goto</code> goes to executor 1.</li>
+  <li><code>exec 1 cue 2 move up|down|&lt;position&gt;</code> reorders. The cue numbers stay where they are —
+      a 1 · 5 · 10 list is still 1 · 5 · 10 after a move — and if you move the cue that is playing,
+      playback follows it.</li>
+  <li><code>label exec 1 cue 2 Chorus</code> names a cue.</li>
+</ul>
+
+<h4>How a cue list holds a look</h4>
+<p>Cues are <strong>deltas</strong>, and the console tracks. Running a cue replays every cue from the last
+<em>block</em> cue forward, so a cue only has to hold what <em>changes</em>. That is why recording just what
+is in your programmer is the right thing to do, and why jumping backwards correctly removes the
+changes the later cues made. Mark a cue as <strong>Block</strong> to make it a hard starting point that
+inherits nothing.</p>
+
+<h4>Cues that reference presets</h4>
+<p>A cue can hold a preset by reference instead of by value. <code>exec 1 cue 2 ref 5 …</code>, or the
+preset chip's own menu, chooses which:</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Mode</th><th>Behaviour</th></tr>
+  <tr><td><strong>Referenced</strong> (default)</td><td>The cue follows the preset. Change the preset and every cue referencing it changes.</td></tr>
+  <tr><td><strong>Locked</strong></td><td>The values are frozen at today's version, but the cue still remembers which preset it came from. Later preset edits do not reach it.</td></tr>
+  <tr><td><strong>Absolute</strong></td><td>The values are baked in and the reference is thrown away. There is no going back to referenced from here.</td></tr>
+</table>
+</div>
+<p>A value you typed into the cue by hand always beats the referenced preset on that same attribute.</p>
+
+<h3>Executor options</h3>
+<p>Set these in <strong>Cue Lists</strong>, or from the command line. All of them take an argument — see the
+warning below.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Option</th><th>Effect</th></tr>
+  <tr><td><code>exec 1 priority &lt;0-200&gt;</code></td><td>Where this executor sits when two executors want the same channel. Executors default to 50; your programmer sits above them at 110.</td></tr>
+  <tr><td><code>exec 1 master &lt;0-100&gt;</code></td><td>The executor's own level. Moving it is instant — a master never restarts a crossfade.</td></tr>
+  <tr><td><code>exec 1 loop on|off</code></td><td>Runs the list round. Without it, GO stops on the last cue instead of wrapping.</td></tr>
+  <tr><td><code>exec 1 momentary on|off</code></td><td>Runs only while held. Shows as <strong>Flash</strong> in Cue Lists.</td></tr>
+  <tr><td><code>exec 1 parked on|off</code></td><td>Immune to Release All and to master release. Use it for house light and anything that must not go out.</td></tr>
+  <tr><td><code>exec 1 touch toggle|go+|go-|flash</code></td><td>What a <em>press</em> on its tile or fader button does. Typing <code>go 1</code> always means GO regardless.</td></tr>
+  <tr><td><code>exec 1 fade 2 out 4</code></td><td>This executor's own times. <code>exec 1 fade</code> reads them back; <code>exec 1 fade clear</code> removes them. They only supersede the cue with <code>overridetime on</code>.</td></tr>
+  <tr><td><code>exec 1 overridetime on|off</code></td><td>Off by default: the executor runs on its cue times. On: its own fade time supersedes every cue time. <code>exec 1 overridetime</code> reads it back. The Exec Fade bezel still wins over both.</td></tr>
+  <tr><td><code>exec 1 timing cue</code></td><td>Ignore the Exec Fade bezel and always use the cue's stored times. <code>timing master</code> puts it back under the bezel.</td></tr>
+</table>
+</div>
+<div class="callout warn">
+<h4>Finish the sentence</h4>
+<p>An <code>exec</code> line the console does not recognise falls through to a <strong>GO</strong>. Typing
+<code>exec 1 loop</code> without <code>on</code> or <code>off</code> will fire executor 1 rather than refuse.
+Always give the argument.</p>
+</div>
+
+<h4>Releasing is not fading to zero</h4>
+<p>Releasing an executor re-resolves the stack and reveals what is underneath. Only channels nothing
+else is holding actually ramp out. That is what makes busking work — release the top look and the one
+below it is simply there.</p>
+
+<h3>The Cue Lists window</h3>
+<p>Executors are tiles down the left, in the same colours they wear on the main screen. Tap one and its
+cue list fills the right: one big row per cue carrying the number, the name and — as chips — Fade In,
+Fade Out, Wait In, Wait Out, Dwell, Follow, Block, Priority and what the cue fires on GO. Tap a row and
+it opens into its editor: every value is a cell that raises the keypad, with a − and a + beside it, and
+the cue's own <strong>Up</strong> · <strong>Down</strong> · <strong>Merge</strong> ·
+<strong>Replace</strong> · <strong>Delete</strong> sit along the bottom of it. Transport is
+<span style="color:var(--cyan)">Back</span> · <span style="color:var(--green)">Go</span> ·
+<span style="color:var(--orange)">Release</span>, with the executor's properties beneath them. The
+playing cue's row is green. Times clamp at 600 seconds; a cue number already in use is refused. The
+property toggles under the transport include <strong>Exec Time &gt; Cue</strong> — off by default, so the
+executor runs on its cue times; turn it on and this executor's own fade time supersedes every cue time.</p>
+<p>A cue with a <strong>Dwell</strong> runs on by itself after that long; a cue marked <strong>Follow</strong>
+runs on as soon as its wait and fade are done. Any manual GO cancels a pending follow. Auto-follows
+always use the cue's own times, whatever the Exec Fade bezel says.</p>
+
+<h3>Effects</h3>
+<p>Open <strong>FX</strong> to build one: pick the attribute, the waveform, the rate, the size and the
+spread across the selection. <code>fx fire</code> starts it, <code>fx stop</code> stops it,
+<code>fx rev</code> reverses.</p>
+<p>Two buttons save an effect, and they do different things:</p>
+<ul>
+  <li><strong>● Pool</strong> stores the effect's <em>shape</em> only, in the FX window's own pool. Recalling
+      it points that shape at whatever you have selected now, without restarting the wave.</li>
+  <li><strong>● Preset</strong> stores it as an ordinary preset, listed in the <strong>FX Presets</strong>
+      window; tap to re-fire.</li>
+</ul>
+<div class="callout warn">
+<h4>Multi-axis effects want ● Pool</h4>
+<p><strong>● Preset</strong> keeps only the first axis, so a circle recorded that way comes back as a
+single sweep. Use <strong>● Pool</strong> for anything with more than one axis running.</p>
+</div>
+<p>An FX pool tile is a tap to recall. To throw one away, <strong>hold it</strong> (or right-click it) and
+take <em>Delete</em>.</p>
+<p>And remember: a Clear does not stop effects.</p>
+
+  </main>
+  <div class=pager><a href="/manual/groups/">← Groups &amp; masters</a><a href="/manual/faders/">Faders →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

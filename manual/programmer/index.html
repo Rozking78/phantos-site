@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Programmer & Clear — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/programmer/">
+<meta name="description" content="The programmer is what you are holding. It sits on top of playback, it is yours alone, and it stays there until you give it back.">
+<meta property="og:title" content="Programmer &amp; Clear">
+<meta property="og:description" content="The programmer is what you are holding. It sits on top of playback, it is yours alone, and it stays there until you give it back.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/programmer/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Programmer &amp; Clear</p>
+  <main>
+
+<h2><span class="num">3</span>Programmer &amp; Clear</h2>
+
+<p class="lede">The programmer is what you are holding. It sits on top of playback, it is yours alone,
+and it stays there until you give it back.</p>
+
+<h3>Putting values in</h3>
+<ul>
+  <li><code>1 thru 8 @ 50</code> — select and set intensity in one line.</li>
+  <li><code>at +10</code> / <code>at -10</code> — nudge. Each fixture moves from <em>its own</em> level,
+      so a spread stays a spread.</li>
+  <li><code>color red</code>, <code>cct 5400</code>, <code>pan 60</code>, <code>zoom 40</code>,
+      <code>gobo circle</code> — attributes by name.</li>
+  <li><code>hue red thru blue</code> — a line of colour laid across the selection in fan order.</li>
+</ul>
+<div class="callout law">
+<h4>No selection, no write</h4>
+<p>Every line above is <em>selection-scoped</em>: it lands on the fixtures you are holding. With an empty
+selection it is a no-op — nothing is written, nothing is recorded, and the status line reads
+<em>&ldquo;no selection&rdquo;</em>. This is deliberate: a bare <code>full</code> typed out of habit, or
+tapped on the deck between looks, must never take the whole rig to 100%. The verbs that <em>do</em> mean
+everything — Master Clear, Release All, <code>unpatch all</code> — say so in their own name and never rely
+on an empty selection to get there.</p>
+</div>
+
+<h3>Clear: values first, then the selection</h3>
+<div class="callout law">
+<h4>The Clear law</h4>
+<p><strong>Each press clears the next non-empty stage: VALUES first (red), the SELECTION second
+(green).</strong> Your values release on the first press — over the Prog Fade time when fade is armed —
+and your hand keeps its fixtures until the second press lets them go. An empty stage is skipped, so
+with nothing selected one press still drops the values, and with nothing at all Clear quietly does
+nothing.</p>
+</div>
+<div class="tablewrap">
+<table>
+  <tr><th>Press</th><th>What happens</th><th>Button colour before the press</th></tr>
+  <tr><td><strong>1</strong></td><td>Your programmer values are released (Prog Fade time if armed). <em>The selection is held.</em></td><td><span style="color:var(--red)">Red</span> — there are values to drop</td></tr>
+  <tr><td><strong>2</strong></td><td>The selection is dropped; Align/fan resets to off, highlight and lowlight lift.</td><td><span style="color:var(--green)">Green</span> — only a selection to give back</td></tr>
+</table>
+</div>
+<p>The status line names the stage: <em>“Cleared values — selection held; press again to deselect”</em>,
+then <em>“Cleared selection”</em>.</p>
+
+<div class="callout">
+<h4>Two things that surprise people</h4>
+<ul>
+  <li><strong>The stage comes from what exists, not from a counter.</strong> Put new values in between
+      presses and the next Clear drops those values again; the selection goes on the press after. Session
+      traffic from other consoles and media playhead ticks can never rob you of a stage.</li>
+  <li><strong>Pressing Clear during a clear fade snaps it complete.</strong> The ramp jumps to done rather
+      than restarting the ladder.</li>
+</ul>
+</div>
+
+<h3>What Clear does not touch</h3>
+<ul>
+  <li><strong>Executors keep running.</strong> Clear is the programmer; <strong>Release All</strong> is playback.</li>
+  <li><strong>Other operators' values.</strong> Clear only drops rows this console authored — which is why
+      the button lights red only for what <em>you</em> can actually give back.</li>
+  <li><strong>Group masters.</strong> See <a href="/manual/groups/#groups">Groups &amp; masters</a>. This is the point of them.</li>
+  <li><strong>Grand master, blackout, flash, patch, layouts, fade times.</strong></li>
+</ul>
+<div class="callout warn">
+<h4>Running effects survive a Clear</h4>
+<p>A Clear does not stop an effect. Stop it from the FX window, or with <code>fx stop</code>, before you
+wonder why a light is still moving.</p>
+</div>
+
+<h3>Clearing one kind of thing</h3>
+<p>The per-domain buttons — <strong>Clear Light</strong>, <strong>Clear Cam</strong>, <strong>Clear Switch</strong>,
+<strong>Clear Audio</strong>, <strong>Clear Media</strong>, <strong>Clear Display</strong> — are the same two-press
+ladder, narrowed to one kind of fixture. Press 1 drops just that domain's fixtures out of your
+selection; press 2 releases that domain's values.</p>
+<div class="callout warn">
+<h4>Domain press 2 crosses the session</h4>
+<p>A plain Clear is yours alone. A per-domain press 2 is a <em>master</em> clear of that domain: every
+console in the session releases its own values for those fixtures. Arming one domain also disarms any
+other domain you had primed, so <em>Clear Light</em> then <em>Clear Cam</em> can never hand Cam a loaded
+second press.</p>
+</div>
+
+<h3>Giving back playback</h3>
+<div class="tablewrap">
+<table>
+  <tr><th>Button / verb</th><th>What it releases</th></tr>
+  <tr><td><strong>Release All</strong> · <code>release</code></td><td>Every running executor, on every console in the session. Parked executors are immune. The programmer is untouched. Each fades out over <strong>its own release time</strong> (per-executor Out, else the cue's fade); an armed Exec Fade bezel releases everything over that one time instead.</td></tr>
+  <tr><td><code>release 2</code></td><td>Just executor 2.</td></tr>
+    <tr><td><strong>Record Dialog</strong></td><td>Opens the record chooser — Preset (with the feature filter and fade), Group or Executor — as a window, for the times you want to pick before you record. <strong>Record</strong> itself still arms and lets the next tap decide.</td></tr>
+<tr><td><strong>Rel Light</strong>, <strong>Rel Cam</strong>, <strong>Rel Switch</strong>, <strong>Rel Audio</strong>, <strong>Rel Media</strong>, <strong>Rel Display</strong></td><td>Executors of that domain only. One press, no ladder. What is underneath comes back up.</td></tr>
+  <tr><td><code>mclear</code></td><td>Master Clear — every console runs the two-press ladder. Say it twice to reach press 2 everywhere.</td></tr>
+  <tr><td><code>mreleaseexec</code></td><td>Master release, executors only.</td></tr>
+</table>
+</div>
+
+<h3>Fade — one dial, one switch</h3>
+<div class="callout law">
+<h4>The fade law</h4>
+<p><strong>The switch decides, the dial remembers.</strong> With <em>Fade</em> off, everything snaps —
+whatever seconds are dialled in. With <em>Fade</em> on, the dialled time applies. Turning the switch off
+does not lose your time.</p>
+</div>
+<p>Open <strong>Prog Fade</strong> — the same panel opens under <strong>Prog Time</strong>, and the
+executor pair under <strong>Exec Fade</strong> and <strong>Exec Time</strong>. You get:</p>
+<ul>
+  <li><strong>Fade</strong> — the green arm switch. This is the one that decides.</li>
+  <li><strong>Link / Unlink</strong> — linked means Fade Out follows Fade In. Unlink to split them; the Out
+      fader seeds itself from the In time so you never start from zero. Link is only reachable while
+      Fade is on.</li>
+  <li><strong>Fade In</strong> and <strong>Fade Out</strong> — two vertical faders, 0 to 10 seconds. Grab
+      anywhere on the fader and drag: the time moves with your finger from where it already was, so
+      touching the fader never jumps the time. Hold <kbd>Shift</kbd> while dragging for fine control.</li>
+</ul>
+<p>A value moving <em>up</em> uses Fade In; a value moving <em>down</em> uses Fade Out. A bezel button
+carrying Prog Fade shows the time on its face — <em>2s</em> when linked, <em>2s/4s</em> when split — and
+goes green while the fade is armed.</p>
+<p>From the command line, <code>time 3</code> (or <code>fade 3</code>) sets three seconds <em>and arms
+the switch</em>; <code>time 0</code> disarms it. You can also hang a time on the end of any command:
+<code>preset 4 time 2</code>.</p>
+
+<div class="callout">
+<h4>Why some things still snap with fade armed</h4>
+<ul>
+  <li><strong>Hand-tracked moves.</strong> A fader you are dragging, a dial you are turning and a group
+      fader follow your hand exactly. A typed destination fades; a live gesture tracks.</li>
+  <li><strong>Switched channels.</strong> Dropdowns, toggles and wheel slots land instantly — halfway
+      between two gobos is not a value, and a shape list never sweeps through the twenty shapes in
+      between on its way from one to another.</li>
+  <li><strong>Move-in-black channels.</strong> Profile channels marked as snap (ATEM sources, some wheels)
+      hold their old value until the fixture is dark or the fade has run, then jump.</li>
+  <li><strong>Fixtures with a real mechanical time</strong> use the fixture's own time, not yours.</li>
+</ul>
+</div>
+<p>When a fan is armed at the same time as a fade, the fixtures start in fan order rather than
+together — the spread arrives as a wave.</p>
+
+<p><strong>Effects morph out; they do not pop.</strong> Fade a look away and the continuous half of a
+prism, prismatic or animation closes first — spread, index and spin travel back to their rest positions —
+while the pick itself (the prism type, the facet count, the pattern) stays on its slot. The pick drops
+only once those parameters have landed, so the effect dissolves instead of disappearing at full spread.
+Fading a look <em>in</em> is the other way round: the pick lands first and the parameters open under it.</p>
+
+<h3>Executor fade</h3>
+<p><strong>Exec Fade</strong> is the same panel for playback. While it is armed it <em>overrides</em> the
+times stored in your cues, and the panel says so at the bottom: <em>overrides cue times</em> or
+<em>honoring cue times</em>. It applies to manual GOs and releases only — an auto-follow or a loop always
+uses the cue's own times, and an executor set to locked cue timing ignores the bezel entirely.</p>
+<p>An executor's own fade time does not touch its cues until you say so. Turn on
+<strong>Exec Time &gt; Cue</strong> (the toggle in Cue Lists, or <code>exec &lt;n&gt; overridetime on</code>) and
+this executor's stored fade time supersedes every one of its cue times, GO and release alike. Leave it
+<em>off</em> — the default — and the executor honors the times written in its cues, even if a fade time is
+stored on it. The armed Exec Fade bezel still overrides everything above that.</p>
+<p>Order of precedence for a manual GO: <strong>armed Exec Fade → the executor's own fade time (only when
+Exec Time &gt; Cue is on) → the cue's time.</strong></p>
+
+<h3>Undo</h3>
+<ul>
+  <li><strong>Fifty steps</strong> of history. Recording something new discards the redo pile.</li>
+  <li>Undo and redo honour the fade switch: off snaps, on crossfades over the Prog Fade time.</li>
+  <li>One fader gesture is <em>one</em> step, not two hundred.</li>
+  <li>Undoing a recorded pool change puts the old look back instantly, on purpose.</li>
+</ul>
+<div class="callout warn">
+<h4>What undo will not bring back</h4>
+<p><strong>Selection</strong> is not undoable — undo restores values, not what you had highlighted. Nor
+are align mode, highlight, grand master, patch, layouts or fade times. And while you are in a
+session, <strong>executor go/release is not undoable</strong>: playback undo works on a standalone console
+only. Release and re-fire instead.</p>
+</div>
+
+  </main>
+  <div class=pager><a href="/manual/screen/">← The screen</a><a href="/manual/groups/">Groups &amp; masters →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

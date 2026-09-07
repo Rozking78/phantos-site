@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How the console thinks — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/overview/">
+<meta name="description" content="Command is a nodal console. You do not drive lamps, cameras and switchers with three different tools — you drive fixtures , and a fixture is anything with a profile: a moving head,">
+<meta property="og:title" content="How the console thinks">
+<meta property="og:description" content="Command is a nodal console. You do not drive lamps, cameras and switchers with three different tools — you drive fixtures , and a fixture is anything with a profile: a moving head,">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/overview/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / How the console thinks</p>
+  <main>
+
+<h2><span class="num">1</span>How the console thinks</h2>
+
+<p class="lede">Command is a nodal console. You do not drive lamps, cameras and switchers with three
+different tools — you drive <strong>fixtures</strong>, and a fixture is anything with a profile: a moving
+head, a media layer, a PTZ camera, an ATEM, a display. One selection language, one programmer, one
+record button, whatever the fixture happens to be.</p>
+
+<h3>The chain, front to back</h3>
+<p>Every value you put on stage travels the same road. Knowing the road tells you where to look when
+something is not doing what you asked.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Stage</th><th>What lives there</th></tr>
+  <tr><td><strong>Selection</strong></td><td>The fixtures your next command will touch. Local to you — nobody else's selection moves when yours does.</td></tr>
+  <tr><td><strong>Programmer</strong></td><td>What you are building right now, live on stage, on top of everything else. It is yours; another operator's programmer is a separate layer.</td></tr>
+  <tr><td><strong>Presets</strong></td><td>Looks you saved out of the programmer, by type — intensity, position, colour, gobo, beam and the rest.</td></tr>
+  <tr><td><strong>Executors &amp; cues</strong></td><td>Playback. Cue lists that run under the programmer and can be released without touching what you are holding.</td></tr>
+  <tr><td><strong>Group masters</strong></td><td>Rig configuration that scales or pins whole groups at the very end. Not programmer content — see <a href="/manual/groups/#groups">Groups &amp; masters</a>.</td></tr>
+  <tr><td><strong>Grand master</strong></td><td>The last word on intensity, bottom-right of the screen.</td></tr>
+  <tr><td><strong>The wire</strong></td><td>Command sends resolved values to Babel. Babel merges every console in the session and talks to the actual gear. Command never speaks a device protocol itself.</td></tr>
+</table>
+</div>
+
+<div class="callout law">
+<h4>The one habit that makes the desk make sense</h4>
+<p>Select, then act. Almost every command works on the current selection, so if a command did nothing,
+the first question is always <em>what is selected?</em> — not <em>is the command broken?</em></p>
+<p><strong>With nothing selected, a value command does nothing at all.</strong> <code>full</code>,
+<code>at 50</code>, <code>color red</code>, a nudge, a panel fader, the deck&#x27;s <kbd>full</kbd> key —
+every one of them needs a selection to aim at, and without one the console touches no fixture and says
+<em>&ldquo;no selection&rdquo;</em> on the status line. An empty selection is never read as
+<em>everything</em>. When you really do mean the whole rig, say so — <code>1 thru &lt;last&gt;</code>,
+a group, or &ldquo;all fixtures&rdquo; out loud — and the console selects it first.</p>
+</div>
+
+<h3>Three ways to give the same order</h3>
+<p>Every function has one implementation and several doors. Whichever you use, the result is identical
+and the status line at the bottom-right tells you what happened.</p>
+<ul>
+  <li><strong>The command line</strong> — bottom of the screen. Fastest for anything with numbers in it.</li>
+  <li><strong>Buttons</strong> — the bezel rows around the workspace, the tiles inside it, a Stream Deck, a
+      foot pedal, a gamepad.</li>
+  <li><strong>Your voice</strong> — the microphone beside the command line, or a comms channel. Spoken asks
+      go to the AI lane, which <em>proposes</em>; nothing runs until you confirm.</li>
+</ul>
+
+<div class="howto">
+<span class="q">How do I get a light on, from nothing?</span>
+<ol>
+  <li>Click the command line at the bottom of the screen.</li>
+  <li>Type <code>1 thru 8 @ full</code> and press <kbd>Return</kbd>.</li>
+  <li>Fixtures 1 to 8 are now in your programmer at 100%.</li>
+  <li>Press <strong>Clear</strong> twice to give them back.</li>
+</ol>
+</div>
+
+<h3>Reading the status line</h3>
+<p>The line at the right-hand end of the command bar is the console answering you. It says what it
+just did — <em>“Cleared values — selection held; press again to deselect”</em>, <em>“Master Clear
+— all consoles”</em>, <em>“Cue Lists — Exec 3”</em>. When a command seems to have been ignored, read it
+before you do anything else.</p>
+
+<h3>Getting back here</h3>
+<p>Click <strong>?</strong> beside the command line to open this manual at the command reference.
+Hold <strong>?</strong> down for the quick pop-up verb list instead — same verbs, no page change.
+You can also put <strong>Manual</strong> on a bezel button or a workspace tile, or open it on a second
+display from <strong>Settings ▸ Screen</strong>.</p>
+<p>The Mac menu bar carries <strong>Help and nothing else</strong> — this manual, the GPW timeline
+section and the command reference. That is deliberate: the console <em>is</em> the menu. Nothing on
+this desk lives only up there, so a touchscreen with no mouse and no menu bar reaches every function.
+The three Help entries open the very page the <strong>?</strong> opens.</p>
+
+  </main>
+  <div class=pager><a href="/manual/">← Contents</a><a href="/manual/screen/">The screen →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

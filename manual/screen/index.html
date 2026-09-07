@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The screen — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/screen/">
+<meta name="description" content="One window, four bands: a top bezel, the workspace, a bottom bezel, and the command line. Panels slide over the workspace; they never rearrange it.">
+<meta property="og:title" content="The screen">
+<meta property="og:description" content="One window, four bands: a top bezel, the workspace, a bottom bezel, and the command line. Panels slide over the workspace; they never rearrange it.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/screen/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / The screen</p>
+  <main>
+
+<h2><span class="num">2</span>The screen</h2>
+
+<p class="lede">One window, four bands: a top bezel, the workspace, a bottom bezel, and the command
+line. Panels slide over the workspace; they never rearrange it.</p>
+
+<h3>Top bezel</h3>
+<ul>
+  <li><strong>Broker lamp</strong> — green with the word <em>Broker</em> when this console is in a session,
+      red and <em>offline</em> when it is not.</li>
+  <li><strong>Fixtures</strong> and <strong>Prog</strong> — two fixed tabs that slide the fixture list and the
+      programmer panel in over the workspace from the edges. Tap again to slide them away. Where each one
+      opens is yours — see <a href="#panes">Where the panels open</a>.</li>
+  <li><strong>Bezel buttons 0–11</strong> — the top row of assignable buttons.</li>
+</ul>
+
+<h3>Workspace</h3>
+<p>The middle band. Tiles fill it; the Fixtures and Programmer panels slide <em>over</em> it from the
+edges rather than squeezing it; a bezel window pops up on top. The <strong>Fixtures</strong> panel is a
+wall of fixture tiles — tap to select, long-press to edit. The <strong>Prog</strong> panel is built from
+the profiles of whatever you have selected, so it shows that fixture's real channels and nothing else.</p>
+
+<h3 id="panes">Where the panels open</h3>
+<p>Fixtures and Programmer come up in the same place at the same size every time. Out of the box
+Fixtures is the <strong>left vertical quarter</strong> and Programmer the <strong>right vertical
+quarter</strong> — the widths the console has always used. Either can be moved to any of seven places:</p>
+<ul>
+  <li><strong>Left ¼</strong> and <strong>Right ¼</strong> — the vertical quarter panes.</li>
+  <li><strong>Left ½</strong> and <strong>Right ½</strong> — vertical half-screen panes: exactly half the
+      workspace, full height.</li>
+  <li><strong>Top ⅓</strong> and <strong>Bottom ⅓</strong> — a full-width band across the workspace.</li>
+  <li><strong>Full Screen</strong> — the panel fills the workspace.</li>
+</ul>
+<p><strong>The Programmer's faders follow the shape of the pane.</strong> In a quarter pane — tall and
+narrow — the attributes stack as full-width rows, exactly as they always have. In a <strong>Top ⅓</strong>
+or <strong>Bottom ⅓</strong> band — and on <strong>Full Screen</strong>, which is a wide surface too —
+the pane is wider than it is tall, so the faders <strong>stand up</strong>: one
+column per attribute, side by side, each with its name above and its level, −, ⌂ and + below, and the
+feature-group buttons and the Align strip on a single line above them. Drag a fader up and down; hold
+<kbd>⇧</kbd> while you drag for a fine one. Nothing about the quarter or half panes changes — both are
+taller than they are wide, so their faders stay as stacked rows.</p>
+<p>Change the default in <strong>Settings ▸ Screen ▸ Panes</strong>: one row per panel, tap it and pick
+the place. Your choice is kept on this console and comes back next launch. The same seven places are also
+<strong>bezel options</strong> — long-press a bezel slot, open the <strong>Panes</strong> tab and assign
+e.g. <em>Programmer Full Screen</em>. Pressing that key puts the panel there and opens it; pressing it
+again while the panel is already there closes it, and the place is remembered either way.</p>
+
+<h3>Bottom bezel</h3>
+<ul>
+  <li><strong>Bezel buttons 12–29</strong> — the bottom row. Thirty assignable slots in total.</li>
+  <li><strong>Grand master</strong> — the fader at the far right, with the level beside it.
+      Drag it. It is grab-relative: it moves from wherever you take hold, so a mistap on the busiest
+      strip on the console cannot snap the show to zero. For Flash, BO and the lock open the
+      <strong>Grand Master</strong> window; from the command line, <code>gm 80</code>,
+      <code>blackout</code>, <code>flash</code>.</li>
+</ul>
+<p>A fresh console starts with the first seven top-row buttons filled: Settings, Save Show, Load Show,
+Patch, Undo, Redo, Clear. Everything else is blank and waiting.</p>
+
+<h3>Assigning a bezel button</h3>
+<div class="howto">
+<span class="q">How do I put a function on a bezel button?</span>
+<ol>
+  <li><strong>Press and hold</strong> the button for half a second. The assign sheet opens.</li>
+  <li>Pick a tab: <strong>Windows</strong> (surfaces that open), <strong>Actions</strong> (things that fire once),
+      <strong>Toggles</strong> (panels that slide).</li>
+  <li>Tap the function. The sheet closes and the button takes it.</li>
+  <li>Turn on <strong>Lock</strong> first if you are assigning several buttons in a row — the sheet stays open.</li>
+  <li><strong>Clear slot</strong> empties the button again.</li>
+</ol>
+</div>
+<p>An empty slot shows a faint <em>＋ Assign</em>. Tapping an empty slot does nothing on purpose —
+assignment is long-press only, so a fat finger during a show cannot pop a sheet over your work.</p>
+<p>Once assigned: <strong>tap = do it</strong>, <strong>long-press = reassign</strong>. A button whose function has
+no backend yet is outlined in <span style="color:var(--orange)">orange</span> rather than the teal
+affordance colour, and says
+so in the log when you press it. Nothing in this console pretends to work.</p>
+
+<h4>Reading a bezel button</h4>
+<div class="tablewrap">
+<table>
+  <tr><th>What you see</th><th>What it means</th></tr>
+  <tr><td>Cyan outline</td><td>Assigned and working.</td></tr>
+  <tr><td><span style="color:var(--orange)">Orange</span> outline</td><td>Assigned to something with no backend yet.</td></tr>
+  <tr><td>Filled / lit</td><td>Its panel is open, or its mode is armed.</td></tr>
+  <tr><td>Clear buttons: <span style="color:var(--green)">green</span></td><td>Only a selection to give back — press 1 is soft.</td></tr>
+  <tr><td>Clear buttons: <span style="color:var(--red)">red</span></td><td>There are values to drop — the next press really lets go.</td></tr>
+  <tr><td>Fade / Align buttons: a value on the face</td><td>The armed time (<em>2s</em>, <em>2s/4s</em>) or the armed fan.</td></tr>
+  <tr><td>Fade / Align buttons: <span style="color:var(--green)">green</span></td><td>Armed and actually doing something — not merely open.</td></tr>
+  <tr><td>A screenshot as the face</td><td>A recall-layout button, wearing the workspace it saves.</td></tr>
+</table>
+</div>
+
+<div class="howto">
+<span class="q">How do I take a function off a button?</span>
+<ol>
+  <li>Tap <strong>Delete</strong> to arm it.</li>
+  <li>Tap the bezel button. It is unbound, back to <em>＋ Assign</em>.</li>
+  <li>It does <em>not</em> fire the function on the way out, and it does not touch what the button pointed
+      at — deleting a Save Show button does not touch the show.</li>
+  <li>Delete disarms itself after one deletion. Tapping an already-blank slot leaves it armed, so you
+      can go and hit the one you meant.</li>
+</ol>
+</div>
+
+<h3>The workspace grid</h3>
+<p>The middle of the screen is a grid of cells you fill with <strong>tiles</strong>. Drag across empty cells
+to choose a block, and the tile picker opens; pick a category, then an item.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Category</th><th>What you can drop</th></tr>
+  <tr><td>Presets</td><td>Preset pools, by type — All, All-in-One, one type, or a combination.</td></tr>
+  <tr><td>Fixtures</td><td>All Fixtures, Cameras, Media, DMX Fixtures.</td></tr>
+  <tr><td>Playback</td><td>Executors, Groups, Fader.</td></tr>
+  <tr><td>Content</td><td>Video Viewer, Time Display, Universe Monitor, System, Canvas, Multi-View, Sessions, Command Keypad, Manual.</td></tr>
+  <tr><td>Actions</td><td>Clear, Release All, Record, Undo, Redo, Delete, New Show, Save Show, Load Show and the per-domain clears and releases — the bezel functions, as tiles.</td></tr>
+</table>
+</div>
+<p><strong>Clear</strong> is the red button at the top of the picker, beside Cancel. It empties the
+selected cells again. It sits outside the category tabs on purpose — it is an action, not a
+category — so it is one tap away whichever tab you are on, and it is the only route: there is no
+&ldquo;Clear Tile&rdquo; item hidden in the Content tab any more.</p>
+<p>A tile keeps its saved cells. If the console window is shorter than it was when you laid the grid
+&mdash; a layout made full-screen, opened windowed &mdash; the bottom row is cut at the grid&rsquo;s edge,
+above the command line, and a pool tile there scrolls to reach the rest. Nothing is painted under the
+command line or the bottom bezel.</p>
+<div class="callout warn">
+<h4>Tiles do not drag around</h4>
+<p>There is no drag-to-move and no resize handle. To change a tile: use the small grid glyph in its
+top-right corner to re-assign it in place, or start a fresh drag from an <em>empty</em> cell across the
+area you want — laying a new tile removes whatever it overlaps.</p>
+</div>
+<p>A preset pool tile fills its block with the pool's tiles. The <strong>first tile names the pool</strong> —
+long-press it to set the number range it shows, or tap it while Record is armed to record into that
+pool's type.</p>
+
+<div class="howto">
+<span class="q">How do I save the layout I just built?</span>
+<ol>
+  <li>Tap <strong>Record</strong> (a bezel button or an Actions tile). It arms — it does not pop a chooser.</li>
+  <li>Tap an <strong>empty bezel slot</strong>. The workspace is captured onto that slot as a recall layout,
+      with a screenshot of itself as the button face.</li>
+  <li>Tapping that button later restores the layout. Tapping it while Record is armed overwrites it.</li>
+</ol>
+</div>
+<p>A layout holds the open windows, the panel toggles and every tile in the grid. It deliberately does
+<strong>not</strong> hold your bezel buttons — recalling a layout never rewrites the button row out from
+under you. Arm <strong>Edit</strong> and tap a layout button to rename it or delete it.</p>
+<div class="callout warn">
+<h4>Use a bezel slot, not the generic action</h4>
+<p>The <em>Recall Layout</em> action assigned from a picker has no layout attached and will simply say so.
+Layouts are recorded <strong>onto a bezel slot</strong> with Record, as above.</p>
+</div>
+
+<h3>Editing a pool tile — right-click it, hold it, or arm Edit and tap</h3>
+<p>Every pool tile is edited the same way, by three routes that all land in one step: <strong>right-click
+the tile</strong>, <strong>hold the tile</strong> for half a second, or arm <strong>Edit</strong> on a bezel
+button or an Actions tile and tap it. What opens is sized for a finger. Nothing is hidden behind a
+right-click, and nothing pops up in between to ask which command you meant.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Right-click, hold, or tap with Edit armed</th><th>What opens</th></tr>
+  <tr><td>A <strong>preset</strong> tile</td><td>Recall mode (Selective / Fixture / World), Update (merge the programmer in), Overwrite (replace), Rename, Delete.</td></tr>
+  <tr><td>A <strong>group</strong> tile</td><td>Masters — mode, Level, Priority — plus Recall / Add sel. / Toggle, Overwrite from selection, Merge selection in, Grid, Z-Order, Rename and Delete.</td></tr>
+  <tr><td>An <strong>executor</strong> tile</td><td>The Cue Lists window, focused on that executor.
+  <em>One exception:</em> an executor set to <strong>Flash</strong> (or Momentary) is active-while-held, so
+  holding it flashes it — a flash is never interrupted by a window. Right-click it, or arm Edit and tap.</td></tr>
+  <tr><td>A <strong>layout</strong> bezel button</td><td>Rename or delete the layout.</td></tr>
+</table>
+</div>
+<p>Arm <strong>Delete</strong> or <strong>Copy</strong> instead and the tap acts at once — no sheet, no
+confirmation, but every one of them is undoable. Arm <strong>Record</strong> and tap a tile that already
+holds something and the console asks first: a preset offers <strong>Merge</strong> or
+<strong>Overwrite</strong>, an executor offers <strong>Add Cue</strong>, <strong>Merge into</strong> that cue or
+<strong>Replace</strong> it. Merge and Overwrite refuse an empty programmer.</p>
+<p>Rename opens the on-screen keyboard with the caret at the end of the current name, so the first key you
+press adds to the name instead of wiping it. A hardware keyboard types straight into the same field.</p>
+
+<h4>Z-Order — stagger depth across a group</h4>
+<p>From the group sheet, <strong>Z-Order</strong> takes one value, 0 to 255, and staggers the Z (depth)
+attribute across the group's members in the programmer — live, and recordable like anything else you set
+by hand. A value of <strong>128 or more stacks downward</strong> from it; below 128 it stacks
+<strong>upward</strong>. The step shrinks automatically so a big group still fits inside 0–255. Fixtures with
+no Z or depth attribute are skipped, and the status line tells you how many were hit.</p>
+<p>The console's <strong>Align</strong> mode decides the shape: normally the offset grows one position at a
+time down the group, but with <em>Fold&nbsp;&lt;&lt;</em> or <em>Fold&nbsp;&gt;&gt;</em> armed it mirrors
+about the group's centre — the outer pair furthest apart, the ends matching. The sheet shows which shape is
+in force so you are never guessing.</p>
+
+<div class="callout">
+<h4>Moving a group in the pool — both directions</h4>
+<p>The <strong>Move</strong> key has two armed states. Press it once and it reads <em>▲ earlier</em>: tap a
+group tile and it moves one slot earlier in the pool. Press it again and it reads <em>▼ later</em>: the next
+tap moves the group one slot later. A third press turns it off. The group's edit sheet carries the same pair
+as buttons — <strong>Move earlier</strong> and <strong>Move later</strong> — and the command line still
+takes <code>group 4 move up</code> / <code>group 4 move down</code>. A move swaps the group's number with its
+neighbour's, so the sheet closes and the pool re-sequences in front of you.</p>
+</div>
+
+<h3>The window index</h3>
+<p>Every surface below can be a bezel button, and the full-screen ones fill the workspace when opened.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Window</th><th>What it is for</th></tr>
+  <tr><td><strong>Patch</strong></td><td>Your fixtures as cards, grouped by universe, with the editor beside them and the Add flow. See <a href="/manual/patch/#patch">Patch &amp; devices</a>.</td></tr>
+  <tr><td><strong>Settings</strong></td><td>Five categories across the top — Comms, Deck, Gamepad, Audio, Screen — each a page of cards.</td></tr>
+  <tr><td><strong>Sessions</strong></td><td>Broker connection, this console's identity, granted ports, the session registry.</td></tr>
+  <tr><td><strong>System</strong></td><td>Live counts — presets, executors, groups, fixtures, registry entries, render rate.</td></tr>
+  <tr><td><strong>Universe Monitor</strong></td><td>The resolved DMX going out, channel by channel, per universe. The place to prove a value left the desk.</td></tr>
+  <tr><td><strong>Cue Lists</strong></td><td>The cue-list editor and the executor faders — the playback surface.</td></tr>
+  <tr><td><strong>Preset Pool</strong></td><td>The banked preset grid, empty slots included.</td></tr>
+  <tr><td><strong>FX</strong></td><td>The effects editor: attribute, waveform, rate, size, spread.</td></tr>
+  <tr><td><strong>FX Presets</strong></td><td>Recorded effects, tap to re-fire.</td></tr>
+  <tr><td><strong>Align</strong></td><td>The fan tool: mode and axis for spreading one value across a selection.</td></tr>
+  <tr><td><strong>Prog Fade</strong> · <strong>Exec Fade</strong></td><td>Fade times for the programmer and for playback. See <a href="/manual/programmer/#programmer">Programmer &amp; Clear</a>.</td></tr>
+  <tr><td><strong>Prog Time</strong> · <strong>Exec Time</strong></td><td>The same fade controls under their older names — one control, two doors.</td></tr>
+  <tr><td><strong>Grand Master</strong></td><td>The grand master as a panel, with BO and Full.</td></tr>
+  <tr><td><strong>Command Keypad</strong></td><td>A touch keypad that types into the one command line.</td></tr>
+  <tr><td><strong>Grid</strong></td><td>The fixture position grid — where each fixture physically sits, for fan and effect order.</td></tr>
+  <tr><td><strong>Media</strong></td><td>The media window: clips, slots, transport, time displays.</td></tr>
+  <tr><td><strong>Gobos</strong></td><td>The gobo and content library; tap to point the selection at a slot. Media and Gobos are on the factory bezel from the first launch. (The old <em>Content Browser</em> tile was this same library under a second name; a show that still holds one opens Gobos.)</td></tr>
+  <tr><td><strong>Canvas Preview</strong></td><td>The output canvas, live from Light, filling the window; the status pill reads Connected, Searching or No signal. When more than one Light is publishing, a <strong>Light</strong> row appears — tap it and pick which one you are watching. Command does not yet know the canvas resolution: it says so on the card and draws the frame 16:9.</td></tr>
+  <tr><td><strong>Multi-View</strong></td><td>Live video cells in one full-screen grid. Pick a shape — <strong>1</strong>, <strong>2H</strong>, <strong>2V</strong>, <strong>3</strong>, <strong>4</strong>, <strong>6</strong>, <strong>9</strong> or <strong>16</strong>. Each cell has <strong>SOURCE</strong> to choose its feed, an expand key to blow it up full-window, and <strong>SELECT</strong>; select two or more and <strong>Merge</strong> makes them one cell (<strong>Unmerge</strong> puts them back). <strong>REC</strong> then a letter saves the whole layout to <strong>A</strong>–<strong>G</strong>; the letter alone recalls it. Tap a cell's picture to arm its source, <kbd>Esc</kbd> to disarm. <strong>TAKE</strong> routes an armed source onto a layer fixture — that route is not built yet, so TAKE stays dark. <strong>Close</strong> and <strong>Lock</strong> sit at the left of the same row as <strong>Merge</strong>.</td></tr>
+  <tr><td><strong>Video Viewer</strong></td><td>One live NDI or IOSurface source, full-screen. <strong>Source</strong> opens the picker; on a connected NDI camera <strong>PTZ</strong> opens a pan/tilt/zoom/focus pad on the right — the arrows drive while you hold them and stop when you let go, <strong>■</strong> stops everything, <strong>AF</strong> pushes an autofocus, <strong>⌂</strong> and <strong>P1</strong>–<strong>P3</strong> recall presets. A source that does not advertise PTZ shows <strong>PTZ?</strong>; the pad still opens and the camera may ignore it.</td></tr>
+  <tr><td><strong>GPW Timeline</strong></td><td>The timeline surface.</td></tr>
+  <tr><td><strong>Warp / Blend</strong></td><td>Per-output warp, edge blend and lens correction.</td></tr>
+  <tr><td><strong>Manual</strong></td><td>This document.</td></tr>
+</table>
+</div>
+<p><strong>Operator Focus</strong> is on by default; switch it off on the single row under
+<strong>Multi-Window</strong> in <strong>Settings &#9656; Screen</strong>, beside the picker that places every
+other detached window, and it will say so there rather than disappearing.</p>
+<p>A window that fills the workspace has a red <strong>Close</strong> and an orange <strong>Lock</strong> at the
+top. Lock pins it open: neither Close nor a tap outside will dismiss it. Smaller windows float over the
+tiles and a tap outside closes them, unless they are locked. <strong>Multi-View</strong> puts that same
+Close and Lock at the head of its own control row, just left of <strong>Merge</strong>, instead of on a
+strip of their own — one row less between you and the pictures. On a narrow window the shape and
+<strong>A</strong>–<strong>G</strong> keys drop to a second line so nothing is cut off.</p>
+
+<h3>Second and third displays</h3>
+<div class="howto">
+<span class="q">How do I put a surface on another monitor?</span>
+<ol>
+  <li>Open <strong>Settings ▸ Screen</strong>.</li>
+  <li>Choose what to show: <strong>Full Console</strong>, <strong>Fixtures</strong>,
+      <strong>Programmer</strong>, <strong>Multi-View</strong>,
+      <strong>Universe Monitor</strong>, <strong>Timecode (GPW)</strong>,
+      <strong>Video Viewer</strong>, <strong>Operator Focus</strong>, <strong>Manual</strong>,
+      <strong>Warp / Blend</strong>, <strong>Gobos</strong> or <strong>Media</strong>.</li>
+  <li>Turn <strong>Full screen</strong> on first if you want the window to fill that display every time
+      it opens.</li>
+  <li>Tap the display you want it on. The window opens there and is remembered.</li>
+</ol>
+</div>
+<p>Windows are pinned to the physical panel, not to a screen number, so they come back on the right
+monitor after a reboot or a hot-plug. If a pinned monitor is missing, the window stays <em>closed</em>
+and reappears when the panel returns — it will never jump onto a screen that is feeding an output.
+Closing a window with its red button does not delete it; reopen it from the same Settings row. Every
+detached window can go full screen — <strong>⌃⌘F</strong> or the green button, <strong>Esc</strong> to
+come back — and the <strong>Full screen</strong> button on its Settings row makes that its habit, so it
+opens filling the display from then on.</p>
+<p><strong>Warp / Blend</strong>, <strong>Gobos</strong> and <strong>Media</strong> are on that list too:
+put the warp editor on the display it is warping and you can see the canvas and the wall at once, and
+either library gets a monitor's width instead of a panel over the tiles. A detached window is the SAME
+window as the one the bezel tile opens — one warp, one gobo library, one media pool, shown in two
+places, so an edit on the second display is live on the first.</p>
+
+<h3>The command line</h3>
+<p>Left to right: the terminal icon, the entry field, <strong>?</strong> (this manual),
+the <strong>microphone</strong>, the comms indicator when a listening channel is armed, history
+<strong>up/down</strong> chevrons, and the status line.</p>
+<ul>
+  <li><kbd>Tab</kbd> completes the first word from the verb list.</li>
+  <li>The chevrons walk your command history; they grey out when there is none.</li>
+  <li>The command line, the Command Keypad window and the keypad tile are three windows onto
+      <em>one</em> line of text. Typing on the keypad fills the bar.</li>
+</ul>
+
+<h3>The Command Keypad</h3>
+<p>A touch keypad for the command line — as a bezel window, or as a workspace tile that needs at least
+two columns by three rows to draw keys big enough to hit. It has two pages; the digits and operators
+never move between them, so muscle memory holds. The keypad never scrolls and is never cut off: the
+window is sized to its keys, and on a small screen the keys shrink to the touch floor rather than
+losing the Enter row.</p>
+<div class="callout warn">
+<h4>Two clears, and they are not the same</h4>
+<p><strong>C←</strong> (orange) wipes the line you are typing. It never touches the programmer.
+<strong>CLEAR</strong> (red) sends the <code>clear</code> command — the two-press ladder. Tap it twice to
+give the values back.</p>
+</div>
+
+  </main>
+  <div class=pager><a href="/manual/overview/">← How the console thinks</a><a href="/manual/programmer/">Programmer &amp; Clear →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Patch & devices — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/patch/">
+<meta name="description" content="Patching tells the desk what is out there and where it lives. Everything is patched the same way, whether it ends up as DMX, an ATEM command or a camera move.">
+<meta property="og:title" content="Patch &amp; devices">
+<meta property="og:description" content="Patching tells the desk what is out there and where it lives. Everything is patched the same way, whether it ends up as DMX, an ATEM command or a camera move.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/patch/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / Patch &amp; devices</p>
+  <main>
+
+<h2><span class="num">8</span>Patch &amp; devices</h2>
+
+<p class="lede">Patching tells the desk what is out there and where it lives. Everything is patched
+the same way, whether it ends up as DMX, an ATEM command or a camera move.</p>
+
+<p>Tap fixture cards to edit them. <strong>Live selection</strong> starts off: browsing Patch,
+Command-clicking, Shift-clicking, and <strong>None</strong> affect the Patch editor selection only.
+Turn it on to send subsequent Patch selections to the programmer too. Turning it on or off does
+not itself change the programmer selection.</p>
+
+<h3>Patching</h3>
+<div class="howto">
+<span class="q">How do I patch a fixture?</span>
+<ol>
+  <li>Open <strong>Patch</strong> and tap <strong>Add</strong>. The Add flow takes the whole window: the
+      fixture library on the left, the setup cards on the right. Search the library, pick manufacturer,
+      model and mode, set the quantity, and press <strong>Add Fixture</strong> (top right or bottom).
+      <strong>Back to patch</strong> returns to the cards without adding.</li>
+  <li>Leave the address on auto and the console finds the first gap that fits. A batch spills into the
+      next universe by itself, and the placement card shows you the plan before you commit —
+      <em>→ U1.1 … U2.13 (12 fixtures)</em> — or refuses in orange if there is no room.</li>
+  <li>Or from the command line, when you know the profile ID: <code>patch phantos_full 1 @1/1</code>.</li>
+</ol>
+</div>
+<div class="callout warn">
+<h4>The Add flow checks addresses; the typed verb does not</h4>
+<p><code>patch</code> refuses a fixture <em>number</em> that is already taken, but it does not check
+whether the DMX address overlaps something else — and with no <code>@u/a</code> it lands at universe 0,
+address 1. Use the Add flow when you want the console to find you a clean address.</p>
+</div>
+<div class="tablewrap">
+<table>
+  <tr><th>Command</th><th>What it does</th></tr>
+  <tr><td><code>patch &lt;profile&gt; &lt;num&gt; @&lt;uni&gt;/&lt;addr&gt;</code></td><td>Patch a fixture at a number and an address. An unknown profile ID is refused, with the list of valid ones.</td></tr>
+  <tr><td><code>unpatch 5</code> · <code>unpatch all</code></td><td>Remove it.</td></tr>
+  <tr><td><code>readdress 5 1/21</code></td><td>Move it. This one <em>does</em> check for an overlap and refuses without changing anything.</td></tr>
+  <tr><td><code>renumber 5 12</code></td><td>Change its fixture number. Refused if the number is taken, or if presets, groups, cues or pad bindings still point at it.</td></tr>
+  <tr><td><code>label fixture 5 as Spot L</code></td><td>Name it.</td></tr>
+  <tr><td><code>domain 1 thru 5 recording</code></td><td>Say what kind of thing these are: lighting, media, camera, sound, recording, switching, displays. <code>domain 1 thru 5 profile</code> hands it back to the profile.</td></tr>
+  <tr><td><code>host 10 192.168.1.50 [port]</code></td><td>Give a network device its address. Leave the port off and the device family's own default is used — 9910 for ATEM, 80 for Panasonic, 52381 for VISCA.</td></tr>
+</table>
+</div>
+<p>The fixture's <strong>domain</strong> is what makes the per-domain clears and releases work, and what
+tints its tile. It normally comes from the profile; set it by hand when the profile is generic. A
+universe takes on the domain of whatever is patched lowest in it, and the placement card tells you when
+you are about to mix domains in one universe.</p>
+<h3>Reading the Patch window</h3>
+<p>Fixtures are cards, in the same language as the pool tiles: the fixture number, its name, its
+profile, its universe and address (<em>1.163</em>), its channel count, and its IP if it is a network
+device. Cards are grouped by universe. Each universe heading carries the domain the universe holds and
+a gauge of how many of its 512 channels are used, so a full universe is visible at a glance. Search
+and Sort work inside the groups.</p>
+<p>Tap a card to select it — it lights green and its editor opens beside the cards. Tap another card to
+move on. To build a selection of several, <strong>long-press</strong> a card (or ⌘-tap with a mouse),
+and ⇧-tap picks a range. The toolbar then shows how many are selected, with <strong>None</strong> and
+<strong>Delete</strong>. Right-click a card to delete it.</p>
+<p><strong>Deleting a fixture asks first, and cannot be undone.</strong> Every delete on this page — the
+toolbar's <strong>Delete N</strong>, the right-click menu, the fixture editor's Delete button and the same
+menu on the Fixtures panel — puts up one question that names what is about to go
+(<em>&ldquo;Delete fixture 12 (Mac Aura, U3/A1)?&rdquo;</em>). Answer it and the fixture leaves the patch
+here, on Babel and on every Light in the session; the console saves the show two seconds later. Undo does
+<em>not</em> bring a fixture back and no backup is taken, so the question is the last stop. Presets, groups
+and cues keep their references to the number, so re-patching it restores those links. Nothing on the
+keyboard completes the delete — the confirm button has no shortcut, and <kbd>Esc</kbd> cancels.</p>
+<p>Selecting several fixtures gives you the multi-editor: sequential numbering, sequential
+addressing, sequential IP and sequential naming across the selection. Sequential numbering is
+all-or-nothing — one clash and nothing moves — and it rewrites every preset, cue, group and pad
+binding that pointed at the old numbers.</p>
+
+<h3>Finding a profile</h3>
+<pre><code>profile find generic rgbwauv   search the fixture library
+profile import &lt;libraryID&gt;     adopt it so patch will accept it
+profile list                    what this console has
+profile reset &lt;id&gt; | all        undo local edits, back to the shipped profile</code></pre>
+<p><code>profile find</code> returns the twelve best matches with the exact <code>profile import</code>
+line to run. Import is safe to repeat, echoes the channel map it adopted, and gives you the
+<code>patch</code> line to use. <code>profile list</code> sorts what you have into three groups —
+built-ins you have <em>edited</em>, profiles you <em>imported</em> from the library, and profiles
+<em>authored</em> from the rig itself — because each one has a different way out.
+<code>profile reset</code> only makes sense for the first group, and says so for the others.</p>
+
+<h3>Devices</h3>
+<p>A device is patched exactly like a lamp — a profile, a fixture number, and a <code>host</code>. From
+then on it is selected and driven like anything else, and the console sends nothing device-specific
+itself: it publishes values, and Babel speaks the device's own protocol.</p>
+<div class="tablewrap">
+<table>
+  <tr><th>Device</th><th>How you drive it</th></tr>
+  <tr><td><strong>ATEM</strong> switchers</td><td><code>pgm 4</code> and <code>pvw 4</code> set the buses; <code>pgm +</code> and <code>pgm -</code> step through them. <code>cut</code>, <code>auto</code> (or <code>take</code>) and <code>ftb</code> do the transitions. The generated ATEM PGM / PVW / Trans / Keys pools give you the same thing as tiles; a <code>tbar</code> fader is the lever and <code>atemtrans</code> is the rate. Program and preview keys light from the switcher's own tally. A gamepad reaches the switcher too — see the law below.</td></tr>
+  <tr><td><strong>VISCA</strong> PTZ cameras</td><td>Pan, tilt, zoom and focus are ordinary attributes, so <code>pan 60</code> works and so does a gamepad. <code>home</code> recentres, <code>af</code> is a one-push autofocus, <code>camstart save</code> and <code>camstart recall</code> store and recall a camera's whole pose.</td></tr>
+  <tr><td><strong>Panasonic</strong> cameras</td><td>Patched and driven as attributes, with a hundred recallable presets. Five models ship, and they are <em>not</em> interchangeable — the AW-UE40 takes a reduced command set, so it has its own profile. Pick the right model.</td></tr>
+  <tr><td><strong>Panasonic</strong> projectors</td><td>Power, shutter, blank, freeze, input, light output, test pattern and lens shift / focus / zoom / memory, in the displays domain.</td></tr>
+  <tr><td><strong>Monitors</strong></td><td><code>ddc luminance 80</code> and the rest of the DDC set — contrast, volume, mute, input, red, green, blue.</td></tr>
+</table>
+</div>
+
+<h3>Displays and wall processors</h3>
+<p>Projectors, LED walls and wall processors live in the <strong>Displays</strong> domain. The shipped
+library includes only personalities backed by a complete manufacturer chart: current Panasonic
+Art-Net projector modes, Barco Pulse DMX modes, Christie 24-channel Art-Net modes, Brompton Tessera
+factory personalities and the fully documented NovaStar fixed Art-Net layout. A model with no
+published DMX chart is not represented by a guessed personality.</p>
+<p>The Patch editor's <strong>Display Control</strong> block stores the receiver setup beside the fixture:
+protocol and personality, host and port, Art-Net Net / Sub-Net / Universe or sACN universe, and the
+fixture's normal DMX start address. PJLink and Vendor are available as honest control-path labels for
+devices that do not expose a DMX personality; they do not invent DMX channels. Tap
+<strong>Protocol</strong> and the choices pop out as a list, the same way every other picker in Patch
+behaves — in the add sheet and in the editor alike. Changing it moves the port to that protocol's
+default unless you have typed one of your own.</p>
+<div class="callout warn">
+<h4>Display passwords stay on this Mac</h4>
+<p>A per-fixture web/admin user may travel with the patch, but its password is stored in the macOS login
+Keychain under the fixture's stable identity. Show save and export omit the password bytes. Moving a show
+to another console therefore requires entering that display password on the destination Mac.</p>
+</div>
+
+<div class="callout">
+<h4>A pad binding drives whatever the attribute belongs to</h4>
+<p>Bind any control on a gamepad — a stick, the HOTAS throttle or twist, a trigger — to an ATEM
+channel such as <strong>T-Bar</strong> or <strong>PVW Source</strong>, and it drives the patched
+switcher, not the camera the pad's cursor happens to be sitting on. The attribute decides, not
+which piece of plastic you bound it to. Bind that same control to Pan, Tilt or Zoom and it drives
+the cursor camera exactly as before, group and all.</p>
+<p>One thing to know before you bind a <em>spring-return</em> stick to the T-bar: a stick offers
+<strong>Absolute</strong> only, and absolute means the control <em>is</em> the value — let go of a
+sprung stick and it re-centres, so the T-bar parks mid-throw and holds the switcher mid-transition.
+The HOTAS throttle stays where you leave it, which is why it is the lever that suits a T-bar. Use
+the throttle, or a <code>tbar</code> fader tile, for a throw you have to complete.</p>
+</div>
+
+<div class="callout warn">
+<h4>Two ATEM profiles, and they are not interchangeable</h4>
+<p><strong>ATEM SDI Extreme ISO</strong> has eight inputs. <strong>ATEM Constellation HD 1ME</strong> has ten,
+four upstream keys, one downstream key and six aux outputs — and its source values sit at different
+numbers, which is exactly why it is a separate profile rather than a revision. <code>pgm 9</code> works
+on a Constellation and is refused on an Extreme. Because the two disagree, Command and Babel must be
+deployed together.</p>
+</div>
+<div class="callout warn">
+<h4><code>home</code>, <code>af</code> and <code>camstart</code> are VISCA-only</h4>
+<p>They will not reach a Panasonic camera, even though it has both a home and a one-push autofocus
+channel — you will get <em>“no camera patched”</em>. Drive those from the camera's own attributes for
+now.</p>
+</div>
+<p>The device verbs — <code>cut</code>, <code>auto</code>, <code>ftb</code>, <code>pvw</code>,
+<code>pgm</code>, <code>home</code>, <code>af</code>, <code>camstart</code> — take an optional fixture
+number; without one they find the first patched device of that kind. The stepping forms
+(<code>pgm +</code>, <code>pvw -</code>) always use the first patched ATEM.</p>
+<p>Camera positions you record land in the generated <strong>Camera Pos</strong> pool, so a camera move is
+a preset like any other.</p>
+<p>There is also a <code>wall</code> verb for LED walls — <code>wall @404/1 10x6 176x176 2.84</code>
+patches a processor with its cabinet grid, cabinet size in pixels and pitch, and
+<code>wall &lt;n&gt; fill h|v|hv|1to1</code> sets how the paired output fills it.</p>
+
+<h3>Outputs</h3>
+<pre><code>output 1 exclusive on            give an output sole use
+output 1 ndi 1920 1080          NDI size for an output
+output 1 shader warp on         warp / edge-blend / curve / lens
+output 1 refresh 60             refresh rate
+canvas 3840 2160                the output canvas size</code></pre>
+<p><strong>Warp / Blend</strong> is the editor for the same thing, per output. The canvas size lives on
+the <strong>outputs</strong>: <code>canvas 3840 2160</code> (or the canvas control in the window) stamps
+every patched Phantos Output with it and tells Light, and the window lays the outputs out on it the moment
+it is known. With no output patched there is no canvas, and the window says so. A <strong>Phantos
+Master</strong> is optional — patch one for a master fader, a test pattern, borders, or a cue-recordable
+canvas preset; you never need one to get a canvas. Pick an output from the strip along
+the top; it joins the <strong>canvas</strong>, where every selected output is drawn at its true place and
+size on the canvas with its own live picture inside. Add more outputs with <strong>Stitch</strong> to see
+several at once — where two touch is the join, where they overlap is the blend zone, tinted orange. Drag
+the four <strong>corner handles</strong> on any output's tile to warp that output — they grab where you
+put your finger and move from there, so a grab is never a jump, and it takes a real drag: a tap on a
+handle does nothing. Grabbing a handle on another output makes it the one you are editing. Pinch (or scroll a
+mouse wheel) to zoom the canvas and drag empty canvas to pan; <strong>Fit</strong> zooms to the selected
+outputs' extents, <strong>All</strong> shows the whole canvas again. With no canvas size known the same
+handles sit on a single-output plate with the live picture behind them. The stepper
+column beside the canvas is the same four corners as numbers, and it is the value to trust when you need
+one. Every control here writes a fixture channel, so a warp records into a preset or a cue and fades like
+any other attribute.</p>
+<p><strong>Warp Mode</strong> sits in the column above the corner numbers: <strong>4-Point</strong> is a
+corner pin — straight edges stay straight, the four handles are the whole warp; <strong>8-Point</strong> is
+Light's bilinear warp, which also carries Curvature. It is a fixture channel like everything else here, so
+it records and fades. With several outputs stitched the row shows the mode they share, or
+<strong>MIXED</strong> when they differ — tap a mode to set all of them at once.</p>
+<p><strong>8-Point brings its own controls up.</strong> Switch to it and the four edge
+<strong>midpoint handles</strong> — TM, ML, MR, BM — appear on every tile and on the corner-pin plate,
+with their own rows in the numbers fold. 4-Point shows the four corners only, and that is not an
+omission: 4-Point is a corner pin, and the midpoints genuinely do nothing in it.</p>
+<p><strong>CENTER</strong>, the row under Warp Mode, adds a ninth handle in the middle of the frame.
+In 8-Point it is the warp's centre point. In 4-Point it pinches or bulges the middle while the corner
+pin is held — drag it and the four corners and all four edges stay exactly where you put them. Off is
+the default, and with it off the picture is exactly what it was. Like the mode, it addresses every
+stitched output and shows <strong>MIXED</strong> when they differ.</p>
+<p>All nine points are fixture channels, so a warp — corners, midpoints, centre and the centre's
+on/off — records into a preset or a cue and fades like any other attribute. <strong>Reset</strong>
+flattens all nine and switches the centre off. Lens correction is the one thing still not built here.
+Curvature, Scale and Rotation are.</p>
+<p><strong>Auto Blend and warping are independent.</strong> Auto Blend owns the four edge-blend widths
+and nothing else — you can seam-detect an output and still warp its corners.</p>
+
+  </main>
+  <div class=pager><a href="/manual/media/">← Media &amp; time</a><a href="/manual/session/">Session &amp; network →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>

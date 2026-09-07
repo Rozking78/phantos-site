@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPW timeline — Phantos Operator Manual</title>
+<link rel="canonical" href="https://phantos.io/manual/gpw/">
+<meta name="description" content="GPW is the console&#x27;s timeline: tracks, events, automation curves and a playhead that free-runs or follows the Command timecode. Open it from the workspace tile or a detached screen">
+<meta property="og:title" content="GPW timeline">
+<meta property="og:description" content="GPW is the console&#x27;s timeline: tracks, events, automation curves and a playhead that free-runs or follows the Command timecode. Open it from the workspace tile or a detached screen">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/manual/gpw/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/manual/manual.css">
+</head>
+<body class="manual">
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav class=sitenav><a href="/">Home</a><a href="/manual/">Manual</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+<div class=wrap>
+  <p class=crumb><a href="/manual/">Operator Manual</a> / GPW timeline</p>
+  <main>
+
+<h2><span class="num">10</span>GPW timeline</h2>
+
+<p class="lede">GPW is the console's timeline: tracks, events, automation curves and a playhead that
+free-runs or follows the Command timecode. Open it from the workspace tile or a detached screen —
+both drive the <strong>same</strong> timeline.</p>
+
+<div class="howto">
+<span class="q">Transport</span>
+<p>Play free-runs the playhead; Stop pauses and returning to zero is the ⏮ button. <strong>TC</strong>
+follows the Command timecode (external Art-Net LTC, or the program clock). While following, the
+playhead is clamped to the arrangement — if the source is not arriving the readout says so and the
+playhead holds rather than running away. Loop wraps a region in free-run only; an external clock owns
+the position, so loop is inert under TC.</p>
+</div>
+
+<div class="howto">
+<span class="q">Scrubbing</span>
+<p>Every scrub — the transport slider, a ruler click, the minimap — is a real seek: bound video
+follows, and events behind the playhead re-arm, so dragging back before a cue and rolling again fires
+it again. A loop wrap does the same.</p>
+</div>
+
+<div class="howto">
+<span class="q">Events &amp; fades</span>
+<p>An event fires a preset recall, an executor GO (a real cue advance, identical on every pass), an
+executor toggle-recall, an intensity set, or a custom command. A preset event's fade in/out belongs to
+<strong>that event</strong> — it rides the one recall and never changes the console's Prog Time.</p>
+<p>Drag a block to move it. Drag either <em>end</em> of a block to pull a fade in or out — the grips
+are offered only on a block wide enough to hold them and still be draggable, so zoom in if you want
+them. On a short block the whole block moves and the fades are set as numbers: tap the block to open
+the event editor, which carries <strong>Fade In</strong> and <strong>Fade Out</strong> as fields.
+<strong>Long-press (or right-click) the timeline</strong> for the rest — add an event at the playhead,
+set the loop in/out, and, with an event selected, lock, disable, edit, duplicate or delete it.</p>
+</div>
+
+<div class="howto">
+<span class="q">The GPW Transport tile (Playback)</span>
+<p>Drop a <strong>GPW Transport</strong> tile anywhere on the workspace (it takes exactly five
+columns). It drives the <em>same</em> timeline as the GPW window. Down the centre: the time readout
+and the <strong>arrangement</strong> name; ⏮ · play · stop · record-arm · TC · <strong>↻ loop</strong>;
+and the <strong>scrub fader</strong> along the bottom. Every fader on the tile is the console's
+standard fader — grab-and-drag, so a mistap never snaps the playhead. Scrubbing is a real seek —
+bound video follows and events re-arm, exactly as in the window. The <strong>↻ loop</strong> button
+arms the timeline's loop (green when armed); an empty region defaults to the whole arrangement, and
+loop wraps in free-run only.</p>
+<p>Tap the <strong>arrangement</strong> name and a list pops out: pick any saved GPW arrangement to
+load and play it, <strong>New Arrangement</strong> to start a fresh one, or <strong>Save as GPW
+Preset</strong> to bank the current one — the same pool the GPW window's preset strip holds.</p>
+<p>Flanking the transport are two full-height faders — <strong>TTE</strong> (Trans Time, the
+programmer fade time, exactly what <code>fade &lt;sec&gt;</code> and the Prog Fade bezel
+set) on the left and <strong>TTR</strong> (Trans Rate, the switcher's transition rate) across from it
+on the right. TTE arms the prog fade when raised off the bottom and disarms at the bottom; TTR reads
+in <strong>frames</strong> and reaches the switcher's <strong>mix</strong> rate — with no ATEM patched
+it says so where the throw would be rather than pretending to drive one.</p>
+</div>
+
+<div class="howto">
+<span class="q">GPW presets — save a timeline, recall it playing</span>
+<p>The strip to the right of the transport holds numbered <strong>GPW presets</strong>. <strong>＋</strong>
+saves the current arrangement into the next free slot (loop region included), and the key beside it
+starts a <strong>new blank arrangement</strong> outright (bank the current one with <strong>＋</strong>
+first; it is undoable either way). <strong>Tap a preset
+and it loads and PLAYS</strong> from the top — recall is a GO, not just a load. <strong>Long-press
+(or right-click) a tile</strong> to overwrite it with the current arrangement or delete it. The green
+tile is the active preset; the orange dot means the current arrangement has unsaved changes.</p>
+</div>
+
+<div class="howto">
+<span class="q">Tracks</span>
+<p>A track header carries its name and five keys: <strong>M</strong> mute · <strong>S</strong> solo ·
+<strong>R</strong> record-arm · <strong>A</strong> show this track's automation lanes · the padlock.
+Tap the name to rename it on the keypad, and <strong>drag the coloured strip down the left edge of
+the header</strong> up or down to resize the track — it is the track's colour and its resize grip, a
+full-height handle rather than the hairline it used to be. <strong>Long-press (or right-click) the
+header</strong> to delete the track or add an automation lane; with lanes shown, the
+<strong>I P C G B</strong> keys add one directly.</p>
+</div>
+
+<div class="howto">
+<span class="q">Assign a video — its timelines arrive with it</span>
+<p>Tap <strong>Assign Video</strong> in the row along the bottom of the window (Zoom · Assign Video · Events · + at playhead) and pick a slot from the list; the track's row
+fills in: a <strong>strip of video
+thumbnails</strong> along the timeline, and an <strong>audio waveform</strong> band underneath, both
+scaled to the zoom, with an amber dashed line at the end of the media. The arrangement takes the
+slot's duration. Scrub and the slot follows.</p>
+<p>This needs the file on <em>this</em> Mac. Media lives on Light, so when the console cannot find a
+local copy the row says so in orange and draws only the slot name and duration ticks off Light's
+report — it will never draw a waveform it does not have. Keep the file in a media folder listed in
+Settings ▸ Content and the picture and waveform come back.</p>
+</div>
+
+<div class="howto">
+<span class="q">Keys, loops, markers, follow</span>
+<p>With a GPW window open the timeline keys are live: <kbd>Space</kbd> play/pause · <kbd>I</kbd>/<kbd>O</kbd>
+loop in/out at the playhead · <kbd>M</kbd> drop a marker · <kbd>,</kbd>/<kbd>.</kbd> previous/next marker ·
+<kbd>Tab</kbd> step events · <kbd>N</kbd> new event · <kbd>←</kbd>/<kbd>→</kbd> nudge (⇧ = one frame) ·
+<kbd>J</kbd>/<kbd>K</kbd>/<kbd>L</kbd> skip back/pause/skip forward · <kbd>R</kbd> record-arm ·
+<kbd>T</kbd> TC chase · <kbd>F</kbd> follow · <kbd>Home</kbd>/<kbd>End</kbd> · ⌘Z/⌘⇧Z (GPW's own undo) ·
+⌘C/⌘V/⌘X/⌘D events · ⌘=/⌘−/⌘0 zoom. The transport bar carries touch twins for the loop
+(<strong>I</strong>/<strong>O</strong>), the markers (⟨ ⚑ ⟩) and <strong>follow</strong> — with follow
+on, the paper pages so the playhead never walks off screen. Keys stay out of text fields.</p>
+<p>None of that needs a keyboard. <strong>Press and hold the timeline</strong> — or right-click it — and
+a list pops out. With an event selected it holds <strong>Lock / Unlock Position</strong>,
+<strong>Disable / Enable</strong>, <strong>Edit…</strong>, <strong>Duplicate</strong> and
+<strong>Delete</strong>; with nothing selected, <strong>Add Event at Playhead</strong> and the two loop
+points (and <strong>Disable Loop</strong> when the loop is armed). Dragging still does what it always
+did — rubber-band a selection, move an event, drag a breakpoint, seek from the ruler — because a press
+that moves is a drag and never opens the list.</p>
+</div>
+
+<div class="howto">
+<span class="q">Record-arm</span>
+<p>Arm REC and play: preset recalls, executor GOs and executor <em>taps</em> land as events at the
+playhead; fader moves land as automation breakpoints (while rolling). The timeline never records its
+own playback. The <strong>R</strong> flag picks the record-target track (track 1 with none armed);
+<strong>M</strong> mutes a track's events and <strong>S</strong> solos.</p>
+</div>
+
+<div class="howto">
+<span class="q">Automation — lanes drive the rig on their own plane</span>
+<p>A recorded lane plays back onto <strong>exactly the fixtures it was recorded on</strong> — never
+the current selection. Its values ride a dedicated GPW plane below your hand: a programmer write or
+camera move always wins over the timeline, and an executor whose priority you have raised above 104
+out-holds it too — that is by design. <strong>Clear never touches timeline output</strong> (clear
+your programmer freely while it plays); <strong>Master Clear stops the timeline and releases its
+output</strong> — it is the panic button. Stop releases everything cleanly; muting a track drops just
+its lanes and unmuting brings them back. Record never captures the timeline's own output. A lane with
+no recorded fixtures shows an orange note and drives nothing. <strong>Long-press (or right-click) a
+lane header</strong> to promote the breakpoint at the playhead into a real preset, or to delete the lane.</p>
+</div>
+
+<div class="callout"><h4>Not built yet — and this page is where it says so</h4>
+<p>There is no upload <em>from</em> GPW: hover <strong>Assign Video</strong> and its tip sends you to the Media window instead
+(<strong>＋ New ▸ Upload files to Light…</strong>), and assigning an existing slot here works and
+scrubs. There is no playing video <em>picture</em> in the window, and no manual Load Audio; the
+thumbnail strip and waveform only appear for media the console can find on this Mac — it cannot pull
+a file back off Light to read it. Automation capture is fader-scoped for now (widening is planned).</p></div>
+
+  </main>
+  <div class=pager><a href="/manual/session/">← Session &amp; network</a><a href="/manual/cli/">Command line reference →</a></div>
+</div>
+<footer><div class=wrap>
+  <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
+     <a href="/beta.html">Try the beta</a>.</p>
+  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>
