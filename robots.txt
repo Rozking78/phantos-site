@@ -1,0 +1,7 @@
+# phantos.io — show control for macOS (HTD LLC)
+# Everything here is meant to be found. Nothing is private; the private surfaces
+# (admin, licence issuance, developer login) live on the Worker, not on this site.
+User-agent: *
+Allow: /
+
+Sitemap: https://phantos.io/sitemap.xml
