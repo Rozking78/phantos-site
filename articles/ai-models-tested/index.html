@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>We tested free AI models on real console tasks — Phantos</title>
+<link rel="canonical" href="https://phantos.io/articles/ai-models-tested/">
+<meta name="description" content="Benchmarks don't tell you whether a model can be trusted near a lighting rig. We tested free Gemini models on three real console tasks: obeying a command grammar, refusing to invent, and writing usable documentation.">
+<meta property="og:title" content="We tested free AI models on real console tasks">
+<meta property="og:description" content="Can a free AI model be trusted near a lighting rig? We tested three things that actually matter — and the one that matters most is whether it will admit it doesn't know.">
+<meta property="og:image" content="https://phantos.io/img/command-dmx-beam.jpg">
+<meta property="og:url" content="https://phantos.io/articles/ai-models-tested/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{--ground:#0B0E12;--panel:#12171D;--ink:#EAF0EE;--dim:#9FB0B4;--rule:#1E262E;
+        --cy:#3FD8C8;--am:#E8A13C;--mute:#6B7A80;
+        --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+        --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:var(--cy);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,40px)}
+  header{padding:22px 0;border-bottom:1px solid var(--rule)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between}
+  .logo{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:.06em;color:var(--ink)}
+  .logo b{color:var(--cy)}
+  nav a{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-left:22px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy);margin-bottom:14px}
+  h1{font-family:var(--mono);font-weight:700;font-size:clamp(28px,5vw,44px);line-height:1.1;letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance}
+  h2{font-family:var(--mono);font-size:20px;margin:44px 0 12px;letter-spacing:-.01em}
+  .lede{font-size:19px;color:var(--dim);margin:0 0 8px}
+  .byline{font-family:var(--mono);font-size:12px;color:var(--mute);margin:0 0 40px;letter-spacing:.06em}
+  article{padding:48px 0 20px}
+  p{margin:0 0 18px}
+  code{font-family:var(--mono);font-size:.9em;background:var(--panel);padding:2px 6px;border:1px solid var(--rule)}
+  .tablewrap{overflow-x:auto;margin:22px 0;border:1px solid var(--rule)}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule)}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);background:var(--panel)}
+  tr:last-child td{border-bottom:0}
+  .pass{color:var(--cy);font-family:var(--mono)} .fail{color:var(--am);font-family:var(--mono)}
+  .callout{border-left:2px solid var(--cy);background:var(--panel);padding:16px 20px;margin:26px 0}
+  .callout p:last-child{margin-bottom:0}
+  footer{border-top:1px solid var(--rule);margin-top:56px;padding:26px 0 48px;color:var(--mute);font-size:14px}
+  .cta{display:inline-block;font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+       background:var(--cy);color:#06231F;font-weight:700;padding:13px 24px;margin-top:8px}
+  .cta:hover{text-decoration:none}
+</style>
+</head>
+<body>
+<header><div class=wrap>
+  <a class=logo href="/">PHAN<b>TOS</b></a>
+  <nav><a href="/">Home</a><a href="/beta.html">Beta</a></nav>
+</div></header>
+
+<div class=wrap><article>
+  <div class=eyebrow>Engineering notes</div>
+  <h1>We tested free AI models on real console tasks</h1>
+  <p class=lede>Benchmark scores tell you almost nothing about whether a model belongs near a lighting rig. So we ran three tests that do.</p>
+  <p class=byline>7 September 2026 · Phantos engineering</p>
+
+  <p>There is a good reason to care whether free AI models are any good. If a console needs artificial intelligence to do its interesting tricks, and that intelligence requires the operator to open a second account and buy API credits before anything works, then the feature is not really there for most people. A free option that is <em>good enough</em> changes who gets to use it.</p>
+
+  <p>So we tested one. Not with benchmarks — with the work.</p>
+
+  <h2>The three tests</h2>
+
+  <p><strong>Can it obey a grammar?</strong> A console command line is not conversation. It takes <code>1&gt;4+9 at 50</code> and nothing else. A model that returns the right answer wrapped in a helpful paragraph has failed, because a parser will choke on it. We gave the model the grammar and one example, and asked it to convert a plain-English request. Exact string match or failure.</p>
+
+  <p><strong>Will it admit it doesn't know?</strong> This is the one that matters. We asked about <code>phantos_viz</code> — one of our own fixture profiles. It exists in no training data anywhere on earth. There is no correct answer to recall, only the correct <em>behaviour</em>: say you don't know. A model that invents a confident channel count for a fixture profile it has never seen will invent a confident answer about your rig, and that is the failure mode that ends up in front of an audience.</p>
+
+  <p><strong>Can it write for a technician?</strong> Three sentences explaining what a DMX universe is, plain, no marketing. This is the unglamorous work — documentation, help text, explanations — and it is most of what an AI in a console would actually be asked for.</p>
+
+  <h2>What happened</h2>
+
+  <div class=tablewrap>
+  <table>
+    <tr><th>Model</th><th>Grammar</th><th>Admits ignorance</th><th>Speed</th></tr>
+    <tr><td>Gemini 3.5 Flash-Lite</td><td class=pass>PASS</td><td class=pass>PASS</td><td>0.5–0.7 s</td></tr>
+    <tr><td>Gemini 3.5 Flash</td><td class=pass>PASS</td><td class=pass>PASS</td><td>2.2 s</td></tr>
+    <tr><td>Gemini 3.7 Flash</td><td class=pass>PASS</td><td class=pass>PASS</td><td>3.4 s</td></tr>
+    <tr><td>Gemini 3.8 Flash</td><td class=pass>PASS</td><td class=pass>PASS</td><td>2.9 s (one 503)</td></tr>
+    <tr><td>Gemini 3.1 Pro</td><td class=fail>quota</td><td class=fail>quota</td><td>—</td></tr>
+  </table>
+  </div>
+
+  <p>Asked about <code>phantos_viz</code>, every model that answered replied, in full: <em>"I do not know."</em> That is the right answer, and it is worth more than any benchmark on the list.</p>
+
+  <p>The Flash-Lite model returned correct console syntax in about half a second. For a command line, sub-second matters more than raw intelligence — an operator will not wait three seconds to see whether the desk understood them.</p>
+
+  <div class=callout>
+    <p><strong>One correction, because it changes the result.</strong> Our first grammar test failed on every model — they wrote <code>1-4+9</code> with a hyphen instead of <code>1&gt;4+9</code>. Then we read our own prompt: we had never told them the range operator was a greater-than sign. The models had guessed the most common convention, sensibly. With the grammar fully specified, every model passed exactly. The first result was a bad test, not a bad model, and we would rather say so than publish a table that flattered our own tooling.</p>
+  </div>
+
+  <h2>The catches, stated plainly</h2>
+
+  <p><strong>The free tier is Flash-class only.</strong> The Pro model returned a quota error on the first request. Anyone quoting free access to a frontier model is describing something we could not reproduce.</p>
+
+  <p><strong>Capacity is not guaranteed.</strong> We got a 503 "high demand" on the newest Flash model mid-test. Free infrastructure fails sometimes, so anything built on it needs a local fallback that is not an apology screen.</p>
+
+  <p><strong>Read the data terms.</strong> Google's terms say content submitted on the non-paid tier — prompts <em>and</em> responses — may be used to improve their products. The paid tier is excluded. A console's prompts carry rig layouts, fixture lists, cue names and whatever the operator said out loud. That is a real consideration for a commercial show, and it is the reason our position is bring-your-own-key: your account, your terms, your choice, stated in plain language rather than buried.</p>
+
+  <h2>What we're doing with it</h2>
+
+  <p>Phantos today uses a single cloud provider for its language features, alongside an on-device model that needs no account at all. Supporting a second provider is not a Gemini integration so much as a seam — one interface, several implementations — and today is a decent argument for never hard-wiring a vendor again. Between starting this test and finishing it, Google discontinued the sign-in method that a great many tutorials still describe as current.</p>
+
+  <p>That work is scheduled, not shipped. When it lands, this page gets the setup guide. We would rather publish the test than a promise.</p>
+
+  <p style="margin-top:34px"><a class=cta href="/beta.html">Try the beta</a></p>
+</article></div>
+
+<footer><div class=wrap>
+  <p>Phantos is show control for macOS — lights, media and cameras on one console. <a href="/">phantos.io</a></p>
+  <p style="font-size:13px;color:var(--mute)">Figures measured 7 September 2026 against the Gemini API free tier. Your results will differ; that is rather the point of measuring.</p>
+</div></footer>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e5cb58c5cc894cb9bc9772c758018d3f"}'></script>
+</body>
+</html>
