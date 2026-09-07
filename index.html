@@ -30,6 +30,8 @@
   .logo b{color:var(--cy)}
   nav a{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-left:26px}
   nav a:hover{color:var(--cy);text-decoration:none}
+  nav a.navcta{color:var(--cy);border:1px solid var(--cy);padding:7px 13px;margin-left:22px}
+  nav a.navcta:hover{background:var(--cy);color:#06231F;text-decoration:none}
   /* hero */
   .hero{padding-top:clamp(64px,11vh,120px);padding-bottom:56px}
   h1{font-family:var(--mono);font-weight:700;letter-spacing:-.02em;font-size:clamp(38px,7vw,76px);line-height:1.02;margin:0 0 22px;text-wrap:balance}
@@ -151,10 +153,12 @@
 <header>
   <div class="wrap">
     <div class="logo">PHAN<b>TOS</b></div>
-    <nav><a href="/manual/">Manual</a>
+    <nav>
       <a href="#what">What it is</a>
       <a href="#free">Free build</a>
       <a href="#founding">Founding</a>
+      <a href="/manual/">Manual</a>
+      <a class="navcta" href="/beta.html">Beta</a>
     </nav>
   </div>
 </header>
