@@ -38,6 +38,21 @@
   h1 em{font-style:normal;color:var(--cy)}
   .lede{font-size:clamp(17px,2vw,22px);color:var(--dim);max-width:60ch;margin:0 0 34px}
   .lede strong{color:var(--ink)}
+  /* Waitlist — the third, low-friction door. The other two (apply with an NDA, or pay $299) both
+     ask a lot on a first visit; this asks for an email and promises one message. */
+  .wl{border:1px solid var(--rule);background:var(--panel);padding:clamp(22px,4vw,34px);margin:8px 0 6px}
+  .wl h3{font-family:var(--mono);font-size:clamp(18px,2.6vw,23px);margin:0 0 8px;letter-spacing:-.01em}
+  .wl p{color:var(--dim);margin:0 0 18px;max-width:56ch}
+  .wl form{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .wl input{flex:1 1 260px;min-width:0;padding:14px 14px;background:var(--ground);border:1px solid var(--rule);
+            color:var(--ink);font-size:16px;font-family:var(--sans)}
+  .wl input:focus{outline:none;border-color:var(--cy)}
+  .wl button{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+             background:var(--cy);color:#06231F;font-weight:700;padding:14px 24px;border:0;cursor:pointer}
+  .wl button[disabled]{opacity:.55;cursor:default}
+  .wl .say{margin:14px 0 0;font-size:15px;min-height:1.2em}
+  .wl .say.ok{color:var(--cy)} .wl .say.bad{color:var(--am)}
+  .wl .fine{font-size:13px;color:var(--mute);margin:12px 0 0}
   .cta{display:inline-block;font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;
        background:var(--cy);color:#06231F;font-weight:700;padding:15px 28px;border:0;cursor:pointer}
   .cta:hover{filter:brightness(1.1);text-decoration:none}
@@ -215,6 +230,59 @@
     </div>
   </div>
 </section>
+
+<section class="wrap" aria-labelledby="wl-h">
+  <div class=wl>
+    <h3 id="wl-h">Not ready to apply?</h3>
+    <p>The beta asks you to read two agreements and tell us about your rig — fair, but it is a lot for
+       a first visit. Leave an address instead and we will tell you when there is something to try.</p>
+    <form id="wlform" novalidate>
+      <input id="wlmail" type="email" name="email" required autocomplete="email"
+             placeholder="you@example.com" aria-label="Your email address">
+      <button id="wlbtn" type="submit">Keep me posted</button>
+    </form>
+    <p class="say" id="wlsay" role="status" aria-live="polite"></p>
+    <p class=fine>One email when it opens. Nothing else, and no list we sell or share.
+       Already sure? <a href="/beta.html">Apply for the beta</a>.</p>
+  </div>
+</section>
+<script>
+(function(){
+  var f=document.getElementById('wlform'), i=document.getElementById('wlmail'),
+      b=document.getElementById('wlbtn'), say=document.getElementById('wlsay');
+  function tell(msg, ok){ say.textContent=msg; say.className='say '+(ok?'ok':'bad'); }
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email=(i.value||'').trim();
+    // Cheap client check only. The Worker validates properly; this just avoids a pointless round trip.
+    if(!email || email.indexOf('@')<1 || email.indexOf('.', email.indexOf('@'))<0){
+      tell('That does not look like an email address.', false); i.focus(); return;
+    }
+    b.disabled=true; tell('Adding you…', true);
+    fetch('https://phantos-beta.rozking.workers.dev/api/notify-beta', {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify({ email: email, source: 'site-hero' })
+    }).then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(j){
+        if(j && j.ok){
+          // A duplicate is a success, not an error — and it must not send a second email.
+          f.style.display='none';
+          tell(j.state === 'already-listed'
+                ? 'You were already on the list — nothing more to do.'
+                : 'You are on the list. Check your inbox for a confirmation.', true);
+        } else {
+          b.disabled=false;
+          tell('That did not go through. Try again, or email support@rocshopav.com.', false);
+        }
+      })
+      .catch(function(){
+        b.disabled=false;
+        tell('Could not reach the server. Try again, or email support@rocshopav.com.', false);
+      });
+  });
+})();
+</script>
+
 
 <section id="free">
   <div class="wrap">
