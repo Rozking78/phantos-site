@@ -236,7 +236,9 @@
     <h3 id="wl-h">Not ready to apply?</h3>
     <p>The beta asks you to read two agreements and tell us about your rig — fair, but it is a lot for
        a first visit. Leave an address instead and we will tell you when there is something to try.</p>
-    <form id="wlform" novalidate>
+    <form id="wlform" method="POST" novalidate
+          action="https://phantos-beta.rozking.workers.dev/api/notify-beta">
+      <input type="hidden" name="source" value="site-hero">
       <input id="wlmail" type="email" name="email" required autocomplete="email"
              placeholder="you@example.com" aria-label="Your email address">
       <button id="wlbtn" type="submit">Keep me posted</button>
