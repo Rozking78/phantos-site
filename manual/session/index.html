@@ -236,6 +236,51 @@ when you tap it, and read-outs sit in dark capsules. Everything is a full-size t
 </table>
 </div>
 
+<h3>Gamepad camera holds</h3>
+<p>Camera and Followspot share Live Op priority above the normal programmer, with separate holds and pad undo history. Camera Focus also sets the profile’s manual-focus gate in that same layer.
+Console Clear and Release leave those holds alone. Turn off Camera mode or disconnect the pad to
+release that pad's camera holds. A pending autofocus reset cannot bring a disconnected pad back
+into control or replace a newer input.</p>
+<p>Starting a new show or accepting a show load discards the previous show's live camera holds,
+camera fades and pad undo/redo history. Saved controller maps and camera positions remain saved.
+A refused load leaves the current holds intact. A Cam Start gesture is cancelled if its target, mode or binding changes, or the pad disconnects. Shift bindings use the active layer.</p>
+
+<p>Switcher mode is retired. Existing Switcher assignments migrate to Programmer; saved Cut, Auto and FTB actions become ordinary held parameter bindings. HOTAS keeps Camera plus Programmer by default. ATEM fixture controls and tally remain available.</p>
+<p>DS4, wired Xbox and GameController trigger button bindings fire at half pull. Held actions release their original targets when the pad changes mode, cursor or map, or disconnects. Absolute triggers can return all the way to zero; an untouched trigger does not claim a value. Fine and other held modifiers use the active Shift binding. Stick parameter bindings offer Y absolute or X velocity nudge. HOTAS throttle, twist and paddle honor their offered parameter methods.</p>
+<h3>DS4 followspot</h3>
+<p>Use an ordinary moving light with a correctly mapped Pan and Tilt. In <strong>Settings ▸ Gamepad</strong>,
+choose <strong>Use DS4 Followspot layout</strong> on the connected pad, then assign the lights you want.
+This replaces that pad's current bindings with the spot layout. Prepare the look and light output on the
+programmer before Grab; Grab does not home the lights or open the beam. Missing optics stay unavailable.</p>
+<div class="tablewrap"><table>
+<tr><th>Control</th><th>Default action</th></tr>
+<tr><td>Right stick</td><td>Pan/tilt. Push farther for more speed; centre stops sending movement.</td></tr>
+<tr><td>Left stick up/down</td><td>Spot dimmer: open/close the iris. With no iris, use the real dimmer. With neither, unavailable; no virtual LED dimming.</td></tr>
+<tr><td>L2 / R2</td><td>Zoom out / in.</td></tr>
+<tr><td>L1 / R1</td><td>Focus near / far.</td></tr>
+<tr><td>D-pad left / right</td><td>Iris close / open. Labels in the profile determine direction and travel. Check the beam and use Reverse iris for that light if needed.</td></tr>
+<tr><td>Hold Square + L2 / R2</td><td>Real dimmer down / up, independent of the iris.</td></tr>
+<tr><td>Hold L3</td><td>Fine: one tenth of the requested speed. An 8-bit head still moves in visible native steps.</td></tr>
+<tr><td>D-pad up / down</td><td>Next / previous assigned light. Only the current light follows the stick; the others hold.</td></tr>
+<tr><td>Cross (×)</td><td>Grab the assigned moving lights. Latched: no need to hold the button. Repeating Grab keeps the existing hold.</td></tr>
+<tr><td>Circle (○)</td><td>Release all this pad's spots to the programmer at their current values. Repeating Release does not grab again.</td></tr>
+<tr><td>Triangle (△)</td><td>Toggle Beam Clear on the current light. Only profile-described optical Open/Off or highlight values are used; missing mappings are reported.</td></tr>
+</table></div>
+<p>Release transfers the held look into the programmer before letting go, including Beam Clear values still
+held. The light keeps its aim; the programmer now contains an ordinary, undoable edit that can be recorded
+or changed. It does not return to the old pre-grab position. Turning off Followspot, changing its assigned
+set, or disconnecting the pad performs the same handback. Normal programmer Clear/Release does not drop a
+spot hold. Pad Undo/Redo uses the same isolated journal as Camera, including Beam Clear toggles. A new show discards it; press Grab again in the new show.</p>
+<p>On Release, running programmer effects on the held attributes are stopped for those lights, so an old
+movement does not restart over the position you just left. Other effect targets and attributes keep running.
+Recall an effect explicitly to run it again; programmer Undo restores values, not stopped effects.
+A competing console's higher physical dimmer can take effect again under normal HTP merging after Release.</p>
+<p>The Followspot setup shows the held set, active light and unavailable controls, with separate Pan and Tilt speed, acceleration controls and
+per-light iris reversal. Motion accelerates to stick speed without a queued target; centre stops immediately.
+After changing pad modes while controls are deflected, centre/release the controls before
+working in the new mode. A DS4 report outage stops further pad movement after 250 ms while retaining the last
+position. The separate <strong>Camera Follow</strong> video-overlay idea is not part of this mode.</p>
+
 <h3>Stream Deck</h3>
 <p>Plug one in; it is detected live, and <strong>Settings ▸ Deck</strong> shows the model, its key count and
 its serial. The last key or pedal you pressed is shown live, so you can prove a surface is talking
@@ -312,7 +357,7 @@ Set that window, and the channel's sensitivity, in <strong>Settings ▸ Audio</s
 <footer><div class=wrap>
   <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
      <a href="/beta.html">Try the beta</a>.</p>
-  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+  <p class=meta>Generated from the app build 2026-09-08c. If the app and this page disagree, the app is right.</p>
 </div></footer>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7537933508cf4ac5a3eed3674e6e7a91"}'></script>
 </body>

@@ -158,8 +158,11 @@ lane header</strong> to promote the breakpoint at the playhead into a real prese
 <p>There is no upload <em>from</em> GPW: hover <strong>Assign Video</strong> and its tip sends you to the Media window instead
 (<strong>＋ New ▸ Upload files to Light…</strong>), and assigning an existing slot here works and
 scrubs. There is no playing video <em>picture</em> in the window, and no manual Load Audio; the
-thumbnail strip and waveform only appear for media the console can find on this Mac — it cannot pull
-a file back off Light to read it. Automation capture is fader-scoped for now (widening is planned).</p></div>
+thumbnail strip and waveform use a local copy when available. Otherwise Command fetches the clip
+from a live Light, verifies its content hash and caches it before extracting. The band says
+<strong>fetching from Light…</strong> while waiting, or names the refusal. Files over 64 MB must be
+copied to this Mac by hand. Missing holders and pending hashes retry slowly; a silent transfer times
+out after 60 seconds. Reassign the slot to retry a refused transfer. Automation capture is fader-scoped for now (widening is planned).</p></div>
 
   </main>
   <div class=pager><a href="/manual/session/">← Session &amp; network</a><a href="/manual/cli/">Command line reference →</a></div>
@@ -167,7 +170,7 @@ a file back off Light to read it. Automation capture is fader-scoped for now (wi
 <footer><div class=wrap>
   <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
      <a href="/beta.html">Try the beta</a>.</p>
-  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+  <p class=meta>Generated from the app build 2026-09-08c. If the app and this page disagree, the app is right.</p>
 </div></footer>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7537933508cf4ac5a3eed3674e6e7a91"}'></script>
 </body>

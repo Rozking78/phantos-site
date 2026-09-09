@@ -131,8 +131,15 @@ spread. Fan a pan across a wall and it runs left to right across the <em>real</e
 <p>The layout belongs to the group. It travels in the show file, it follows the group when you reorder the
 pool, and it follows the fixtures through a renumber.</p>
 <ul>
-  <li><strong>Recall a group and the Grid is already laid out</strong> — one row, left to right, in the
-      group's member order. You are re-arranging a layout, never starting from blank paper.</li>
+  <li><strong>Recall a group to load its saved layout.</strong> An unsaved group follows its members’
+      canvas positions until you edit or save the grid. Fixtures without canvas placement stay unplaced;
+      several fixtures at the same centre default are not a layout. Reset remains a creative square arrangement.</li>
+  <li><strong>Fit</strong> shows the occupied extent, including layouts offset from zero. It re-fits when
+      the layout or window size changes; <strong>Zoom 1:1</strong> returns to the normal cell size.
+      Cells keep their touch size, so very dense layouts still scroll. Both controls work on scratch paper too.</li>
+  <li><strong>From Output</strong> deliberately replaces the current layout with current canvas positions.
+      Use it after moving a rig whose grid was already saved. <code>grid fromoutput</code> does the same.
+      With no distinct canvas geometry it refuses and leaves your layout alone.</li>
   <li>Tap a fixture, then tap a cell to place it. For a staggered rig, the <strong>PLACE INTO</strong> row
       appears the moment something is selected: choose <em>Whole cell</em>, <em>Right half</em>,
       <em>Bottom half</em> or <em>Corner</em>, and the next cell you tap takes the fixture in that slot.
@@ -176,10 +183,9 @@ your selection, and failing that the whole rig — you do not have to build a gr
       or fill.</li>
   <li>The popover tells you how many fixtures it is about to position and draws them before you commit.
       One Undo reverts the whole array.</li>
-  <li><strong>Auto Array moves fixtures on the canvas, not on the graph paper.</strong> It writes the
-      programmer's Pan/Tilt (and Zoom) so the rig lands in shape on the wall; the grid you pressed the
-      button on is deliberately left exactly as you arranged it. Use <strong>Update Grid</strong> or
-      <strong>Straighten</strong> to change the paper.</li>
+  <li><strong>Auto Array writes canvas position and optional zoom.</strong> Unsaved geometry follows the
+      new positions. Saved or hand-edited grid layouts remain yours; press <strong>From Output</strong>
+      to replace one deliberately. <strong>Update Grid</strong> saves the paper; it does not read output positions.</li>
   <li>When it is done it reports what it <em>wrote</em> beside the button — not how many fixtures it
       was offered. A fixture whose profile is not loaded is skipped, and the count says
       "3 of 5" rather than pretending all five moved.</li>
@@ -210,6 +216,18 @@ rather than leaving the console holding one. And <code>align axis x</code> (or <
 tells you when there is no grid to fan along: it still sets the axis, and warns that the fan will run in
 selection order until the selection has a layout.</p>
 <h3>Align follows the grid of the group you are holding</h3>
+<p><strong>Bitmap / pixel mapper:</strong> patch a <strong>Bitmap</strong> fixture, recall the target group
+and arrange its Grid. Press <strong>Bind Bitmap</strong>, choose that fixture, then choose its NDI source.
+Select the Bitmap in the programmer and raise <strong>Color Xfade</strong> to map RGB, or
+<strong>Intensity Xfade</strong> to map picture brightness. Both start at zero. Position X/Y, Zoom and
+H/V Scale move and scale the picture; 128 is neutral. These seven ordinary attributes can be recorded
+in presets and cues. The Grid cells show the final output returned by Babel. Remove the binding or set
+both crossfades to zero to return to the underlying look; losing the video returns to that look within
+one second. Live Op keeps control. Overlapping bitmap groups blend in ascending group-number order.
+The video proxy is at most 64 pixels on its longest edge and updates at up to 30 Hz.</p>
+<p>From the command line use <code>grid bitmap &lt;fixture|none&gt; [group]</code> and the existing
+<code>ndi &lt;fixture&gt; &lt;source name&gt;</code>. NDI reception runs on the Command that owns the Bitmap.
+Keep that Command online while playing mapped cues.</p>
 <p>The Align window's <strong>X</strong> and <strong>Y</strong> axes fan along the grid. They light up when the
 selection actually has a layout, and stay dim when it does not — the console will not pretend to fan along
 geometry it does not have. <strong>#</strong> is the honest axis with no grid: it fans in selection order.</p>
@@ -248,7 +266,7 @@ Both leave the chip hidden.</p>
 <footer><div class=wrap>
   <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
      <a href="/beta.html">Try the beta</a>.</p>
-  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+  <p class=meta>Generated from the app build 2026-09-08c. If the app and this page disagree, the app is right.</p>
 </div></footer>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7537933508cf4ac5a3eed3674e6e7a91"}'></script>
 </body>

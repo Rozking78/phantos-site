@@ -63,10 +63,10 @@
 <div class="verb" data-verb="fan"><div class="verbhead"><code class="vname">fan</code></div><div class="vsyntax">fan &lt;0-100&gt; · fan +&lt;n&gt; | fan -&lt;n&gt;</div><div class="veg">e.g. <code>fan 50</code></div></div>
 <div class="verb" data-verb="fixture"><div class="verbhead"><code class="vname">fixture</code></div><div class="vsyntax">fixture selected &lt;attr&gt; &lt;0-255 | 0.0-1.0&gt;</div><div class="veg">e.g. <code>fixture selected zoom 0.5</code></div></div>
 <div class="verb" data-verb="focus"><div class="verbhead"><code class="vname">focus</code></div><div class="vsyntax">focus &lt;0-100&gt; · focus +&lt;n&gt; | focus -&lt;n&gt;</div><div class="veg">e.g. <code>focus 50</code></div></div>
-<div class="verb" data-verb="fx"><div class="verbhead"><code class="vname">fx</code><span class="alias">effect</span></div><div class="vsyntax">fx attr|wave|rate|size|spread|rev|fire|stop …</div><div class="veg">e.g. <code>fx wave sine</code></div></div>
+<div class="verb" data-verb="fx"><div class="verbhead"><code class="vname">fx</code><span class="alias">effect</span></div><div class="vsyntax">fx edit mode prog|lo|hi · fx edit &lt;attribute&gt; lo|hi|phase|rate|spread &lt;value&gt; · fx edit &lt;attribute&gt; form|relative|axes|fold … · fx attr|wave|rate|size|spread|rev|fire|stop …</div><div class="veg">e.g. <code>fx wave sine</code></div></div>
 <div class="verb" data-verb="gobo"><div class="verbhead"><code class="vname">gobo</code></div><div class="vsyntax">gobo &lt;slot 0-255&gt; | gobo &lt;name&gt; | gobo +&lt;n&gt; | gobo -&lt;n&gt;</div><div class="veg">e.g. <code>gobo circle</code></div></div>
 <div class="verb" data-verb="green"><div class="verbhead"><code class="vname">green</code></div><div class="vsyntax">green &lt;0-100&gt; — drive the Green emitter channel (additive)</div><div class="veg">e.g. <code>green 100</code></div></div>
-<div class="verb" data-verb="grid"><div class="verbhead"><code class="vname">grid</code></div><div class="vsyntax">grid place|remove|reset|auto|save|load …</div><div class="veg">e.g. <code>grid auto</code></div></div>
+<div class="verb" data-verb="grid"><div class="verbhead"><code class="vname">grid</code></div><div class="vsyntax">grid place|remove|reset|auto|fromoutput|save|load … · grid depth &lt;fixture&gt; &lt;integer|none&gt; · grid bitmap &lt;fixture|none&gt; [group]</div><div class="veg">e.g. <code>grid auto</code></div></div>
 <div class="verb" data-verb="iris"><div class="verbhead"><code class="vname">iris</code></div><div class="vsyntax">iris &lt;0-100&gt; · iris +&lt;n&gt; | iris -&lt;n&gt;</div><div class="veg">e.g. <code>iris 50</code></div></div>
 <div class="verb" data-verb="lime"><div class="verbhead"><code class="vname">lime</code></div><div class="vsyntax">lime &lt;0-100&gt; — drive the Lime emitter channel (additive)</div><div class="veg">e.g. <code>lime 50</code></div></div>
 <div class="verb" data-verb="opacity"><div class="verbhead"><code class="vname">opacity</code></div><div class="vsyntax">opacity &lt;0-100&gt; · opacity +&lt;n&gt; | opacity -&lt;n&gt;</div><div class="veg">e.g. <code>opacity 50</code></div></div>
@@ -171,7 +171,7 @@
 <footer><div class=wrap>
   <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
      <a href="/beta.html">Try the beta</a>.</p>
-  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+  <p class=meta>Generated from the app build 2026-09-08c. If the app and this page disagree, the app is right.</p>
 </div></footer>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7537933508cf4ac5a3eed3674e6e7a91"}'></script>
 </body>

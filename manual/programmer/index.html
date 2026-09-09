@@ -28,6 +28,28 @@
 <p class="lede">The programmer is what you are holding. It sits on top of playback, it is yours alone,
 and it stays there until you give it back.</p>
 
+<h3>One editing surface, five destinations</h3>
+<p>The bottom rail reads <strong>Prog · FX Hi · FX Lo · Time In · Time Out</strong>. Switching tabs changes
+where an attribute edit lands. Selection, feature groups, Align and # / X / Y / XY stay in place.
+The colour wheel and swatches edit the chosen FX endpoint as well as Prog; scroll down for the attribute
+faders and FX parameters. Abs/Rel applies to the named attribute, not every colour channel together.</p>
+<p>There is <strong>one axis selector</strong>: the existing Align <strong># / X / Y / XY</strong> row.
+In an FX tab it also re-fits the selected programmer effects; Prog and cue-owned effects are not retuned.
+X Fold folds the X grid line (or the # selection-order line); Y Fold folds Y. XY adds those same two
+shared fractions after their respective folds. Zero leaves a line unfolded; each count doubles the
+number of paper-fold segments. Spread zero remains unison, so folds cannot create a phase spread from zero.
+<strong>Z Fold is unavailable</strong>: the shared selector has no Z coordinate. Its meaning is awaiting
+an operator ruling. Rate/Spread retain their long-press master assignment.</p>
+<p><strong>Time In / Time Out</strong> edit per-attribute fades in seconds. Select <strong>Delay</strong>
+to edit the delay shared by both sides. The range selector gives 0–10, 0–60 or 0–300 seconds; Home restores
+inheritance, while zero explicitly requests no fade or delay. These numbers record with presets and cues
+and apply to discrete attribute edits; live drags stay direct. The colour wheel stays visible in TIME,
+but timing uses attribute faders rather than colour picks. Virtual intensity has no separate channel;
+edit the emitter channels for FX and TIME.</p>
+<p>CLI: <code>time edit pan in 2</code>, <code>time edit pan out 4</code>,
+<code>time edit pan delay 1</code>, <code>time edit pan out inherit</code>.
+Clear removes Prog, FX parameters and TIME numbers from the programmer. Cue-owned numbers remain.</p>
+
 <h3>Putting values in</h3>
 <ul>
   <li><code>1 thru 8 @ 50</code> — select and set intensity in one line.</li>
@@ -198,7 +220,7 @@ only. Release and re-fire instead.</p>
 <footer><div class=wrap>
   <p>From the Phantos Command Operator Manual — the same manual that ships in the app.
      <a href="/beta.html">Try the beta</a>.</p>
-  <p class=meta>Generated from the app build 2026-09-07b. If the app and this page disagree, the app is right.</p>
+  <p class=meta>Generated from the app build 2026-09-08c. If the app and this page disagree, the app is right.</p>
 </div></footer>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7537933508cf4ac5a3eed3674e6e7a91"}'></script>
 </body>
