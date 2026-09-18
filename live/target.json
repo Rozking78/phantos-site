@@ -1,5 +1,5 @@
 {
-  "url": "https://max.tailae6da9.ts.net/",
-  "note": "Where phantos.io/live sends the crew. Phase 1 = the Tailscale Funnel on the show machine, whose node is named 'max' in the tailnet admin (rename it there if it came up as proofs-mbp / proof-m5-eth). Phase 2 = https://live.phantos.io/ once the zone is on Cloudflare. Edit this file, push, done — the page reads it on every load.",
-  "updated": "2026-09-18"
+  "url": "https://live.phantos.io/",
+  "note": "Where phantos.io/live sends the crew: the show machine's ROS page behind Cloudflare (Tunnel from Max + a Worker that asks for the crew password). No Tailscale. Edit this file, push, done \u2014 the page reads it on every load.",
+  "updated": "2026-09-18T15:2x"
 }
