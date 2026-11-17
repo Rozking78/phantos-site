@@ -69,17 +69,28 @@
     if (!bar) return;
     bar.querySelector(".nlb-undo").disabled = !undoStack.length;
     bar.querySelector(".nlb-redo").disabled = !redoStack.length;
-    bar.querySelector(".nlb-undo").textContent = "↶ Undo" + (undoStack.length ? " (" + undoStack.length + ")" : "");
+    bar.querySelector(".nlb-undo").innerHTML = '↶<span class="nlb-lbl"> Undo</span>' + (undoStack.length ? " " + undoStack.length : "");
   }
   function mountBar() {
     if (bar || !document.body) return;
     var css = document.createElement("style");
     css.textContent = ".nlb-ur{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:2147483000;display:flex;gap:6px;align-items:center;font:600 14px/1 -apple-system,system-ui,sans-serif}" +
       ".nlb-ur button{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid #3a4250;background:#1b2029;color:#e8ebef;cursor:pointer}" +
-      ".nlb-ur button:disabled{opacity:.35;cursor:default}.nlb-ur .nlb-msg{color:#f0bc60;max-width:50vw;font-weight:500}";
+      ".nlb-ur button:disabled{opacity:.35;cursor:default}.nlb-ur .nlb-msg{color:#f0bc60;max-width:50vw;font-weight:500}" +
+      "body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}" +
+      "@media (max-width:560px){.nlb-ur{gap:4px;right:8px}.nlb-ur button{min-width:44px;padding:0 10px}.nlb-ur .nlb-lbl{display:none}.nlb-ur .nlb-msg{max-width:40vw;font-size:12px}}";
     document.head.appendChild(css);
     bar = document.createElement("div"); bar.className = "nlb-ur";
-    bar.innerHTML = '<span class="nlb-msg"></span><button type="button" class="nlb-undo" title="Undo (Ctrl/⌘ Z)">↶ Undo</button><button type="button" class="nlb-redo" title="Redo (Ctrl/⌘ Shift Z)">↷ Redo</button>';
+    bar.innerHTML = '<span class="nlb-msg"></span><button type="button" class="nlb-theme" title="Switch light / dark"></button><button type="button" class="nlb-undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo">↶<span class="nlb-lbl"> Undo</span></button><button type="button" class="nlb-redo" title="Redo (Ctrl/⌘ Shift Z)" aria-label="Redo">↷<span class="nlb-lbl"> Redo</span></button>';
+    var themeBtn = bar.querySelector(".nlb-theme");
+    var paintTheme = function () { var light = document.documentElement.getAttribute("data-theme") === "light"; themeBtn.innerHTML = light ? '☾<span class="nlb-lbl"> Dark</span>' : '☀<span class="nlb-lbl"> Light</span>'; themeBtn.setAttribute("aria-label", light ? "Dark mode" : "Light mode"); };
+    themeBtn.onclick = function () {
+      var next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("nlb-theme", next); } catch (_) {}
+      paintTheme();
+    };
+    paintTheme();
     bar.querySelector(".nlb-undo").onclick = undo; bar.querySelector(".nlb-redo").onclick = redo;
     document.body.appendChild(bar); paint();
     document.addEventListener("keydown", function (e) {
