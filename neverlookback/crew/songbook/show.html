@@ -217,7 +217,9 @@
   $("ctlFull").onclick = function () { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(function () {}); };
   var displayWin = null;
   $("openDisplay").onclick = async function () {
-    var url = "show.html?display", feat = "popup,width=1080,height=1920";
+    // Same version tag as this window (?v=<hash>), so the chart window can never be an older cached copy.
+    var ver = (location.search.match(/[?&]v=([^&]+)/) || [])[1];
+    var url = "show.html?" + (ver ? "v=" + ver + "&" : "") + "display", feat = "popup,width=1080,height=1920";
     try {   // Chrome/Edge: put the chart window straight onto the other monitor.
       if ("getScreenDetails" in window) {
         var d = await window.getScreenDetails();
