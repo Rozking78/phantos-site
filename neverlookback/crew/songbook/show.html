@@ -99,7 +99,7 @@
   <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span><span class="zoom"><button type="button" data-zoom="-1" aria-label="Smaller chart text">A−</button><button type="button" data-zoom="1" aria-label="Larger chart text">A+</button></span></div>
   <div class="notes hidden" id="dNotes"></div>
   <div id="stage"><div id="chart"></div><span id="probe" aria-hidden="true">00000000000000000000</span></div>
-  <div class="bottom"><span id="dSet"></span><span id="dMidi"><span id="midiState"></span><select id="midiPick" class="hidden" aria-label="MIDI device for fader 1"></select></span><span id="dNext"></span></div>
+  <div class="bottom"><span id="dSet"></span><span id="dMidi"><span id="midiState"></span><select id="midiPick" class="hidden" aria-label="MIDI device for fader 1"></select><span id="dUpd" class="hidden">· Update ready: it loads at a song change once you leave full screen (Esc)</span></span><span id="dNext"></span></div>
   <div id="fsHint">Click anywhere for full screen</div>
   <div id="dgoto" class="hidden"></div>
 </div>
@@ -307,6 +307,7 @@
     var stage = $("stage"), keepAt = shownSlug === x.s ? stage.scrollTop : 0;
     fit();                                    // size first, so chart-fit measures the final size
     if (html !== lastHtml) { $("chart").innerHTML = html; lastHtml = html; }
+    if (shownSlug !== null && shownSlug !== x.s && applyUpdate()) return;   // a newer page loads between songs
     if (shownSlug !== x.s) { stage.style.scrollBehavior = "auto"; stage.scrollTop = 0; stage.style.scrollBehavior = ""; motor(1, true); }
     else stage.scrollTop = keepAt;
     shownSlug = x.s;
@@ -322,8 +323,29 @@
   }
   // Any click or tap on the display, any time it isn't full screen, makes it full screen. Esc leaves full screen.
   $("dsp").addEventListener("click", fullscreen);
-  document.addEventListener("fullscreenchange", function () { paintFull(); if (DISPLAY) setTimeout(fit, 0); });
+  document.addEventListener("fullscreenchange", function () { paintFull(); paintUpdate(); if (DISPLAY) setTimeout(fit, 0); });
   paintFull();
+
+  // ---------- stay current: a chart window left open picks up a newer version of the page ----------
+  // The published shared-db.js links show.html?v=<hash of the current build>. Once a minute the chart window asks
+  // for it (a unique query, so no browser or CDN cache answers); when the hash differs from its own, the newer page
+  // loads at the next song change (the chart starts at the top then anyway), never mid-song, and never in full
+  // screen, because a reload leaves full screen and only a click can go back. In full screen the footer says an
+  // update is waiting. The song and set survive the reload (they are saved in this browser).
+  var myVer = (location.search.match(/[?&]v=([^&]+)/) || [])[1] || "", pendingVer = null;
+  function checkVersion() {
+    fetch("shared-db.js?check=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (t) {
+      var m = t.match(/show\.html\?v=([0-9a-f]{6,})/);
+      if (m && m[1] !== myVer) { pendingVer = m[1]; paintUpdate(); }
+    }).catch(function () {});
+  }
+  function paintUpdate() { $("dUpd").classList.toggle("hidden", !(pendingVer && document.fullscreenElement)); }
+  function applyUpdate() {
+    if (!pendingVer || document.fullscreenElement) { paintUpdate(); return false; }
+    location.replace("show.html?v=" + pendingVer + "&display");
+    return true;
+  }
+  if (DISPLAY) { setTimeout(checkVersion, 8000); setInterval(checkVersion, 60000); }
   window.addEventListener("resize", function () { if (DISPLAY) setTimeout(fit, 0); });
 
   // ---------- X-Touch: fader 1 scrolls the chart (display window; Chrome / Edge) ----------
