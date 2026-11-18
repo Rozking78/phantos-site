@@ -298,7 +298,9 @@
   // of the song. The fader moves the chart only while a finger is on it, so the motor can never scroll the chart by
   // itself; the rest of the time the motor follows the chart (every new song drives it to the top).
   // The browser sees only MIDI devices on this computer: USB, or the unit's Ethernet port through a network-MIDI
-  // session, which shows up under the session's name; pick that once below and it is remembered.
+  // session, which shows up under the session's name ("Network RTP Session 1"), not "X-Touch". So every connected
+  // MIDI input is heard, and touching fader 1 on one of them makes it the fader device (proven 2026-11-18: in network
+  // mode the USB port stays listed but sends nothing). The picker below can also fix a choice; it is remembered.
   var midi = null, midiIn = null, midiOut = null, midiName = null, f1Touched = false, motorAt = -1, motorT = null, midiT = null;
   function motor(v, force) {
     if (!midiOut || f1Touched) return;
@@ -323,26 +325,43 @@
   }
   function midiState(text, ok) { $("midiState").textContent = text; $("dMidi").classList.toggle("ok", !!ok); }
   function savedMidi() { try { return localStorage.getItem("nlb-show-midi"); } catch (_) { return null; } }
-  function connectMidi() {
-    var ins = [], outs = [], saved = savedMidi();
-    midi.inputs.forEach(function (p) { ins.push(p); });
-    midi.outputs.forEach(function (p) { outs.push(p); });
-    var isXT = function (p) { return /x-?touch/i.test(p.name || "") && !/\bext\b/i.test(p.name || ""); };
-    var pick = (saved && ins.find(function (p) { return p.name === saved; })) || ins.find(isXT) || null;
-    if (midiIn && midiIn !== pick) midiIn.onmidimessage = null;
-    midiIn = pick;
-    midiOut = pick ? (outs.find(function (o) { return o.name === pick.name; }) || null) : null;
-    if (midiIn) midiIn.onmidimessage = onMidi;
-    var sel = $("midiPick");
-    // Always offered when any MIDI device exists: with the unit on Ethernet its USB port can still be listed, silent,
-    // so the automatic choice must never be the only one.
-    sel.innerHTML = '<option value="">' + (pick ? "Automatic (X-Touch)" : "Choose a MIDI device…") + "</option>" +
-      ins.map(function (p) { return "<option" + (pick === p ? " selected" : "") + ">" + esc(p.name || "MIDI device") + "</option>"; }).join("");
-    sel.classList.toggle("hidden", !ins.length);
-    if (pick) midiState("Fader 1 scrolls:", true);
-    else midiState(ins.length ? "No X-Touch found." : "No X-Touch on this computer");
+  var midiIns = [];
+  function live(p) { return p.state !== "disconnected"; }               // an unplugged device can stay listed
+  function isXT(p) { return /x-?touch/i.test(p.name || "") && !/\bext\b/i.test(p.name || ""); }
+  function savedLive() { var s = savedMidi(); return s ? midiIns.find(function (p) { return p.name === s; }) || null : null; }
+  function adopt(pick) {                                                   // this input (+ its same-named output)
+    midiIn = pick; midiOut = null;
+    if (pick) midi.outputs.forEach(function (o) { if (!midiOut && live(o) && o.name === pick.name) midiOut = o; });
     var name = pick ? pick.name : null;
-    if (name !== midiName) { midiName = name; f1Touched = false; followChart(true); }
+    if (name !== midiName) { midiName = name; f1Touched = false; motorAt = -1; followChart(true); }
+    paintMidi();
+  }
+  function paintMidi() {
+    var sel = $("midiPick");
+    // Always offered when any MIDI device exists, so the automatic choice is never the only one.
+    sel.innerHTML = '<option value="">' + (midiIn ? "Automatic" : "Choose a MIDI device…") + "</option>" +
+      midiIns.map(function (p) { return "<option" + (midiIn === p ? " selected" : "") + ">" + esc(p.name || "MIDI device") + "</option>"; }).join("");
+    sel.classList.toggle("hidden", !midiIns.length);
+    if (midiIn) midiState("Fader 1 scrolls:", true);
+    else midiState(midiIns.length ? "Touch fader 1 to connect the X-Touch, or choose:" : "No X-Touch on this computer");
+  }
+  function listen(port) {
+    port.onmidimessage = function (e) {
+      if (port !== midiIn) {
+        var d = e.data, touch = d && d.length >= 3 && d[0] === 0x90 && d[1] === 0x68 && d[2] >= 64;
+        // A fader-1 touch claims the device, unless a remembered choice is connected (or it is an Extender port).
+        if (!touch || /\bext\b/i.test(port.name || "") || savedLive()) return;
+        adopt(port);
+      }
+      onMidi(e);
+    };
+  }
+  function connectMidi() {
+    midiIns = [];
+    midi.inputs.forEach(function (p) { if (live(p)) midiIns.push(p); });
+    var keep = midiIn && midiIns.indexOf(midiIn) >= 0 ? midiIn : null;    // a claimed device stays claimed
+    midiIns.forEach(listen);
+    adopt(savedLive() || keep || midiIns.find(isXT) || null);
   }
   if (DISPLAY) {
     $("dMidi").addEventListener("click", function (e) { e.stopPropagation(); });   // the picker never triggers full screen
