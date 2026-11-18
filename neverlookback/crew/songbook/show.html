@@ -88,7 +88,7 @@
     <span class="zoom"><button type="button" data-zoom="-1" aria-label="Smaller chart text">A−</button><button type="button" data-zoom="1" aria-label="Larger chart text">A+</button></span>
     <a class="btn" href="./" style="display:inline-flex;align-items:center;text-decoration:none">Songbook</a>
     <span id="status"></span>
-    <span class="keys">→ next song · ← back · number + Enter jumps · ↓ ↑ / Space scroll the chart · + − text size</span>
+    <span class="keys">→ next song · ← back · number + Enter jumps · ↓ ↑ / Space scroll the chart · + − text size · X-Touch channel 1: fader scrolls, SOLO back, MUTE next, REC next set</span>
   </header>
   <ol id="list"></ol>
   <div id="goto" class="hidden"></div>
@@ -363,16 +363,42 @@
     var st = $("stage");
     st.style.scrollBehavior = "auto"; st.scrollTop = (1 - v) * (st.scrollHeight - st.clientHeight); st.style.scrollBehavior = "";
   }
+  // Messages only one mode sends tell the page which mode the unit is in: MC = pitch bend (any fader), touch notes
+  // 104-109 (Ctrl has no such note), V-Pots CC 16-23, jog CC 60; Ctrl = faders CC 70-77, encoders CC 80-87, jog CC 88.
+  function learnMode(d) {
+    var st = d[0] & 0xF0;
+    if (st === 0xE0 || (st === 0x90 && d[1] >= 0x68 && d[1] <= 0x6D) || (st === 0xB0 && ((d[1] >= 0x10 && d[1] <= 0x17) || d[1] === 0x3C))) setMode("mc");
+    else if (st === 0xB0 && ((d[1] >= 0x46 && d[1] <= 0x4D) || (d[1] >= 0x50 && d[1] <= 0x58))) setMode("ctrl");
+  }
+  // Channel-1 strip buttons (captured from the unit 2026-11-18): MC REC/SOLO/MUTE = notes 0/8/16 (SELECT 24);
+  // Ctrl = notes 8/16/24 (SELECT 32). SOLO = previous song, MUTE = next song, REC = next set. Acts on the press.
+  var BUTTONS = { mc: { 0x00: "set", 0x08: "prev", 0x10: "next" }, ctrl: { 0x08: "set", 0x10: "prev", 0x18: "next" } };
   function onMidi(e) {
     var d = e.data; if (!d || d.length < 3) return;
+    learnMode(d);
     if ((d[0] === 0x90 || d[0] === 0x80) && (d[1] === TOUCH_MC || d[1] === TOUCH_CTRL)) {   // finger on / off
       var m = d[1] === TOUCH_MC ? "mc" : "ctrl", on = d[0] === 0x90 && d[2] >= 64;
       held[m] = on;
       if (!on && m === ctlMode) followChart(true);                       // let go: the motor shows the true place
       return;
     }
-    if (d[0] === 0xE0) { setMode("mc"); if (held.mc) scrollToFader((d[1] | (d[2] << 7)) / 16383); }
-    else if (d[0] === 0xB0 && d[1] === CC_CTRL) { setMode("ctrl"); if (held.ctrl) scrollToFader(d[2] / 127); }
+    if (d[0] === 0x90 && d[2] >= 64 && BUTTONS[ctlMode][d[1]]) {
+      var act = BUTTONS[ctlMode][d[1]];
+      if (act === "prev") go(show.i - 1); else if (act === "next") go(show.i + 1); else nextSet();
+      return;
+    }
+    if (d[0] === 0xE0) { if (held.mc) scrollToFader((d[1] | (d[2] << 7)) / 16383); }
+    else if (d[0] === 0xB0 && d[1] === CC_CTRL) { if (held.ctrl) scrollToFader(d[2] / 127); }
+  }
+  // REC: the next gig set (the Master Setlist is the band's inventory, so it is skipped), with its name shown big.
+  var bannerT = null;
+  function nextSet() {
+    var gigs = sets().filter(function (s) { return s.kind !== "master"; }); if (!gigs.length) return;
+    var cur = currentSet(), k = gigs.findIndex(function (s) { return cur && s.id === cur.id; });
+    var s = gigs[(k + 1) % gigs.length];
+    pickSet(s.id);
+    var b = $("dgoto"); b.textContent = s.name || "Setlist"; b.classList.remove("hidden");
+    clearTimeout(bannerT); bannerT = setTimeout(function () { if (typed) flashTyped(); else b.classList.add("hidden"); }, 1600);
   }
   function midiState(text, ok) { $("midiState").textContent = text; $("dMidi").classList.toggle("ok", !!ok); }
   function savedMidi() { try { return localStorage.getItem("nlb-show-midi"); } catch (_) { return null; } }
@@ -380,6 +406,11 @@
   function live(p) { return p.state !== "disconnected"; }               // an unplugged device can stay listed
   function isXT(p) { return /x-?touch/i.test(p.name || "") && !/\bext\b/i.test(p.name || ""); }
   function savedLive() { var s = savedMidi(); return s ? midiIns.find(function (p) { return p.name === s; }) || null : null; }
+  // The device last claimed by a fader-1 touch is preferred after a reload, so buttons work before any touch.
+  function lastLive() {
+    var s = null; try { s = localStorage.getItem("nlb-show-midi-last"); } catch (_) {}
+    return s ? midiIns.find(function (p) { return p.name === s; }) || null : null;
+  }
   function adopt(pick) {                                                   // this input (+ its same-named output)
     midiIn = pick; midiOut = null;
     if (pick) midi.outputs.forEach(function (o) { if (!midiOut && live(o) && o.name === pick.name) midiOut = o; });
@@ -403,6 +434,7 @@
         // A fader-1 touch claims the device, unless a remembered choice is connected (or it is an Extender port).
         if (!touch || /\bext\b/i.test(port.name || "") || savedLive()) return;
         adopt(port);
+        try { localStorage.setItem("nlb-show-midi-last", port.name || ""); } catch (_) {}
       }
       onMidi(e);
     };
@@ -412,7 +444,7 @@
     midi.inputs.forEach(function (p) { if (live(p)) midiIns.push(p); });
     var keep = midiIn && midiIns.indexOf(midiIn) >= 0 ? midiIn : null;    // a claimed device stays claimed
     midiIns.forEach(listen);
-    adopt(savedLive() || keep || midiIns.find(isXT) || null);
+    adopt(savedLive() || keep || lastLive() || midiIns.find(isXT) || null);
   }
   if (DISPLAY) {
     $("dMidi").addEventListener("click", function (e) { e.stopPropagation(); });   // the picker never triggers full screen
