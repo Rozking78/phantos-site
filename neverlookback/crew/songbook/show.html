@@ -59,6 +59,9 @@
   #chart .empty { white-space:normal; color:var(--muted); font:3vh var(--font-body); }
   #dsp .bottom { display:flex; justify-content:space-between; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
   #dsp .bottom b { color:var(--ink); }
+  #dMidi { display:inline-flex; align-items:center; gap:1vw; font-size:2vh; }
+  #dMidi.ok #midiState { color:var(--denim); }
+  #midiPick { font:inherit; color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:6px; padding:.3vh .6vw; max-width:30vw; }
   /* Not full screen yet: a small hint (never blocks the chart); a click anywhere on the display goes full screen. */
   .zoom { display:inline-flex; gap:6px; }
   .zoom button { min-width:44px; min-height:44px; padding:0 12px; border-radius:8px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); font-weight:700; cursor:pointer; }
@@ -90,7 +93,7 @@
   <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span><span class="zoom"><button type="button" data-zoom="-1" aria-label="Smaller chart text">A−</button><button type="button" data-zoom="1" aria-label="Larger chart text">A+</button></span></div>
   <div class="notes hidden" id="dNotes"></div>
   <div id="stage"><div id="chart"></div><span id="probe" aria-hidden="true">00000000000000000000</span></div>
-  <div class="bottom"><span id="dSet"></span><span id="dNext"></span></div>
+  <div class="bottom"><span id="dSet"></span><span id="dMidi"><span id="midiState"></span><select id="midiPick" class="hidden" aria-label="MIDI device for fader 1"></select></span><span id="dNext"></span></div>
   <div id="fsHint">Click anywhere for full screen</div>
   <div id="dgoto" class="hidden"></div>
 </div>
@@ -270,7 +273,7 @@
     var stage = $("stage"), keepAt = shownSlug === x.s ? stage.scrollTop : 0;
     fit();                                    // size first, so chart-fit measures the final size
     if (html !== lastHtml) { $("chart").innerHTML = html; lastHtml = html; }
-    if (shownSlug !== x.s) { stage.style.scrollBehavior = "auto"; stage.scrollTop = 0; stage.style.scrollBehavior = ""; }
+    if (shownSlug !== x.s) { stage.style.scrollBehavior = "auto"; stage.scrollTop = 0; stage.style.scrollBehavior = ""; motor(1, true); }
     else stage.scrollTop = keepAt;
     shownSlug = x.s;
     $("dSet").textContent = set.name || "";
@@ -288,6 +291,77 @@
   document.addEventListener("fullscreenchange", function () { paintFull(); if (DISPLAY) setTimeout(fit, 0); });
   paintFull();
   window.addEventListener("resize", function () { if (DISPLAY) setTimeout(fit, 0); });
+
+  // ---------- X-Touch: fader 1 scrolls the chart (display window; Chrome / Edge) ----------
+  // Mackie Control, as the unit sends it with no host handshake (captured 2026-11-18): fader 1 position = pitch bend,
+  // channel 1, 14-bit; finger on fader 1 = note 104 velocity 127, finger off = note 104 velocity 0. Fader up = top
+  // of the song. The fader moves the chart only while a finger is on it, so the motor can never scroll the chart by
+  // itself; the rest of the time the motor follows the chart (every new song drives it to the top).
+  // The browser sees only MIDI devices on this computer: USB, or the unit's Ethernet port through a network-MIDI
+  // session, which shows up under the session's name; pick that once below and it is remembered.
+  var midi = null, midiIn = null, midiOut = null, midiName = null, f1Touched = false, motorAt = -1, motorT = null, midiT = null;
+  function motor(v, force) {
+    if (!midiOut || f1Touched) return;
+    var n = Math.round(Math.max(0, Math.min(1, v)) * 16383);
+    if (n === motorAt && !force) return;
+    motorAt = n;
+    try { midiOut.send([0xE0, n & 127, n >> 7]); } catch (_) {}
+  }
+  function scrollFraction() { var st = $("stage"), max = st.scrollHeight - st.clientHeight; return max > 0 ? st.scrollTop / max : 0; }
+  function followChart(force) { motor(1 - scrollFraction(), force === true); }
+  function onMidi(e) {
+    var d = e.data; if (!d || d.length < 3) return;
+    if ((d[0] === 0x90 || d[0] === 0x80) && d[1] === 0x68) {           // finger on / off fader 1
+      f1Touched = d[0] === 0x90 && d[2] >= 64;
+      if (!f1Touched) followChart(true);
+      return;
+    }
+    if (d[0] === 0xE0 && f1Touched) {                                    // fader 1 moved by hand
+      var st = $("stage"), v = (d[1] | (d[2] << 7)) / 16383;
+      st.style.scrollBehavior = "auto"; st.scrollTop = (1 - v) * (st.scrollHeight - st.clientHeight); st.style.scrollBehavior = "";
+    }
+  }
+  function midiState(text, ok) { $("midiState").textContent = text; $("dMidi").classList.toggle("ok", !!ok); }
+  function savedMidi() { try { return localStorage.getItem("nlb-show-midi"); } catch (_) { return null; } }
+  function connectMidi() {
+    var ins = [], outs = [], saved = savedMidi();
+    midi.inputs.forEach(function (p) { ins.push(p); });
+    midi.outputs.forEach(function (p) { outs.push(p); });
+    var isXT = function (p) { return /x-?touch/i.test(p.name || "") && !/\bext\b/i.test(p.name || ""); };
+    var pick = (saved && ins.find(function (p) { return p.name === saved; })) || ins.find(isXT) || null;
+    if (midiIn && midiIn !== pick) midiIn.onmidimessage = null;
+    midiIn = pick;
+    midiOut = pick ? (outs.find(function (o) { return o.name === pick.name; }) || null) : null;
+    if (midiIn) midiIn.onmidimessage = onMidi;
+    var sel = $("midiPick");
+    // Always offered when any MIDI device exists: with the unit on Ethernet its USB port can still be listed, silent,
+    // so the automatic choice must never be the only one.
+    sel.innerHTML = '<option value="">' + (pick ? "Automatic (X-Touch)" : "Choose a MIDI device…") + "</option>" +
+      ins.map(function (p) { return "<option" + (pick === p ? " selected" : "") + ">" + esc(p.name || "MIDI device") + "</option>"; }).join("");
+    sel.classList.toggle("hidden", !ins.length);
+    if (pick) midiState("Fader 1 scrolls:", true);
+    else midiState(ins.length ? "No X-Touch found." : "No X-Touch on this computer");
+    var name = pick ? pick.name : null;
+    if (name !== midiName) { midiName = name; f1Touched = false; followChart(true); }
+  }
+  if (DISPLAY) {
+    $("dMidi").addEventListener("click", function (e) { e.stopPropagation(); });   // the picker never triggers full screen
+    $("midiPick").addEventListener("change", function () {
+      try { if (this.value) localStorage.setItem("nlb-show-midi", this.value); else localStorage.removeItem("nlb-show-midi"); } catch (_) {}
+      if (midi) connectMidi();
+    });
+    $("stage").addEventListener("scroll", function () {
+      if (motorT) return;
+      motorT = setTimeout(function () { motorT = null; followChart(); }, 40);
+    }, { passive: true });
+    if (navigator.requestMIDIAccess) {
+      navigator.requestMIDIAccess().then(function (m) {
+        midi = m;
+        m.onstatechange = function () { clearTimeout(midiT); midiT = setTimeout(connectMidi, 250); };  // plugged in / out
+        connectMidi();
+      }, function () { midiState("Fader: MIDI is blocked for this site (Chrome site settings)"); });
+    } else midiState("Fader needs Chrome or Edge");
+  }
 
   function render() { if (DISPLAY) renderDsp(); else renderCtl(); }
 
