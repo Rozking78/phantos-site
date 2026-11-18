@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="color-scheme" content="dark">
+<title>Never Look Back · Show</title>
+<script>window.NLB_NO_BAR = true;</script>
+<script src="shared-db.js"></script>
+<style>
+  :root { --bg:#0b0e13; --panel:#141a23; --ink:#eef1f5; --muted:#8e99a8; --rule:#273141; --accent:#8fb0e6; --chord:#f0bc60; --now:#1d2a3f; --hot:#ef6b5f; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  button, select { font:inherit; color:inherit; }
+  .btn { min-height:44px; padding:0 16px; border-radius:8px; border:1px solid var(--rule); background:var(--panel); cursor:pointer; }
+  .btn.solid { background:var(--accent); color:#08101c; border-color:var(--accent); font-weight:700; }
+  .hidden { display:none !important; }
+
+  /* ---------- controller: the setlist fills the page ---------- */
+  #ctl { display:flex; flex-direction:column; height:100%; }
+  #ctl header { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:12px 16px; border-bottom:1px solid var(--rule); background:var(--panel); }
+  #ctl header h1 { font-size:15px; letter-spacing:.12em; text-transform:uppercase; margin:0 12px 0 0; color:var(--muted); }
+  #ctl select { min-height:44px; padding:0 10px; border-radius:8px; border:1px solid var(--rule); background:var(--bg); }
+  #ctl .keys { margin-left:auto; color:var(--muted); font-size:13px; }
+  #list { flex:1; overflow:auto; margin:0; padding:8px 0 40px; list-style:none; }
+  #list li { display:grid; grid-template-columns:4.2ch 1fr auto; gap:14px; align-items:baseline; padding:10px 20px; border-bottom:1px solid var(--rule); cursor:pointer; font-size:clamp(18px, 2.4vw, 30px); }
+  #list li .n { color:var(--muted); font-variant-numeric:tabular-nums; text-align:right; }
+  #list li .meta { color:var(--muted); font-size:.6em; white-space:nowrap; }
+  #list li .nochart { color:var(--hot); }
+  #list li.now { background:var(--now); box-shadow:inset 6px 0 0 var(--accent); }
+  #list li.now .t { font-weight:700; }
+  #list li.next .n::after { content:" next"; font-size:.5em; color:var(--accent); }
+  #goto { position:fixed; right:24px; bottom:24px; padding:14px 22px; border-radius:12px; background:var(--accent); color:#08101c; font-size:28px; font-weight:800; }
+  #status { color:var(--muted); font-size:13px; }
+
+  /* ---------- display: the chart fills a portrait monitor ---------- */
+  #dsp { display:flex; flex-direction:column; height:100%; padding:2.2vh 3vw 1.6vh; }
+  #dsp .top { display:flex; align-items:baseline; gap:2vw; border-bottom:2px solid var(--rule); padding-bottom:1vh; }
+  #dsp .num { color:var(--muted); font-size:3.2vh; font-variant-numeric:tabular-nums; }
+  #dsp h2 { margin:0; font-size:4.4vh; line-height:1.1; flex:1; }
+  #dsp .facts { color:var(--chord); font-size:2.4vh; white-space:nowrap; font-weight:600; }
+  #dsp .notes { color:var(--muted); font-size:2vh; margin-top:.8vh; }
+  #stage { flex:1; position:relative; overflow:hidden; margin-top:1.2vh; }
+  #chart { margin:0; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre; line-height:1.18; position:absolute; inset:0; }
+  #chart.cols { column-count:2; column-gap:3vw; column-fill:auto; }
+  #chart .chord { color:var(--chord); font-weight:700; }
+  #chart .prose { white-space:pre-wrap; color:var(--muted); font-style:italic; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
+  #probe { position:absolute; visibility:hidden; white-space:pre; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; left:0; top:0; }
+  #chart .sec { color:var(--accent); font-weight:700; }
+  #chart .sec, #chart .blk { break-inside:avoid; }
+  #chart .empty { white-space:normal; color:var(--muted); font-family:inherit; font-size:3vh; }
+  #dsp .bottom { display:flex; justify-content:space-between; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
+  #dsp .bottom b { color:var(--ink); }
+  #fsHint { position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.72); font-size:3vh; text-align:center; cursor:pointer; }
+  #dgoto { position:fixed; right:3vw; top:2vh; padding:1vh 2vw; border-radius:1vh; background:var(--accent); color:#08101c; font-size:4vh; font-weight:800; }
+</style>
+</head><body>
+
+<div id="ctl" class="hidden">
+  <header>
+    <h1>Never Look Back · Show</h1>
+    <select id="setPick" aria-label="Setlist"></select>
+    <button class="btn solid" id="openDisplay" type="button">Open chart display</button>
+    <button class="btn" id="ctlFull" type="button">Full screen</button>
+    <a class="btn" href="./" style="display:inline-flex;align-items:center;text-decoration:none">Songbook</a>
+    <span id="status"></span>
+    <span class="keys">→ / Space next · ← back · number + Enter jumps</span>
+  </header>
+  <ol id="list"></ol>
+  <div id="goto" class="hidden"></div>
+</div>
+
+<div id="dsp" class="hidden">
+  <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span></div>
+  <div class="notes hidden" id="dNotes"></div>
+  <div id="stage"><pre id="chart"></pre><span id="probe" aria-hidden="true">00000000000000000000</span></div>
+  <div class="bottom"><span id="dSet"></span><span id="dNext"></span></div>
+  <div id="fsHint">Click anywhere to go full screen<br><small>then use → ← or type a number and Enter</small></div>
+  <div id="dgoto" class="hidden"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var DISPLAY = /(^|[?&])display\b/.test(location.search);
+  var $ = function (id) { return document.getElementById(id); };
+  var bus = ("BroadcastChannel" in window) ? new BroadcastChannel("nlb-show") : null;
+  var TITLES = {};             // slug -> [title, artist]
+  var db = { songs: {}, setlists: {}, charts: {} };
+  var show = load() || { set: null, i: 0 };
+  var typed = "", typedT = null;
+
+  function load() { try { return JSON.parse(localStorage.getItem("nlb-show") || "null"); } catch (_) { return null; } }
+  function save() { try { localStorage.setItem("nlb-show", JSON.stringify(show)); } catch (_) {} }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  var docId = function (slug) { return String(slug).replace(/[^A-Za-z0-9_\-.~:@+]/g, "_"); };
+
+  function sets() {
+    return Object.keys(db.setlists).map(function (id) { return Object.assign({ id: id }, db.setlists[id]); })
+      .sort(function (a, b) { return (a.kind === "master") - (b.kind === "master") || (a.createdAt || 0) - (b.createdAt || 0); });
+  }
+  function currentSet() {
+    var all = sets(); if (!all.length) return null;
+    var s = all.find(function (x) { return x.id === show.set; });
+    if (!s) {
+      var active = null; try { active = localStorage.getItem("nlb-active-set"); } catch (_) {}
+      s = all.find(function (x) { return x.id === active && x.kind !== "master"; }) || all.find(function (x) { return x.kind !== "master"; }) || all[0];
+      show.set = s.id; show.i = 0;
+    }
+    return s;
+  }
+  function items(set) { return (set && set.items || []).filter(function (x) { return x && x.s; }); }
+  function title(slug) { return (TITLES[slug] || [slug.replace(/-/g, " ")])[0]; }
+  function artist(slug) { var t = TITLES[slug]; return t && t[1] ? t[1] : ""; }
+  function info(slug) { return db.songs[docId(slug)] || {}; }
+  function chart(slug) { var c = db.charts[docId(slug)]; return c && c.text ? c.text : ""; }
+  function facts(slug) {
+    var f = info(slug), out = [];
+    if (f.key) out.push("Key " + f.key);
+    if (f.capo && !/^no/i.test(String(f.capo))) out.push("Capo " + f.capo);
+    if (f.tuning && !/^E A D G B E$/i.test(String(f.tuning).trim())) out.push(f.tuning);
+    if (f.bpm) out.push("♩" + f.bpm);
+    return out.join(" · ");
+  }
+
+  // ---------- navigation (same keys in both windows; the state is shared) ----------
+  function go(i, from) {
+    var n = items(currentSet()).length; if (!n) return;
+    show.i = Math.max(0, Math.min(n - 1, i)); save();
+    if (bus && from !== "bus") bus.postMessage(show);
+    render();
+  }
+  function pickSet(id) { show.set = id; show.i = 0; save(); if (bus) bus.postMessage(show); render(); }
+  function flashTyped() {
+    var box = $(DISPLAY ? "dgoto" : "goto");
+    box.textContent = typed ? "Go to " + typed : ""; box.classList.toggle("hidden", !typed);
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) && e.key !== "Enter") return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (/^[0-9]$/.test(k)) { typed = (typed + k).slice(-3); clearTimeout(typedT); typedT = setTimeout(function () { typed = ""; flashTyped(); }, 4000); flashTyped(); e.preventDefault(); return; }
+    if (k === "Enter" && typed) { var n = parseInt(typed, 10); typed = ""; flashTyped(); if (n >= 1) go(n - 1); e.preventDefault(); return; }
+    if (k === "Escape" && typed) { typed = ""; flashTyped(); return; }
+    if (k === "Backspace" && typed) { typed = typed.slice(0, -1); flashTyped(); e.preventDefault(); return; }
+    if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " ") { go(show.i + 1); e.preventDefault(); }
+    else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") { go(show.i - 1); e.preventDefault(); }
+    else if (k === "Home") { go(0); e.preventDefault(); }
+    else if (k === "End") { go(1e9); e.preventDefault(); }
+    else if ((k === "f" || k === "F") && DISPLAY) { fullscreen(); }
+  });
+  if (bus) bus.onmessage = function (m) { if (m.data && m.data.set) { show = m.data; save(); render(); } };
+  window.addEventListener("storage", function (e) { if (e.key === "nlb-show") { var s = load(); if (s) { show = s; render(); } } });
+
+  // ---------- controller ----------
+  function renderCtl() {
+    var set = currentSet(), list = items(set), all = sets();
+    $("setPick").innerHTML = all.map(function (s) {
+      return '<option value="' + esc(s.id) + '"' + (set && s.id === set.id ? " selected" : "") + ">" + esc(s.name || "Setlist") + " (" + items(s).length + ")</option>";
+    }).join("");
+    $("list").innerHTML = list.map(function (x, i) {
+      var cls = i === show.i ? "now" : i === show.i + 1 ? "next" : "";
+      var f = facts(x.s), has = !!chart(x.s);
+      return '<li class="' + cls + '" data-i="' + i + '"><span class="n">' + (i + 1) + '</span><span class="t">' + esc(title(x.s)) +
+        (artist(x.s) ? ' <span class="meta">' + esc(artist(x.s)) + "</span>" : "") + '</span><span class="meta">' + esc(f) +
+        (has ? "" : ' <span class="nochart">no chart</span>') + "</span></li>";
+    }).join("") || '<li><span></span><span class="meta">This setlist has no songs.</span><span></span></li>';
+    var now = $("list").querySelector(".now"); if (now) now.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+  $("list").addEventListener("click", function (e) { var li = e.target.closest("li[data-i]"); if (li) go(+li.dataset.i); });
+  $("setPick").addEventListener("change", function () { pickSet(this.value); this.blur(); });
+  $("ctlFull").onclick = function () { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()).catch(function () {}); };
+  var displayWin = null;
+  $("openDisplay").onclick = async function () {
+    var url = "show.html?display", feat = "popup,width=1080,height=1920";
+    try {   // Chrome/Edge: put the chart window straight onto the other monitor.
+      if ("getScreenDetails" in window) {
+        var d = await window.getScreenDetails();
+        var other = d.screens.find(function (s) { return s !== d.currentScreen; });
+        if (other) feat = "popup,left=" + other.availLeft + ",top=" + other.availTop + ",width=" + other.availWidth + ",height=" + other.availHeight;
+      }
+    } catch (_) { /* permission refused: open a window to drag across */ }
+    displayWin = window.open(url, "nlb-show-display", feat);
+    $("status").textContent = displayWin ? "Display open. Click it once to make it full screen." : "Pop-up blocked: allow pop-ups for phantos.io.";
+  };
+
+  // ---------- display ----------
+  var CHORD_TOKEN = /^(\|+|[-x/:.]+|N\.?C\.?|\(?[A-G](#|b)?(m|maj|min|sus|dim|aug|add|M)?\d*(\/[A-G](#|b)?)?\)?\*?|[xX]\d+|\d+[xX])$/;
+  function kind(line) {
+    var t = line.trim();
+    if (!t) return "blank";
+    if (/^[(\[][^()\[\]]*[)\]]$/.test(t) && t.length < 40) return "sec";
+    if (/[-|]{6,}/.test(t) && /\|/.test(t)) return "tab";                       // tablature: never wrap
+    return t.split(/\s+/).every(function (w) { return CHORD_TOKEN.test(w); }) ? "chord" : "text";
+  }
+  // Chord lines and the lyric right under one keep their exact spacing; notes and other prose may wrap.
+  function linesHTML(lines) {
+    var kinds = lines.map(kind), out = [];
+    maxch = 0;
+    var keep = function (line) { maxch = Math.max(maxch, line.replace(/\s+$/, "").length); return line; };
+    lines.forEach(function (line, i) {
+      var k = kinds[i];
+      if (k === "blank") { if (out.length && out[out.length - 1] !== "") out.push(""); return; }   // one blank line at most
+      if (k === "sec") out.push('<span class="sec">' + esc(keep(line)) + "</span>");
+      else if (k === "chord") out.push('<span class="chord">' + esc(keep(line)) + "</span>");
+      // A lyric under a chord line keeps its spacing, unless the paste lost its line breaks (very long line): then wrap.
+      else if (k === "tab" || (kinds[i - 1] === "chord" && line.length <= 72)) out.push(esc(keep(line)));
+      else out.push('<span class="prose">' + esc(line.trim()) + "</span>");
+    });
+    while (out.length && out[out.length - 1] === "") out.pop();
+    return out.join("\n");
+  }
+  var maxch = 0;      // characters in the widest line that keeps its spacing (chords, lyrics under chords, tab)
+  function chartHTML(text, slug) {
+    var lines = text.replace(/\r/g, "").split("\n");
+    // Drop the chart's own header lines (title, artist, "Capo: ...") — they're in the header bar already.
+    var t = title(slug).toLowerCase(), a = artist(slug).toLowerCase();
+    while (lines.length && (!lines[0].trim() || /^capo:/i.test(lines[0].trim()) || /^(tuning|key):/i.test(lines[0].trim()) ||
+           lines[0].trim().toLowerCase() === t || (a && lines[0].trim().toLowerCase() === a) || /^(bruce springsteen|by )/i.test(lines[0].trim()))) lines.shift();
+    return linesHTML(lines);
+  }
+  function fit() {
+    var stage = $("stage"), pre = $("chart");
+    var probe = $("probe");
+    var fits = function (px, cols) {
+      pre.classList.toggle("cols", cols); pre.style.fontSize = px + "px"; probe.style.fontSize = px + "px";
+      var gap = cols ? parseFloat(getComputedStyle(pre).columnGap) || 0 : 0;
+      var colW = cols ? (stage.clientWidth - gap) / 2 : stage.clientWidth;
+      pre.style.setProperty("--colw", Math.floor(colW) + "px");
+      if (maxch * (probe.getBoundingClientRect().width / 20) > colW) return false;   // a kept line would run into the next column
+      return pre.scrollHeight <= stage.clientHeight + 1 && pre.scrollWidth <= stage.clientWidth + 1;
+    };
+    var best = function (cols) { var lo = 8, hi = 90; while (hi - lo > 0.5) { var mid = (lo + hi) / 2; if (fits(mid, cols)) lo = mid; else hi = mid; } return lo; };
+    var one = best(false), two = one < 26 ? best(true) : 0;
+    if (two > one * 1.15) fits(two, true); else fits(one, false);
+  }
+  function renderDsp() {
+    var set = currentSet(), list = items(set), x = list[show.i];
+    if (!x) { $("dTitle").textContent = set ? "No songs in " + (set.name || "this setlist") : "Loading…"; $("chart").innerHTML = ""; return; }
+    var f = info(x.s), next = list[show.i + 1], text = chart(x.s);
+    $("dNum").textContent = (show.i + 1) + " / " + list.length;
+    $("dTitle").textContent = title(x.s);
+    $("dFacts").textContent = facts(x.s);
+    var notes = [f.notes, x.note].filter(Boolean).join(" · ");
+    $("dNotes").textContent = notes; $("dNotes").classList.toggle("hidden", !notes);
+    $("chart").innerHTML = text ? chartHTML(text, x.s) : '<div class="empty">No chart for this song yet.<br>Add one in the songbook and it appears here.</div>';
+    $("dSet").textContent = set.name || "";
+    $("dNext").innerHTML = next ? "Next: <b>" + (show.i + 2) + ". " + esc(title(next.s)) + "</b>" : "<b>End of set</b>";
+    setTimeout(fit, 0);
+  }
+  function fullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {}); }
+  $("fsHint").onclick = function () { fullscreen(); $("fsHint").classList.add("hidden"); };
+  document.addEventListener("fullscreenchange", function () { $("fsHint").classList.toggle("hidden", !!document.fullscreenElement || $("fsHint").dataset.dismissed === "1"); if (DISPLAY) setTimeout(fit, 0); });
+  $("fsHint").addEventListener("click", function () { $("fsHint").dataset.dismissed = "1"; });
+  window.addEventListener("resize", function () { if (DISPLAY) setTimeout(fit, 0); });
+
+  function render() { if (DISPLAY) renderDsp(); else renderCtl(); }
+
+  // ---------- data: the same shared songbook the band edits, live ----------
+  $(DISPLAY ? "dsp" : "ctl").classList.remove("hidden");
+  fetch("songs.json", { cache: "force-cache" }).then(function (r) { return r.json(); }).then(function (t) { TITLES = t; render(); }).catch(function () {});
+  window.claude.use("db").then(function (api) {
+    ["songs", "setlists", "charts"].forEach(function (col) {
+      api.collection(col).onSnapshot(function (snap) {
+        var m = {}; snap.docs.forEach(function (d) { m[d.id] = d.data(); }); db[col] = m; render();
+      });
+    });
+  }).catch(function () {
+    $(DISPLAY ? "dTitle" : "status").textContent = "Can't reach the shared songbook. Check the internet connection.";
+  });
+})();
+</script>
+</body></html>
