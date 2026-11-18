@@ -54,7 +54,9 @@
   #chart .empty { white-space:normal; color:var(--muted); font-family:inherit; font-size:3vh; }
   #dsp .bottom { display:flex; justify-content:space-between; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
   #dsp .bottom b { color:var(--ink); }
-  #fsHint { position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.72); font-size:3vh; text-align:center; cursor:pointer; }
+  /* Not full screen yet: a small hint (never blocks the chart); a click anywhere on the display goes full screen. */
+  #fsHint { position:fixed; left:50%; bottom:7vh; transform:translateX(-50%); z-index:5; padding:1.2vh 2.4vw; border-radius:999px; background:rgba(143,176,230,.92); color:#08101c; font-size:2.2vh; font-weight:700; text-align:center; pointer-events:none; max-width:90vw; }
+  #dsp.notfull { cursor:pointer; }
   #dgoto { position:fixed; right:3vw; top:2vh; padding:1vh 2vw; border-radius:1vh; background:var(--accent); color:#08101c; font-size:4vh; font-weight:800; }
 </style>
 </head><body>
@@ -79,7 +81,7 @@
   <div class="notes hidden" id="dNotes"></div>
   <div id="stage"><pre id="chart"></pre><span id="probe" aria-hidden="true">00000000000000000000</span></div>
   <div class="bottom"><span id="dSet"></span><span id="dNext"></span></div>
-  <div id="fsHint">Click anywhere to go full screen<br><small>→ ← change song · number + Enter jumps · ↓ ↑ Space scroll · + − size</small></div>
+  <div id="fsHint">Click anywhere for full screen</div>
   <div id="dgoto" class="hidden"></div>
 </div>
 
@@ -281,10 +283,16 @@
     $("dNext").innerHTML = next ? "Next: <b>" + (show.i + 2) + ". " + esc(title(next.s)) + "</b>" : "<b>End of set</b>";
     setTimeout(fit, 0);
   }
-  function fullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {}); }
-  $("fsHint").onclick = function () { fullscreen(); $("fsHint").classList.add("hidden"); };
-  document.addEventListener("fullscreenchange", function () { $("fsHint").classList.toggle("hidden", !!document.fullscreenElement || $("fsHint").dataset.dismissed === "1"); if (DISPLAY) setTimeout(fit, 0); });
-  $("fsHint").addEventListener("click", function () { $("fsHint").dataset.dismissed = "1"; });
+  function fullscreen() { if (!document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {}); }
+  function paintFull() {
+    var full = !!document.fullscreenElement;
+    $("fsHint").classList.toggle("hidden", full || !DISPLAY);
+    $("dsp").classList.toggle("notfull", !full);
+  }
+  // Any click or tap on the display, any time it isn't full screen, makes it full screen. Esc leaves full screen.
+  $("dsp").addEventListener("click", fullscreen);
+  document.addEventListener("fullscreenchange", function () { paintFull(); if (DISPLAY) setTimeout(fit, 0); });
+  paintFull();
   window.addEventListener("resize", function () { if (DISPLAY) setTimeout(fit, 0); });
 
   function render() { if (DISPLAY) renderDsp(); else renderCtl(); }
