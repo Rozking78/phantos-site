@@ -105,6 +105,17 @@
   }
   window.NLB_UNDO = { undo: undo, redo: redo, sizes: function () { return [undoStack.length, redoStack.length]; } };
 
+  /* = / + and - zoom the chart text on the songbook page: they press the page's own A+ / A- buttons
+     (whichever chart view is open), so the size is the page's normal setting. */
+  document.addEventListener("keydown", function (e) {
+    if (window.NLB_NO_BAR || e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target; if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    var act = (e.key === "=" || e.key === "+") ? "size-up" : (e.key === "-" || e.key === "_") ? "size-down" : null;
+    if (!act) return;
+    var btn = Array.prototype.find.call(document.querySelectorAll('[data-act="' + act + '"]'), function (b) { return b.offsetParent !== null && !b.disabled; });
+    if (btn) { e.preventDefault(); btn.click(); }
+  });
+
   function put(col, id, body) {
     var prev = state.docs[col][id];
     record(col, id, prev, body);
