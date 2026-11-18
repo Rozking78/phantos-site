@@ -60,6 +60,10 @@
   #dsp .bottom { display:flex; justify-content:space-between; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
   #dsp .bottom b { color:var(--ink); }
   /* Not full screen yet: a small hint (never blocks the chart); a click anywhere on the display goes full screen. */
+  .zoom { display:inline-flex; gap:6px; }
+  .zoom button { min-width:44px; min-height:44px; padding:0 12px; border-radius:8px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); font-weight:700; cursor:pointer; }
+  #dsp .zoom { align-self:center; margin-left:1.5vw; }
+  #dsp .zoom button { min-width:5.2vh; min-height:5.2vh; font-size:2.4vh; }
   #fsHint { position:fixed; left:50%; bottom:7vh; transform:translateX(-50%); z-index:5; padding:1.2vh 2.4vw; border-radius:999px; background:rgba(143,176,230,.92); color:#08101c; font-size:2.2vh; font-weight:700; text-align:center; pointer-events:none; max-width:90vw; }
   #dsp.notfull { cursor:pointer; }
   #dgoto { position:fixed; right:3vw; top:2vh; padding:1vh 2vw; border-radius:1vh; background:var(--accent); color:#08101c; font-size:4vh; font-weight:800; }
@@ -72,6 +76,7 @@
     <select id="setPick" aria-label="Setlist"></select>
     <button class="btn solid" id="openDisplay" type="button">Open chart display</button>
     <button class="btn" id="ctlFull" type="button">Full screen</button>
+    <span class="zoom"><button type="button" data-zoom="-1" aria-label="Smaller chart text">A−</button><button type="button" data-zoom="1" aria-label="Larger chart text">A+</button></span>
     <a class="btn" href="./" style="display:inline-flex;align-items:center;text-decoration:none">Songbook</a>
     <span id="status"></span>
     <span class="keys">→ next song · ← back · number + Enter jumps · ↓ ↑ / Space scroll the chart · + − text size</span>
@@ -82,7 +87,7 @@
 
 <div id="dsp" class="hidden">
   <div id="wm" aria-hidden="true"></div>
-  <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span></div>
+  <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span><span class="zoom"><button type="button" data-zoom="-1" aria-label="Smaller chart text">A−</button><button type="button" data-zoom="1" aria-label="Larger chart text">A+</button></span></div>
   <div class="notes hidden" id="dNotes"></div>
   <div id="stage"><pre id="chart"></pre><span id="probe" aria-hidden="true">00000000000000000000</span></div>
   <div class="bottom"><span id="dSet"></span><span id="dNext"></span></div>
@@ -166,6 +171,12 @@
     else if (k === "-" || k === "_") { cmd({ zoom: -1 }); e.preventDefault(); }
     else if ((k === "f" || k === "F") && DISPLAY) { fullscreen(); }
   });
+  // On-screen A− / A+ (both windows) do what − / + do; they never trigger the click-for-full-screen.
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-zoom]");
+    if (!b) return;
+    e.stopPropagation(); cmd({ zoom: +b.dataset.zoom });
+  }, true);
   // Scroll and size commands go to the chart display, wherever the key was pressed.
   function cmd(c) { if (DISPLAY) doCmd(c); if (bus) bus.postMessage({ cmd: c }); }
   function doCmd(c) {

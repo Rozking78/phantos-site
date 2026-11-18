@@ -83,7 +83,7 @@
       "@media (max-width:560px){.nlb-ur{gap:4px;right:8px}.nlb-ur button{min-width:44px;padding:0 10px}.nlb-ur .nlb-lbl{display:none}.nlb-ur .nlb-msg{max-width:40vw;font-size:12px}}";
     document.head.appendChild(css);
     bar = document.createElement("div"); bar.className = "nlb-ur";
-    bar.innerHTML = '<span class="nlb-msg"></span><a class="nlb-show" href="show.html" title="Show mode: setlist here, chart on a second screen">▶<span class="nlb-lbl"> Show</span></a><button type="button" class="nlb-theme" title="Switch light / dark"></button><button type="button" class="nlb-undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo">↶<span class="nlb-lbl"> Undo</span></button><button type="button" class="nlb-redo" title="Redo (Ctrl/⌘ Shift Z)" aria-label="Redo">↷<span class="nlb-lbl"> Redo</span></button>';
+    bar.innerHTML = '<span class="nlb-msg"></span><button type="button" class="nlb-zoom" data-z="size-down" title="Smaller chart text (−)" aria-label="Smaller chart text" hidden>A−</button><button type="button" class="nlb-zoom" data-z="size-up" title="Larger chart text (=)" aria-label="Larger chart text" hidden>A+</button><a class="nlb-show" href="show.html" title="Show mode: setlist here, chart on a second screen">▶<span class="nlb-lbl"> Show</span></a><button type="button" class="nlb-theme" title="Switch light / dark"></button><button type="button" class="nlb-undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo">↶<span class="nlb-lbl"> Undo</span></button><button type="button" class="nlb-redo" title="Redo (Ctrl/⌘ Shift Z)" aria-label="Redo">↷<span class="nlb-lbl"> Redo</span></button>';
     var themeBtn = bar.querySelector(".nlb-theme");
     var paintTheme = function () { var light = document.documentElement.getAttribute("data-theme") === "light"; themeBtn.innerHTML = light ? '☾<span class="nlb-lbl"> Dark</span>' : '☀<span class="nlb-lbl"> Light</span>'; themeBtn.setAttribute("aria-label", light ? "Dark mode" : "Light mode"); };
     themeBtn.onclick = function () {
@@ -93,6 +93,23 @@
       paintTheme();
     };
     paintTheme();
+    // A− / A+ stay in reach while a chart is open: they press the page's own size buttons (which scroll out of view).
+    var pagePress = function (act) {
+      var b = Array.prototype.find.call(document.querySelectorAll('[data-act="' + act + '"]'), function (x) { return x.offsetParent !== null && !x.disabled; });
+      if (b) b.click(); return !!b;
+    };
+    Array.prototype.forEach.call(bar.querySelectorAll(".nlb-zoom"), function (z) { z.onclick = function () { pagePress(z.dataset.z); }; });
+    // Checks are batched, and the buttons change only when they need to: writing `hidden` (even to the same value)
+    // is itself a mutation, and an unconditional write here would loop forever.
+    var zoomQueued = false;
+    var syncZoom = function () {
+      zoomQueued = false;
+      var open = Array.prototype.some.call(document.querySelectorAll('[data-act="size-up"]'), function (x) { return x.offsetParent !== null; });
+      Array.prototype.forEach.call(bar.querySelectorAll(".nlb-zoom"), function (z) { if (z.hidden !== !open) z.hidden = !open; });
+    };
+    new MutationObserver(function () { if (!zoomQueued) { zoomQueued = true; setTimeout(syncZoom, 120); } })
+      .observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden", "class"] });
+    syncZoom();
     bar.querySelector(".nlb-undo").onclick = undo; bar.querySelector(".nlb-redo").onclick = redo;
     document.body.appendChild(bar); paint();
     document.addEventListener("keydown", function (e) {
@@ -104,6 +121,16 @@
     });
   }
   window.NLB_UNDO = { undo: undo, redo: redo, sizes: function () { return [undoStack.length, redoStack.length]; } };
+
+  /* The band's print logo, dimmed, behind every chart on the songbook page (drawer and songbook views). A PNG, so it
+     looks the same everywhere; it sits under the text inside the chart box and never takes clicks. */
+  if (!window.NLB_NO_BAR) (function () {
+    var css = document.createElement("style");
+    css.textContent = ".chart{position:relative;z-index:0}" +
+      ".chart::before{content:'';position:absolute;left:0;right:0;top:0;bottom:0;max-height:1200px;" +
+      "background:url(nlb-print-logo-1000.png) center 18px / min(84%, 520px) auto no-repeat;opacity:.12;pointer-events:none;z-index:-1}";
+    (document.head || document.documentElement).appendChild(css);
+  })();
 
   /* = / + and - zoom the chart text on the songbook page: they press the page's own A+ / A- buttons
      (whichever chart view is open), so the size is the page's normal setting. */
