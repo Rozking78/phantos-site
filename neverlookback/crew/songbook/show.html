@@ -54,7 +54,6 @@
   /* Charts are drawn by the songbook's own renderer (chart-kit.js / chart-kit.css): same fonts, same 1-7 colours. */
   #chart { margin:0; padding-bottom:40vh; }
   #chart .chart { background:transparent; border:0; padding:0; min-height:0; overflow:visible; line-height:1.3; }
-  #chart .chart .lyric.wrap { white-space:pre-wrap; }
   #chart .deg-key { font-size:2vh; margin-bottom:1.2vh; }
   #probe { position:absolute; visibility:hidden; white-space:pre; font-family:var(--font-data); left:0; top:0; }
   #chart .empty { white-space:normal; color:var(--muted); font:3vh var(--font-body); }
@@ -187,7 +186,7 @@
     else if (c.scroll === "page") stage.scrollBy(0, c.dir * stage.clientHeight * 0.85);
     else if (c.scroll === "top") stage.scrollTo(0, 0);
     else if (c.scroll === "end") stage.scrollTo(0, stage.scrollHeight);
-    if (c.zoom) { zoom = Math.max(0.6, Math.min(2.2, zoom * (c.zoom > 0 ? 1.1 : 1 / 1.1))); try { localStorage.setItem("nlb-show-zoom", zoom); } catch (_) {} fit(); }
+    if (c.zoom) { zoom = Math.max(0.6, Math.min(2.2, zoom * (c.zoom > 0 ? 1.1 : 1 / 1.1))); try { localStorage.setItem("nlb-show-zoom", zoom); } catch (_) {} fit(); lastHtml = null; renderDsp(); }
   }
   if (bus) bus.onmessage = function (m) {
     if (m.data && m.data.cmd) { doCmd(m.data.cmd); return; }
@@ -230,50 +229,34 @@
   // ---------- display ----------
   // The chart is rendered by the songbook's own chartKit (chart-kit.js): chords and the words sung on them are
   // coloured by their number in the key (1-7), with the key strip above, exactly as in the songbook.
-  var maxch = 0;      // widest line that must keep its spacing; sets the text size
   var DEG = ["I", "II", "III", "IV", "V", "VI", "VII"];
-  // Guitar tab (string lines such as "e |--3--|" or "--2-2-2-2--|"): mostly dashes; like chord lines, it never wraps.
-  function tabLine(l) { var t = l.trim(), d = (t.match(/-/g) || []).length; return d >= 8 && d / t.length > 0.35; }
   function chartHTML(text, slug) {
     var lines = text.replace(/\r/g, "").split("\n");
     // Drop the chart's own header lines (title, artist, "Capo: ...") — they're in the header bar already.
     var t = title(slug).toLowerCase(), a = artist(slug).toLowerCase();
     while (lines.length && (!lines[0].trim() || /^capo:/i.test(lines[0].trim()) || /^(tuning|key):/i.test(lines[0].trim()) ||
            lines[0].trim().toLowerCase() === t || (a && lines[0].trim().toLowerCase() === a) || /^(bruce springsteen|by )/i.test(lines[0].trim()))) lines.shift();
-    // Lines longer than this were pasted without their line breaks; they wrap instead of shrinking the whole song.
-    // Chord lines can't wrap, so they always count; other lines count up to 72 characters.
-    var K = window.NLB_KIT, chordLine = function (l) {
-      var toks = l.trim().split(/\s+/).filter(Boolean), n = 0;
-      for (var i = 0; i < toks.length; i++) {
-        var bare = toks[i].replace(/^[(|]+|[)|]+$/g, "");
-        if (bare && K.isChord(bare)) n++; else if (!/^(\||\|\||x\d+:?|\d+x:?|\(x\d+\)|N\.?C\.?|\/|-|–|%|\(|\))$/i.test(toks[i])) return false;
-      }
-      return n > 0;
-    };
-    maxch = lines.reduce(function (m, l) { var n = l.replace(/\s+$/, "").length; return (n <= 72 || chordLine(l) || tabLine(l)) ? Math.max(m, n) : m; }, 0);
     var r = window.NLB_KIT.renderChartHTML(lines.join("\n"), 0, (info(slug).key || "").trim());
     var key = r.colored ? '<div class="deg-key" aria-hidden="true">' + DEG.map(function (n, i) { return '<span class="d' + (i + 1) + '">' + n + "</span>"; }).join("") +
       '<span class="hint">chord colors, key of ' + esc(r.tonic) + "</span></div>" : "";
     return key + '<div class="chart' + (r.mono ? " mono" : "") + '">' + r.html + "</div>";
   }
   var zoom = parseFloat((function () { try { return localStorage.getItem("nlb-show-zoom"); } catch (_) { return null; } })()) || 1;
-  // One column, as wide as the screen: the widest line that keeps its spacing (chords, lyrics under chords, tab)
-  // sets the size, so nothing wraps that shouldn't; the rest of the song scrolls. + / − scale it.
-  function fit() {
-    var stage = $("stage"), pre = $("chart"), probe = $("probe");
-    var width = stage.clientWidth - 4;
-    pre.style.setProperty("--colw", Math.floor(width) + "px");
-    probe.style.fontSize = "100px";
-    var charW = probe.getBoundingClientRect().width / 20 / 100;           // width of one monospace character per px of font
-    probe.style.fontSize = "1px";                                          // the ruler must not widen the page
-    var px = maxch ? width / (Math.max(maxch, 28) * charW) : 32;          // short songs don't balloon past ~28 columns
-    px = Math.max(14, Math.min(54, px)) * zoom;
-    pre.style.fontSize = px.toFixed(1) + "px";
-    Array.prototype.forEach.call(pre.querySelectorAll(".chart .lyric"), function (el) {
-      el.classList.toggle("wrap", !tabLine(el.textContent) && el.textContent.replace(/\s+$/, "").length > maxch);
+  // One text size for every chart (A- / A+ change it for all of them). Lines that don't fit are wrapped by the
+  // songbook's own chart-fit (chart-kit.js): chord and lyric break together, at a phrase gap where there is one,
+  // tab stays aligned; the song scrolls.
+  var BASE = 30;
+  function fit() { $("chart").style.fontSize = (BASE * zoom).toFixed(1) + "px"; }
+  // Guitar tab can't wrap; a tab block wider than the screen is scaled down on its own (chords and words keep the
+  // shared size), so nothing has to scroll sideways on stage.
+  function shrinkTabs() {
+    Array.prototype.forEach.call(document.querySelectorAll("#chart .chart-tab"), function (t) {
+      t.style.fontSize = "";
+      if (t.scrollWidth > t.clientWidth + 1) t.style.fontSize = Math.max(40, Math.floor(100 * t.clientWidth / t.scrollWidth) - 1) + "%";
     });
   }
-  var shownSlug = null;
+  new MutationObserver(function () { setTimeout(shrinkTabs, 0); }).observe($("chart"), { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  var shownSlug = null, lastHtml = null;
   function renderDsp() {
     var set = currentSet(), list = items(set), x = list[show.i];
     if (!x) { $("dTitle").textContent = set ? "No songs in " + (set.name || "this setlist") : "Loading…"; $("chart").innerHTML = ""; return; }
@@ -285,7 +268,8 @@
     $("dNotes").textContent = notes; $("dNotes").classList.toggle("hidden", !notes);
     var html = text ? chartHTML(text, x.s) : '<div class="empty">No chart for this song yet.<br>Add one in the songbook and it appears here.</div>';
     var stage = $("stage"), keepAt = shownSlug === x.s ? stage.scrollTop : 0;
-    if ($("chart").innerHTML !== html) $("chart").innerHTML = html;
+    fit();                                    // size first, so chart-fit measures the final size
+    if (html !== lastHtml) { $("chart").innerHTML = html; lastHtml = html; }
     if (shownSlug !== x.s) { stage.style.scrollBehavior = "auto"; stage.scrollTop = 0; stage.style.scrollBehavior = ""; }
     else stage.scrollTop = keepAt;
     shownSlug = x.s;

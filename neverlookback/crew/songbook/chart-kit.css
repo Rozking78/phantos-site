@@ -14,6 +14,8 @@
 .chords-plain .deg-key { display:none; }
 .deg-key { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; font:600 13px var(--font-data); margin:0 0 8px; }
 .deg-key .hint { font-weight:400; font-family:var(--font-body); }
+.chart-access.partial { color:var(--muted); border-style:dashed; }
+.chart-access.missing { color:var(--muted); border-style:dashed; }
 .chart { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; min-height: 120px; line-height: 1.45; }
 .chart.mono { font-family: var(--font-data); white-space: pre; }
 .chart .chordline { color: var(--denim); font-weight: 500; }
@@ -25,5 +27,11 @@
 .chart .lyric { white-space: pre-wrap; }
 .chart.mono .lyric { white-space: pre; }
 .chart .blank { height: .8em; }
+.chart-empty { color: var(--muted); font-family: var(--font-body); white-space: normal; display: grid; gap: 10px; }
 .chart { min-width:0; max-width:100%; }
+.chart-fitted > .lyric { white-space:pre-wrap !important; overflow-wrap:anywhere; }
+.chart-pair { white-space:pre; overflow-x:auto; max-width:100%; }
+.chart-pair .lyric, .chart-pair .chordline { white-space:pre; }
+.chart-tab { overflow-x:auto; white-space:pre; max-width:100%; }
+.chart-tab .lyric, .chart-tab .chordline { white-space:pre; }
 .chart, .chart .ly, .chart .lyric, .chart .chordline { font-family: var(--font-data); }

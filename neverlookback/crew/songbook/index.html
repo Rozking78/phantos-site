@@ -2936,6 +2936,13 @@ function installChartFit() {
           const p = match.index + 1;
           if (p > start + columns * .35 && p <= end && safe(a, p)) phrase = p;
         }
+        // Otherwise break where the music does: after a comma or other phrase-ending mark, then where a new chord
+        // starts on a word, and only then at the last word that fits.
+        if (!phrase && b) {
+          const lo = start + columns * .4;
+          for (let p = end; p > lo; p--) if (/[,;:.!?)]/.test(b[p - 2] || '') && /\s/.test(b[p - 1] || '') && safe(a, p)) { phrase = p; break; }
+          if (!phrase) for (let p = end; p > lo; p--) if (/\S/.test(a[p] || '') && /\s/.test(a[p - 1] || '') && /\s/.test(b[p - 1] || '') && /\S/.test(b[p] || '')) { phrase = p; break; }
+        }
         if (phrase) end = phrase;
         else while (end > start && !(safe(a, end) && safe(b, end))) end--;
         // An unbroken token stays intact, with scrolling confined to this row.

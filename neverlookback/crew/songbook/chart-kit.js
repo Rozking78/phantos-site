@@ -221,3 +221,115 @@ window.NLB_KIT = (function chartKit() {
   const squashed = t => String(t || "").split("\n").some(l => l.length > 300);
   return { isChord, transposeChord, renderChartHTML, cleanPaste, splitPastes, normTitle, squashed };
   })();
+function installChartFit() {
+  if (typeof ResizeObserver === 'undefined' || typeof MutationObserver === 'undefined') return;
+  const originals = new WeakMap();
+  const isTab = el => /^\s*[A-Ga-g]?[#b]?\s*\|?[-0-9|hpbrx\/\\~^()=.: ]{6,}\|?\s*$/.test(el.textContent) && /[-|]/.test(el.textContent);
+  const isCue = el => /^\s*\([^)]*\):?\s*$/.test(el.textContent);
+  // Slice coloured spans at character positions, retaining the original chord offsets.
+  function slice(el, start, end) {
+    const result = el.cloneNode(false);
+    let offset = 0;
+    function take(node) {
+      const from = offset; offset += node.textContent.length;
+      if (offset <= start || from >= end) return null;
+      if (node.nodeType === 3) return document.createTextNode(node.textContent.slice(Math.max(0, start - from), end - from));
+      const out = node.cloneNode(false); offset = from;
+      for (const child of node.childNodes) { const part = take(child); if (part) out.appendChild(part); }
+      return out;
+    }
+    for (const child of el.childNodes) { const part = take(child); if (part) result.appendChild(part); }
+    return result;
+  }
+  function pieces(top, bottom, columns) {
+    const a = top.textContent, b = bottom ? bottom.textContent : '';
+    const length = Math.max(a.length, b.length), ranges = [];
+    const safe = (t, p) => p >= t.length || /\s/.test(t[p - 1]) || /\s/.test(t[p]);
+    let start = 0;
+    while (start < length) {
+      let end = Math.min(length, start + columns);
+      if (end < length) {
+        // Copied charts often put two phrases on one line, separated by a wide gap.
+        // Prefer that phrase boundary over leaving a lone word on the next row.
+        let phrase = 0, match;
+        const gaps = /\S([ \t]{2,})(?=\S)/g;
+        while ((match = gaps.exec(b))) {
+          const p = match.index + 1;
+          if (p > start + columns * .35 && p <= end && safe(a, p)) phrase = p;
+        }
+        // Otherwise break where the music does: after a comma or other phrase-ending mark, then where a new chord
+        // starts on a word, and only then at the last word that fits.
+        if (!phrase && b) {
+          const lo = start + columns * .4;
+          for (let p = end; p > lo; p--) if (/[,;:.!?)]/.test(b[p - 2] || '') && /\s/.test(b[p - 1] || '') && safe(a, p)) { phrase = p; break; }
+          if (!phrase) for (let p = end; p > lo; p--) if (/\S/.test(a[p] || '') && /\s/.test(a[p - 1] || '') && /\s/.test(b[p - 1] || '') && /\S/.test(b[p] || '')) { phrase = p; break; }
+        }
+        if (phrase) end = phrase;
+        else while (end > start && !(safe(a, end) && safe(b, end))) end--;
+        // An unbroken token stays intact, with scrolling confined to this row.
+        if (end === start) { end = start + columns; while (end < length && !(safe(a, end) && safe(b, end))) end++; }
+      }
+      ranges.push([start, end]); start = end;
+      while (start < length && (!a[start] || /\s/.test(a[start])) && (!b[start] || /\s/.test(b[start]))) start++;
+    }
+    return ranges;
+  }
+  function fit(chart) {
+    const original = originals.get(chart);
+    if (!original || !chart.isConnected || !chart.clientWidth) return;
+    const css = getComputedStyle(chart);
+    const probe = document.createElement('span');
+    probe.textContent = '0000000000'; probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;';
+    chart.appendChild(probe); const charWidth = probe.getBoundingClientRect().width / 10; probe.remove();
+    const width = chart.clientWidth - parseFloat(css.paddingLeft) - parseFloat(css.paddingRight);
+    const columns = Math.max(8, Math.floor((width - 2) / charWidth));
+    if (!Number.isFinite(columns) || original.columns === columns) return;
+    original.columns = columns;
+    const fragment = document.createDocumentFragment(), nodes = original.nodes;
+    for (let i = 0; i < nodes.length; i++) {
+      const top = nodes[i], next = nodes[i + 1];
+      if (isTab(top)) {
+        const tab = document.createElement('div'); tab.className = 'chart-tab';
+        // Keep the chord heading with its six-string tab when present.
+        while (i < nodes.length && isTab(nodes[i])) tab.appendChild(nodes[i++].cloneNode(true));
+        i--; fragment.appendChild(tab); continue;
+      }
+      if (top.classList.contains('chordline') && next && isTab(next)) {
+        const tab = document.createElement('div'); tab.className = 'chart-tab'; tab.appendChild(top.cloneNode(true));
+        while (i + 1 < nodes.length && isTab(nodes[i + 1])) tab.appendChild(nodes[++i].cloneNode(true));
+        fragment.appendChild(tab); continue;
+      }
+      if (top.classList.contains('chordline')) {
+        const lyric = next && next.classList.contains('lyric') && !isCue(next) ? next : null;
+        for (const [start, end] of pieces(top, lyric, columns)) {
+          const pair = document.createElement('div'); pair.className = 'chart-pair';
+          pair.appendChild(slice(top, start, end)); if (lyric) pair.appendChild(slice(lyric, start, end));
+          fragment.appendChild(pair);
+        }
+        if (lyric) i++;
+      } else fragment.appendChild(top.cloneNode(true));
+    }
+    chart.replaceChildren(fragment); chart.classList.add('chart-fitted');
+  }
+  const resize = new ResizeObserver(entries => entries.forEach(entry => fit(entry.target)));
+  function scan() {
+    document.querySelectorAll('.chart.mono').forEach(chart => {
+      const old = originals.get(chart);
+      if (old && old.observed) return;
+      if (old) old.observed = true;
+      else originals.set(chart, {nodes: Array.from(chart.children, el => el.cloneNode(true)), columns: 0, observed: true});
+      resize.observe(chart); fit(chart);
+    });
+  }
+  new MutationObserver(records => {
+    for (const record of records) for (const node of record.removedNodes) {
+      if (node.nodeType !== 1 || node.isConnected) continue;
+      const charts = node.matches('.chart.mono') ? [node] : node.querySelectorAll('.chart.mono');
+      for (const chart of charts) { resize.unobserve(chart); const old = originals.get(chart); if (old) old.observed = false; }
+    }
+    if (records.some(r => Array.from(r.addedNodes).some(n => n.nodeType === 1 && (n.matches('.chart.mono') || n.querySelector('.chart.mono'))))) scan();
+  }).observe(document.body, {childList: true, subtree: true});
+  if (document.fonts) document.fonts.ready.then(() => { document.querySelectorAll('.chart.mono').forEach(chart => { const old = originals.get(chart); if (old) old.columns = 0; fit(chart); }); });
+  scan();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installChartFit); else installChartFit();
