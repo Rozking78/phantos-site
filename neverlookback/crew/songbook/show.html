@@ -45,6 +45,7 @@
   #chart.cols { column-count:2; column-gap:3vw; column-fill:auto; }
   #chart .chord { color:var(--chord); font-weight:700; }
   #chart .prose { white-space:pre-wrap; color:var(--muted); font-style:italic; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
+  #chart .lyric { white-space:pre-wrap; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
   #probe { position:absolute; visibility:hidden; white-space:pre; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; left:0; top:0; }
   #chart .sec { color:var(--accent); font-weight:700; }
   #chart .sec, #chart .blk { break-inside:avoid; }
@@ -190,7 +191,10 @@
     var t = line.trim();
     if (!t) return "blank";
     if (/^[(\[][^()\[\]]*[)\]]$/.test(t) && t.length < 40) return "sec";
-    if (/[-|]{6,}/.test(t) && /\|/.test(t)) return "tab";                       // tablature: never wrap
+    // Tablature (string lines like "e |--3--|" or "--2-2-2-2--|"): mostly dashes, never wrap.
+    var dashes = (t.match(/-/g) || []).length;
+    if (dashes >= 8 && dashes / t.length > 0.35 && /^[A-Ga-g]?\s*\|?[-0-9|hpbrsxvt\/\\~<>()^.* ]+(\s.*)?$/.test(t)) return "tab";
+    if (/^\(/.test(t)) return "note";                                             // "(Turn distortion on here)", "(rest of song …"
     return t.split(/\s+/).every(function (w) { return CHORD_TOKEN.test(w); }) ? "chord" : "text";
   }
   // Chord lines and the lyric right under one keep their exact spacing; notes and other prose may wrap.
@@ -204,8 +208,9 @@
       if (k === "sec") out.push('<span class="sec">' + esc(keep(line)) + "</span>");
       else if (k === "chord") out.push('<span class="chord">' + esc(keep(line)) + "</span>");
       // A lyric under a chord line keeps its spacing, unless the paste lost its line breaks (very long line): then wrap.
-      else if (k === "tab" || (kinds[i - 1] === "chord" && line.length <= 72)) out.push(esc(keep(line)));
-      else out.push('<span class="prose">' + esc(line.trim()) + "</span>");
+      else if (k === "tab" || (k === "text" && kinds[i - 1] === "chord" && line.length <= 72)) out.push(esc(keep(line)));
+      else if (k === "note") out.push('<span class="prose">' + esc(line.trim()) + "</span>");      // side notes: grey italic, wrap
+      else out.push('<span class="lyric">' + esc(line.trim()) + "</span>");                       // a lyric with no chord over it: wraps
     });
     while (out.length && out[out.length - 1] === "") out.pop();
     return out.join("\n");
