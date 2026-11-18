@@ -7,13 +7,15 @@
 <title>Never Look Back · Show</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="chart-kit.css">
+<script src="chart-kit.js"></script>
 <script>window.NLB_NO_BAR = true;</script>
 <script src="shared-db.js"></script>
 <style>
-  :root { --bg:#0b0e13; --panel:#141a23; --ink:#eef1f5; --muted:#8e99a8; --rule:#273141; --accent:#8fb0e6; --chord:#f0bc60; --now:#1d2a3f; --hot:#ef6b5f; }
+  :root { --denim:#8fb0e6; --bg:#0b0e13; --panel:#141a23; --ink:#eef1f5; --muted:#8e99a8; --rule:#273141; --accent:#8fb0e6; --chord:#f0bc60; --now:#1d2a3f; --hot:#ef6b5f; }
   * { box-sizing:border-box; }
-  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:16px/1.4 var(--font-body); -webkit-font-smoothing:antialiased; }
   button, select { font:inherit; color:inherit; }
   .btn { min-height:44px; padding:0 16px; border-radius:8px; border:1px solid var(--rule); background:var(--panel); cursor:pointer; }
   .btn.solid { background:var(--accent); color:#08101c; border-color:var(--accent); font-weight:700; }
@@ -44,19 +46,18 @@
   #wm svg { width:100%; height:100%; display:block; }
   #dsp .top, #dNotes, #stage, #dsp .bottom { position:relative; z-index:1; }
   #dsp .top { display:flex; align-items:baseline; gap:2vw; border-bottom:2px solid var(--rule); padding-bottom:1vh; }
-  #dsp .num { color:var(--muted); font-size:3.2vh; font-variant-numeric:tabular-nums; }
-  #dsp h2 { margin:0; font-size:4.4vh; line-height:1.1; flex:1; }
-  #dsp .facts { color:var(--chord); font-size:2.4vh; white-space:nowrap; font-weight:600; }
+  #dsp .num { color:var(--muted); font:500 3.2vh var(--font-data); font-variant-numeric:tabular-nums; }
+  #dsp h2 { margin:0; font:900 5vh/0.95 var(--font-display); text-transform:uppercase; letter-spacing:-.01em; flex:1; }
+  #dsp .facts { color:var(--chord); font:600 2.4vh var(--font-data); white-space:nowrap; }
   #dsp .notes { color:var(--muted); font-size:2vh; margin-top:.8vh; }
   #stage { flex:1; position:relative; overflow-y:auto; overflow-x:hidden; margin-top:1.2vh; scroll-behavior:smooth; scrollbar-width:thin; }
-  #chart { margin:0; padding-bottom:40vh; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre; line-height:1.25; }
-  #chart .chord { color:var(--chord); font-weight:700; }
-  #chart .prose { white-space:pre-wrap; color:var(--muted); font-style:italic; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
-  #chart .lyric { white-space:pre-wrap; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
-  #probe { position:absolute; visibility:hidden; white-space:pre; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; left:0; top:0; }
-  #chart .sec { color:var(--accent); font-weight:700; }
-  #chart .sec, #chart .blk { break-inside:avoid; }
-  #chart .empty { white-space:normal; color:var(--muted); font-family:inherit; font-size:3vh; }
+  /* Charts are drawn by the songbook's own renderer (chart-kit.js / chart-kit.css): same fonts, same 1-7 colours. */
+  #chart { margin:0; padding-bottom:40vh; }
+  #chart .chart { background:transparent; border:0; padding:0; min-height:0; overflow:visible; line-height:1.3; }
+  #chart .chart .lyric.wrap { white-space:pre-wrap; }
+  #chart .deg-key { font-size:2vh; margin-bottom:1.2vh; }
+  #probe { position:absolute; visibility:hidden; white-space:pre; font-family:var(--font-data); left:0; top:0; }
+  #chart .empty { white-space:normal; color:var(--muted); font:3vh var(--font-body); }
   #dsp .bottom { display:flex; justify-content:space-between; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
   #dsp .bottom b { color:var(--ink); }
   /* Not full screen yet: a small hint (never blocks the chart); a click anywhere on the display goes full screen. */
@@ -89,7 +90,7 @@
   <div id="wm" aria-hidden="true"></div>
   <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span><span class="zoom"><button type="button" data-zoom="-1" aria-label="Smaller chart text">A−</button><button type="button" data-zoom="1" aria-label="Larger chart text">A+</button></span></div>
   <div class="notes hidden" id="dNotes"></div>
-  <div id="stage"><pre id="chart"></pre><span id="probe" aria-hidden="true">00000000000000000000</span></div>
+  <div id="stage"><div id="chart"></div><span id="probe" aria-hidden="true">00000000000000000000</span></div>
   <div class="bottom"><span id="dSet"></span><span id="dNext"></span></div>
   <div id="fsHint">Click anywhere for full screen</div>
   <div id="dgoto" class="hidden"></div>
@@ -227,43 +228,33 @@
   };
 
   // ---------- display ----------
-  var CHORD_TOKEN = /^(\|+|[-x/:.]+|N\.?C\.?|\(?[A-G](#|b)?(m|maj|min|sus|dim|aug|add|M)?\d*(\/[A-G](#|b)?)?\)?\*?|[xX]\d+|\d+[xX])$/;
-  function kind(line) {
-    var t = line.trim();
-    if (!t) return "blank";
-    if (/^[(\[][^()\[\]]*[)\]]$/.test(t) && t.length < 40) return "sec";
-    // Tablature (string lines like "e |--3--|" or "--2-2-2-2--|"): mostly dashes, never wrap.
-    var dashes = (t.match(/-/g) || []).length;
-    if (dashes >= 8 && dashes / t.length > 0.35 && /^[A-Ga-g]?\s*\|?[-0-9|hpbrsxvt\/\\~<>()^.* ]+(\s.*)?$/.test(t)) return "tab";
-    if (/^\(/.test(t)) return "note";                                             // "(Turn distortion on here)", "(rest of song …"
-    return t.split(/\s+/).every(function (w) { return CHORD_TOKEN.test(w); }) ? "chord" : "text";
-  }
-  // Chord lines and the lyric right under one keep their exact spacing; notes and other prose may wrap.
-  function linesHTML(lines) {
-    var kinds = lines.map(kind), out = [];
-    maxch = 0;
-    var keep = function (line) { maxch = Math.max(maxch, line.replace(/\s+$/, "").length); return line; };
-    lines.forEach(function (line, i) {
-      var k = kinds[i];
-      if (k === "blank") { if (out.length && out[out.length - 1] !== "") out.push(""); return; }   // one blank line at most
-      if (k === "sec") out.push('<span class="sec">' + esc(keep(line)) + "</span>");
-      else if (k === "chord") out.push('<span class="chord">' + esc(keep(line)) + "</span>");
-      // A lyric under a chord line keeps its spacing, unless the paste lost its line breaks (very long line): then wrap.
-      else if (k === "tab" || (k === "text" && kinds[i - 1] === "chord" && line.length <= 72)) out.push(esc(keep(line)));
-      else if (k === "note") out.push('<span class="prose">' + esc(line.trim()) + "</span>");      // side notes: grey italic, wrap
-      else out.push('<span class="lyric">' + esc(line.trim()) + "</span>");                       // a lyric with no chord over it: wraps
-    });
-    while (out.length && out[out.length - 1] === "") out.pop();
-    return out.join("\n");
-  }
-  var maxch = 0;      // characters in the widest line that keeps its spacing (chords, lyrics under chords, tab)
+  // The chart is rendered by the songbook's own chartKit (chart-kit.js): chords and the words sung on them are
+  // coloured by their number in the key (1-7), with the key strip above, exactly as in the songbook.
+  var maxch = 0;      // widest line that must keep its spacing; sets the text size
+  var DEG = ["I", "II", "III", "IV", "V", "VI", "VII"];
+  // Guitar tab (string lines such as "e |--3--|" or "--2-2-2-2--|"): mostly dashes; like chord lines, it never wraps.
+  function tabLine(l) { var t = l.trim(), d = (t.match(/-/g) || []).length; return d >= 8 && d / t.length > 0.35; }
   function chartHTML(text, slug) {
     var lines = text.replace(/\r/g, "").split("\n");
     // Drop the chart's own header lines (title, artist, "Capo: ...") — they're in the header bar already.
     var t = title(slug).toLowerCase(), a = artist(slug).toLowerCase();
     while (lines.length && (!lines[0].trim() || /^capo:/i.test(lines[0].trim()) || /^(tuning|key):/i.test(lines[0].trim()) ||
            lines[0].trim().toLowerCase() === t || (a && lines[0].trim().toLowerCase() === a) || /^(bruce springsteen|by )/i.test(lines[0].trim()))) lines.shift();
-    return linesHTML(lines);
+    // Lines longer than this were pasted without their line breaks; they wrap instead of shrinking the whole song.
+    // Chord lines can't wrap, so they always count; other lines count up to 72 characters.
+    var K = window.NLB_KIT, chordLine = function (l) {
+      var toks = l.trim().split(/\s+/).filter(Boolean), n = 0;
+      for (var i = 0; i < toks.length; i++) {
+        var bare = toks[i].replace(/^[(|]+|[)|]+$/g, "");
+        if (bare && K.isChord(bare)) n++; else if (!/^(\||\|\||x\d+:?|\d+x:?|\(x\d+\)|N\.?C\.?|\/|-|–|%|\(|\))$/i.test(toks[i])) return false;
+      }
+      return n > 0;
+    };
+    maxch = lines.reduce(function (m, l) { var n = l.replace(/\s+$/, "").length; return (n <= 72 || chordLine(l) || tabLine(l)) ? Math.max(m, n) : m; }, 0);
+    var r = window.NLB_KIT.renderChartHTML(lines.join("\n"), 0, (info(slug).key || "").trim());
+    var key = r.colored ? '<div class="deg-key" aria-hidden="true">' + DEG.map(function (n, i) { return '<span class="d' + (i + 1) + '">' + n + "</span>"; }).join("") +
+      '<span class="hint">chord colors, key of ' + esc(r.tonic) + "</span></div>" : "";
+    return key + '<div class="chart' + (r.mono ? " mono" : "") + '">' + r.html + "</div>";
   }
   var zoom = parseFloat((function () { try { return localStorage.getItem("nlb-show-zoom"); } catch (_) { return null; } })()) || 1;
   // One column, as wide as the screen: the widest line that keeps its spacing (chords, lyrics under chords, tab)
@@ -278,6 +269,9 @@
     var px = maxch ? width / (Math.max(maxch, 28) * charW) : 32;          // short songs don't balloon past ~28 columns
     px = Math.max(14, Math.min(54, px)) * zoom;
     pre.style.fontSize = px.toFixed(1) + "px";
+    Array.prototype.forEach.call(pre.querySelectorAll(".chart .lyric"), function (el) {
+      el.classList.toggle("wrap", !tabLine(el.textContent) && el.textContent.replace(/\s+$/, "").length > maxch);
+    });
   }
   var shownSlug = null;
   function renderDsp() {
@@ -321,6 +315,7 @@
 
   // ---------- data: the same shared songbook the band edits, live ----------
   $(DISPLAY ? "dsp" : "ctl").classList.remove("hidden");
+  try { if (localStorage.getItem("nlb-chord-colors") === "off") document.body.classList.add("chords-plain"); } catch (_) {}
   fetch("songs.json", { cache: "force-cache" }).then(function (r) { return r.json(); }).then(function (t) { TITLES = t; render(); }).catch(function () {});
   window.claude.use("db").then(function (api) {
     ["songs", "setlists", "charts"].forEach(function (col) {

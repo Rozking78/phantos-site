@@ -126,7 +126,9 @@
      looks the same everywhere; it sits under the text inside the chart box and never takes clicks. */
   if (!window.NLB_NO_BAR) (function () {
     var css = document.createElement("style");
-    css.textContent = ".chart{position:relative;z-index:0}" +
+    // Standard chart font (Design Standards: IBM Plex Mono for chords and words), whatever format a chart was pasted in.
+    css.textContent = ".chart,.chart .ly,.chart .lyric,.chart .chordline{font-family:var(--font-data)}" +
+      ".chart{position:relative;z-index:0}" +
       ".chart::before{content:'';position:absolute;left:0;right:0;top:0;bottom:0;max-height:1200px;" +
       "background:url(nlb-print-logo-1000.png) center 18px / min(84%, 520px) auto no-repeat;opacity:.12;pointer-events:none;z-index:-1}";
     (document.head || document.documentElement).appendChild(css);

@@ -1,0 +1,29 @@
+/* Copied from the songbook build by web/publish_web.py. */
+:root{--font-display:"Big Shoulders Display","Arial Narrow","Helvetica Neue",Arial,sans-serif;--font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;--font-data:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;--radius:6px}
+:root { --deg1:#813131; --deg2:#6b6629; --deg3:#318131; --deg4:#296b6b; --deg5:#313881; --deg6:#593181; --deg7:#813181; }
+@media(prefers-color-scheme:dark) { :root:not([data-theme="light"]) { --deg1:#e29c9c; --deg2:#e2dc9c; --deg3:#9ce29c; --deg4:#9ce2e2; --deg5:#9ca2e2; --deg6:#bf9ce2; --deg7:#e29ce2; } }
+:root[data-theme="dark"] { --deg1:#e29c9c; --deg2:#e2dc9c; --deg3:#9ce29c; --deg4:#9ce2e2; --deg5:#9ca2e2; --deg6:#bf9ce2; --deg7:#e29ce2; }
+.chart .d1, .deg-key .d1 { color:var(--deg1); }
+.chart .d2, .deg-key .d2 { color:var(--deg2); }
+.chart .d3, .deg-key .d3 { color:var(--deg3); }
+.chart .d4, .deg-key .d4 { color:var(--deg4); }
+.chart .d5, .deg-key .d5 { color:var(--deg5); }
+.chart .d6, .deg-key .d6 { color:var(--deg6); }
+.chart .d7, .deg-key .d7 { color:var(--deg7); }
+.chords-plain .chart .d1, .chords-plain .chart .d2, .chords-plain .chart .d3, .chords-plain .chart .d4, .chords-plain .chart .d5, .chords-plain .chart .d6, .chords-plain .chart .d7 { color:inherit; }
+.chords-plain .deg-key { display:none; }
+.deg-key { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; font:600 13px var(--font-data); margin:0 0 8px; }
+.deg-key .hint { font-weight:400; font-family:var(--font-body); }
+.chart { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; min-height: 120px; line-height: 1.45; }
+.chart.mono { font-family: var(--font-data); white-space: pre; }
+.chart .chordline { color: var(--denim); font-weight: 500; }
+.chart .sec { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-top: .8em; font-size: .9em; white-space: normal; }
+.chart .cl { display: flex; flex-wrap: wrap; align-items: flex-end; }
+.chart .seg { display: inline-flex; flex-direction: column; }
+.chart .ch { color: var(--denim); font-family: var(--font-data); font-weight: 500; font-size: .82em; min-height: 1.35em; padding-right: .35em; white-space: pre; }
+.chart .ly { white-space: pre; }
+.chart .lyric { white-space: pre-wrap; }
+.chart.mono .lyric { white-space: pre; }
+.chart .blank { height: .8em; }
+.chart { min-width:0; max-width:100%; }
+.chart, .chart .ly, .chart .lyric, .chart .chordline { font-family: var(--font-data); }
