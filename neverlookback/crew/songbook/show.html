@@ -45,10 +45,12 @@
   #wm { position:absolute; left:4vw; right:4vw; top:10vh; bottom:7vh; opacity:.16; pointer-events:none; z-index:0; }
   #wm svg { width:100%; height:100%; display:block; }
   #dsp .top, #dNotes, #stage, #dsp .bottom { position:relative; z-index:1; }
-  #dsp .top { display:flex; align-items:baseline; gap:2vw; border-bottom:2px solid var(--rule); padding-bottom:1vh; }
-  #dsp .num { color:var(--muted); font:500 3.2vh var(--font-data); font-variant-numeric:tabular-nums; }
-  #dsp h2 { margin:0; font:900 5vh/0.95 var(--font-display); text-transform:uppercase; letter-spacing:-.01em; flex:1; }
-  #dsp .facts { color:var(--chord); font:600 2.4vh var(--font-data); white-space:nowrap; }
+  /* Header: row 1 = song number · key and tempo · A− A+; row 2 = the title across the full width. */
+  #dsp .top { display:grid; grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"num facts zoom" "title title title";
+    align-items:center; column-gap:2.5vw; row-gap:.6vh; border-bottom:2px solid var(--rule); padding-bottom:1vh; }
+  #dsp .num { grid-area:num; color:var(--muted); font:500 2.4vh var(--font-data); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  #dsp h2 { grid-area:title; margin:0; font:900 5.2vh/0.95 var(--font-display); text-transform:uppercase; letter-spacing:-.01em; text-wrap:balance; }
+  #dsp .facts { grid-area:facts; color:var(--chord); font:600 2.4vh var(--font-data); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #dsp .notes { color:var(--muted); font-size:2vh; margin-top:.8vh; }
   #stage { flex:1; position:relative; overflow-y:auto; overflow-x:hidden; margin-top:1.2vh; scroll-behavior:smooth; scrollbar-width:thin; }
   /* Charts are drawn by the songbook's own renderer (chart-kit.js / chart-kit.css): same fonts, same 1-7 colours. */
@@ -57,17 +59,21 @@
   #chart .deg-key { font-size:2vh; margin-bottom:1.2vh; }
   #probe { position:absolute; visibility:hidden; white-space:pre; font-family:var(--font-data); left:0; top:0; }
   #chart .empty { white-space:normal; color:var(--muted); font:3vh var(--font-body); }
-  #dsp .bottom { display:flex; justify-content:space-between; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
+  /* Footer: row 1 = set · next song; row 2, small = the fader status. Each item stays on its own line. */
+  #dsp .bottom { display:grid; grid-template-columns:auto minmax(0,1fr); grid-template-areas:"set next" "midi midi";
+    align-items:baseline; column-gap:3vw; row-gap:.5vh; border-top:2px solid var(--rule); padding-top:.8vh; color:var(--muted); font-size:2.4vh; }
   #dsp .bottom b { color:var(--ink); }
-  #dMidi { display:inline-flex; align-items:center; gap:1vw; font-size:2vh; }
+  #dSet { grid-area:set; white-space:nowrap; }
+  #dNext { grid-area:next; justify-self:end; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #dMidi { grid-area:midi; display:flex; flex-wrap:wrap; align-items:center; gap:.4vh 1vw; font-size:1.7vh; min-width:0; }
   #dMidi.ok #midiState { color:var(--denim); }
-  #midiPick { font:inherit; color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:6px; padding:.3vh .6vw; max-width:30vw; }
+  #midiPick { font:inherit; color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:6px; padding:.2vh .6vw; max-width:60vw; }
   /* Not full screen yet: a small hint (never blocks the chart); a click anywhere on the display goes full screen. */
   .zoom { display:inline-flex; gap:6px; }
   .zoom button { min-width:44px; min-height:44px; padding:0 12px; border-radius:8px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); font-weight:700; cursor:pointer; }
-  #dsp .zoom { align-self:center; margin-left:1.5vw; }
+  #dsp .top .zoom { grid-area:zoom; }
   #dsp .zoom button { min-width:5.2vh; min-height:5.2vh; font-size:2.4vh; }
-  #fsHint { position:fixed; left:50%; bottom:7vh; transform:translateX(-50%); z-index:5; padding:1.2vh 2.4vw; border-radius:999px; background:rgba(143,176,230,.92); color:#08101c; font-size:2.2vh; font-weight:700; text-align:center; pointer-events:none; max-width:90vw; }
+  #fsHint { position:fixed; left:50%; bottom:12vh; transform:translateX(-50%); z-index:5; padding:1.2vh 2.4vw; border-radius:999px; background:rgba(143,176,230,.92); color:#08101c; font-size:2.2vh; font-weight:700; text-align:center; pointer-events:none; max-width:90vw; }
   #dsp.notfull { cursor:pointer; }
   #dgoto { position:fixed; right:3vw; top:2vh; padding:1vh 2vw; border-radius:1vh; background:var(--accent); color:#08101c; font-size:4vh; font-weight:800; }
 </style>
@@ -235,12 +241,37 @@
   // The chart is rendered by the songbook's own chartKit (chart-kit.js): chords and the words sung on them are
   // coloured by their number in the key (1-7), with the key strip above, exactly as in the songbook.
   var DEG = ["I", "II", "III", "IV", "V", "VI", "VII"];
-  function chartHTML(text, slug) {
+  // A leading block of info lines the chart standard doesn't define ("Tempo: 122 BPM", "Arrangement: Tracks",
+  // "Format: ...", an import note) is not song content: it starts with a "Label: text" line and holds no chord, bar,
+  // cue or tab. It moves to the small notes line under the title (Tempo is already in the header, so it is dropped).
+  function takeInfoBlock(lines, out, hasBpm) {
+    var end = 0;
+    while (end < lines.length && lines[end].trim()) end++;
+    var block = lines.slice(0, end);
+    if (!block.length || !/^[A-Z][A-Za-z ]{1,24}:\s*\S/.test(block[0].trim())) return;
+    var content = block.some(function (l) {
+      var s = l.trim();
+      return /^\(/.test(s) || s.indexOf("|") >= 0 || /-{4,}/.test(s) ||
+        s.split(/\s+/).some(function (tok) { return window.NLB_KIT.isChord(tok.replace(/^[(|]+|[)|.,:;]+$/g, "")); });
+    });
+    if (content) return;
+    block.forEach(function (l) { l = l.trim(); if (!(hasBpm && /^(tempo|bpm)\s*:/i.test(l))) out.push(l); });
+    lines.splice(0, end);
+  }
+  function chartHTML(text, slug, meta) {
     var lines = text.replace(/\r/g, "").split("\n");
     // Drop the chart's own header lines (title, artist, "Capo: ...") — they're in the header bar already.
     var t = title(slug).toLowerCase(), a = artist(slug).toLowerCase();
-    while (lines.length && (!lines[0].trim() || /^capo:/i.test(lines[0].trim()) || /^(tuning|key):/i.test(lines[0].trim()) ||
-           lines[0].trim().toLowerCase() === t || (a && lines[0].trim().toLowerCase() === a) || /^(bruce springsteen|by )/i.test(lines[0].trim()))) lines.shift();
+    // "Johnny 99 — Bruce Springsteen" on one line: the title, then a dash or "by", then the artist (many songs have
+    // no artist stored, so the artist itself isn't required).
+    var titleLine = t ? new RegExp("^" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*(—|–|-|\\bby\\b)\\s*\\S") : null;
+    var isHeader = function (s) {
+      var l = s.toLowerCase();
+      return !s || /^capo:/i.test(s) || /^(tuning|key):/i.test(s) || l === t || (a && l === a) || /^(bruce springsteen|by )/i.test(s) ||
+        (titleLine && titleLine.test(l));
+    };
+    while (lines.length && isHeader(lines[0].trim())) lines.shift();
+    if (meta) { takeInfoBlock(lines, meta, !!info(slug).bpm); while (lines.length && !lines[0].trim()) lines.shift(); }
     var r = window.NLB_KIT.renderChartHTML(lines.join("\n"), 0, (info(slug).key || "").trim());
     var key = r.colored ? '<div class="deg-key" aria-hidden="true">' + DEG.map(function (n, i) { return '<span class="d' + (i + 1) + '">' + n + "</span>"; }).join("") +
       '<span class="hint">chord colors, key of ' + esc(r.tonic) + "</span></div>" : "";
@@ -269,9 +300,10 @@
     $("dNum").textContent = (show.i + 1) + " / " + list.length;
     $("dTitle").textContent = title(x.s);
     $("dFacts").textContent = facts(x.s);
-    var notes = [f.notes, x.note].filter(Boolean).join(" · ");
+    var meta = [];
+    var html = text ? chartHTML(text, x.s, meta) : '<div class="empty">No chart for this song yet.<br>Add one in the songbook and it appears here.</div>';
+    var notes = [f.notes, x.note].concat(meta).filter(Boolean).join(" · ");
     $("dNotes").textContent = notes; $("dNotes").classList.toggle("hidden", !notes);
-    var html = text ? chartHTML(text, x.s) : '<div class="empty">No chart for this song yet.<br>Add one in the songbook and it appears here.</div>';
     var stage = $("stage"), keepAt = shownSlug === x.s ? stage.scrollTop : 0;
     fit();                                    // size first, so chart-fit measures the final size
     if (html !== lastHtml) { $("chart").innerHTML = html; lastHtml = html; }
@@ -295,35 +327,52 @@
   window.addEventListener("resize", function () { if (DISPLAY) setTimeout(fit, 0); });
 
   // ---------- X-Touch: fader 1 scrolls the chart (display window; Chrome / Edge) ----------
-  // Mackie Control, as the unit sends it with no host handshake (captured 2026-11-18): fader 1 position = pitch bend,
-  // channel 1, 14-bit; finger on fader 1 = note 104 velocity 127, finger off = note 104 velocity 0. Fader up = top
-  // of the song. The fader moves the chart only while a finger is on it, so the motor can never scroll the chart by
-  // itself; the rest of the time the motor follows the chart (every new song drives it to the top).
+  // Both of the unit's modes work (captured from the unit, 2026-11-18; Behringer's MIDI-mode doc agrees):
+  //   MC   fader 1 = pitch bend ch 1, 14-bit (E0 lsb msb), touch = note 104;  the motor takes the same E0.
+  //   Ctrl fader 1 = CC 70, 7-bit (B0 46 vv),             touch = note 110;  the motor takes the same CC 70.
+  // Touch is velocity 127 on, 0 off. The mode is learned from the fader messages themselves (E0 = MC, CC 70 = Ctrl)
+  // and remembered, because the touch notes overlap: in MC, note 110 is fader 7's touch and CC 70 writes a timecode
+  // digit, so nothing is sent in a mode the unit hasn't shown. Fader up = top of the song. The fader moves the chart
+  // only while a finger is on it, so the motor can never scroll the chart by itself; the rest of the time the motor
+  // follows the chart (every new song drives it to the top).
   // The browser sees only MIDI devices on this computer: USB, or the unit's Ethernet port through a network-MIDI
   // session, which shows up under the session's name ("Network RTP Session 1"), not "X-Touch". So every connected
   // MIDI input is heard, and touching fader 1 on one of them makes it the fader device (proven 2026-11-18: in network
   // mode the USB port stays listed but sends nothing). The picker below can also fix a choice; it is remembered.
-  var midi = null, midiIn = null, midiOut = null, midiName = null, f1Touched = false, motorAt = -1, motorT = null, midiT = null;
+  var midi = null, midiIn = null, midiOut = null, midiName = null, motorAt = -1, motorT = null, midiT = null;
+  var TOUCH_MC = 0x68, TOUCH_CTRL = 0x6E, CC_CTRL = 0x46;
+  var held = { mc: false, ctrl: false };                                 // finger on fader 1, per mode's touch note
+  var ctlMode = (function () { try { return localStorage.getItem("nlb-show-midi-mode") === "ctrl" ? "ctrl" : "mc"; } catch (_) { return "mc"; } })();
+  function f1Held() { return held[ctlMode]; }
+  function setMode(m) {
+    if (m === ctlMode) return;
+    ctlMode = m; motorAt = -1;
+    try { localStorage.setItem("nlb-show-midi-mode", m); } catch (_) {}
+  }
   function motor(v, force) {
-    if (!midiOut || f1Touched) return;
-    var n = Math.round(Math.max(0, Math.min(1, v)) * 16383);
+    if (!midiOut || f1Held()) return;
+    v = Math.max(0, Math.min(1, v));
+    var n = Math.round(v * (ctlMode === "ctrl" ? 127 : 16383));
     if (n === motorAt && !force) return;
     motorAt = n;
-    try { midiOut.send([0xE0, n & 127, n >> 7]); } catch (_) {}
+    try { midiOut.send(ctlMode === "ctrl" ? [0xB0, CC_CTRL, n] : [0xE0, n & 127, n >> 7]); } catch (_) {}
   }
   function scrollFraction() { var st = $("stage"), max = st.scrollHeight - st.clientHeight; return max > 0 ? st.scrollTop / max : 0; }
   function followChart(force) { motor(1 - scrollFraction(), force === true); }
+  function scrollToFader(v) {                                            // v: 1 = fader at the top = top of the song
+    var st = $("stage");
+    st.style.scrollBehavior = "auto"; st.scrollTop = (1 - v) * (st.scrollHeight - st.clientHeight); st.style.scrollBehavior = "";
+  }
   function onMidi(e) {
     var d = e.data; if (!d || d.length < 3) return;
-    if ((d[0] === 0x90 || d[0] === 0x80) && d[1] === 0x68) {           // finger on / off fader 1
-      f1Touched = d[0] === 0x90 && d[2] >= 64;
-      if (!f1Touched) followChart(true);
+    if ((d[0] === 0x90 || d[0] === 0x80) && (d[1] === TOUCH_MC || d[1] === TOUCH_CTRL)) {   // finger on / off
+      var m = d[1] === TOUCH_MC ? "mc" : "ctrl", on = d[0] === 0x90 && d[2] >= 64;
+      held[m] = on;
+      if (!on && m === ctlMode) followChart(true);                       // let go: the motor shows the true place
       return;
     }
-    if (d[0] === 0xE0 && f1Touched) {                                    // fader 1 moved by hand
-      var st = $("stage"), v = (d[1] | (d[2] << 7)) / 16383;
-      st.style.scrollBehavior = "auto"; st.scrollTop = (1 - v) * (st.scrollHeight - st.clientHeight); st.style.scrollBehavior = "";
-    }
+    if (d[0] === 0xE0) { setMode("mc"); if (held.mc) scrollToFader((d[1] | (d[2] << 7)) / 16383); }
+    else if (d[0] === 0xB0 && d[1] === CC_CTRL) { setMode("ctrl"); if (held.ctrl) scrollToFader(d[2] / 127); }
   }
   function midiState(text, ok) { $("midiState").textContent = text; $("dMidi").classList.toggle("ok", !!ok); }
   function savedMidi() { try { return localStorage.getItem("nlb-show-midi"); } catch (_) { return null; } }
@@ -335,7 +384,7 @@
     midiIn = pick; midiOut = null;
     if (pick) midi.outputs.forEach(function (o) { if (!midiOut && live(o) && o.name === pick.name) midiOut = o; });
     var name = pick ? pick.name : null;
-    if (name !== midiName) { midiName = name; f1Touched = false; motorAt = -1; followChart(true); }
+    if (name !== midiName) { midiName = name; held.mc = held.ctrl = false; motorAt = -1; followChart(true); }
     paintMidi();
   }
   function paintMidi() {
@@ -345,12 +394,12 @@
       midiIns.map(function (p) { return "<option" + (midiIn === p ? " selected" : "") + ">" + esc(p.name || "MIDI device") + "</option>"; }).join("");
     sel.classList.toggle("hidden", !midiIns.length);
     if (midiIn) midiState("Fader 1 scrolls:", true);
-    else midiState(midiIns.length ? "Touch fader 1 to connect the X-Touch, or choose:" : "No X-Touch on this computer");
+    else midiState(midiIns.length ? "Touch fader 1 to connect, or pick:" : "No X-Touch on this computer");
   }
   function listen(port) {
     port.onmidimessage = function (e) {
       if (port !== midiIn) {
-        var d = e.data, touch = d && d.length >= 3 && d[0] === 0x90 && d[1] === 0x68 && d[2] >= 64;
+        var d = e.data, touch = d && d.length >= 3 && d[0] === 0x90 && (d[1] === TOUCH_MC || d[1] === TOUCH_CTRL) && d[2] >= 64;
         // A fader-1 touch claims the device, unless a remembered choice is connected (or it is an Extender port).
         if (!touch || /\bext\b/i.test(port.name || "") || savedLive()) return;
         adopt(port);
