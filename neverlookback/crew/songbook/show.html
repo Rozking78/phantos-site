@@ -34,7 +34,10 @@
   #status { color:var(--muted); font-size:13px; }
 
   /* ---------- display: the chart fills a portrait monitor ---------- */
-  #dsp { display:flex; flex-direction:column; height:100%; padding:2.2vh 3vw 1.6vh; }
+  #dsp { display:flex; flex-direction:column; height:100%; padding:2.2vh 3vw 1.6vh; position:relative; }
+  /* The band's wordmark keyed out of a still, waving flag, light and embossed; it stays put while the chart scrolls. */
+  #wm { position:absolute; left:2vw; right:2vw; top:10vh; bottom:7vh; background:url(nlb-watermark.svg) center / contain no-repeat; opacity:.13; pointer-events:none; z-index:0; }
+  #dsp .top, #dNotes, #stage, #dsp .bottom { position:relative; z-index:1; }
   #dsp .top { display:flex; align-items:baseline; gap:2vw; border-bottom:2px solid var(--rule); padding-bottom:1vh; }
   #dsp .num { color:var(--muted); font-size:3.2vh; font-variant-numeric:tabular-nums; }
   #dsp h2 { margin:0; font-size:4.4vh; line-height:1.1; flex:1; }
@@ -71,6 +74,7 @@
 </div>
 
 <div id="dsp" class="hidden">
+  <div id="wm" aria-hidden="true"></div>
   <div class="top"><span class="num" id="dNum"></span><h2 id="dTitle">Loading…</h2><span class="facts" id="dFacts"></span></div>
   <div class="notes hidden" id="dNotes"></div>
   <div id="stage"><pre id="chart"></pre><span id="probe" aria-hidden="true">00000000000000000000</span></div>
