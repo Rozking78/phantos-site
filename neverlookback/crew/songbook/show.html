@@ -376,6 +376,9 @@
       motorT = setTimeout(function () { motorT = null; followChart(); }, 40);
     }, { passive: true });
     if (navigator.requestMIDIAccess) {
+      // Until Chrome's permission prompt is answered nothing else can show; say so (the prompt is small, by the
+      // address bar, and hidden in full screen).
+      midiState("Fader: waiting for MIDI permission. Click Allow at the top of this window (leave full screen to see it).");
       navigator.requestMIDIAccess().then(function (m) {
         midi = m;
         m.onstatechange = function () { clearTimeout(midiT); midiT = setTimeout(connectMidi, 250); };  // plugged in / out
