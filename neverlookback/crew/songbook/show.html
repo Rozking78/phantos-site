@@ -40,9 +40,8 @@
   #dsp h2 { margin:0; font-size:4.4vh; line-height:1.1; flex:1; }
   #dsp .facts { color:var(--chord); font-size:2.4vh; white-space:nowrap; font-weight:600; }
   #dsp .notes { color:var(--muted); font-size:2vh; margin-top:.8vh; }
-  #stage { flex:1; position:relative; overflow:hidden; margin-top:1.2vh; }
-  #chart { margin:0; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre; line-height:1.18; position:absolute; inset:0; }
-  #chart.cols { column-count:2; column-gap:3vw; column-fill:auto; }
+  #stage { flex:1; position:relative; overflow-y:auto; overflow-x:hidden; margin-top:1.2vh; scroll-behavior:smooth; scrollbar-width:thin; }
+  #chart { margin:0; padding-bottom:40vh; font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre; line-height:1.25; }
   #chart .chord { color:var(--chord); font-weight:700; }
   #chart .prose { white-space:pre-wrap; color:var(--muted); font-style:italic; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
   #chart .lyric { white-space:pre-wrap; display:inline-block; max-width:var(--colw, 100%); vertical-align:top; }
@@ -65,7 +64,7 @@
     <button class="btn" id="ctlFull" type="button">Full screen</button>
     <a class="btn" href="./" style="display:inline-flex;align-items:center;text-decoration:none">Songbook</a>
     <span id="status"></span>
-    <span class="keys">→ / Space next · ← back · number + Enter jumps</span>
+    <span class="keys">→ next song · ← back · number + Enter jumps · ↓ ↑ / Space scroll the chart · + − text size</span>
   </header>
   <ol id="list"></ol>
   <div id="goto" class="hidden"></div>
@@ -76,7 +75,7 @@
   <div class="notes hidden" id="dNotes"></div>
   <div id="stage"><pre id="chart"></pre><span id="probe" aria-hidden="true">00000000000000000000</span></div>
   <div class="bottom"><span id="dSet"></span><span id="dNext"></span></div>
-  <div id="fsHint">Click anywhere to go full screen<br><small>then use → ← or type a number and Enter</small></div>
+  <div id="fsHint">Click anywhere to go full screen<br><small>→ ← change song · number + Enter jumps · ↓ ↑ Space scroll · + − size</small></div>
   <div id="dgoto" class="hidden"></div>
 </div>
 
@@ -144,13 +143,33 @@
     if (k === "Enter" && typed) { var n = parseInt(typed, 10); typed = ""; flashTyped(); if (n >= 1) go(n - 1); e.preventDefault(); return; }
     if (k === "Escape" && typed) { typed = ""; flashTyped(); return; }
     if (k === "Backspace" && typed) { typed = typed.slice(0, -1); flashTyped(); e.preventDefault(); return; }
-    if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " ") { go(show.i + 1); e.preventDefault(); }
-    else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") { go(show.i - 1); e.preventDefault(); }
-    else if (k === "Home") { go(0); e.preventDefault(); }
-    else if (k === "End") { go(1e9); e.preventDefault(); }
+    if (k === "ArrowRight") { go(show.i + 1); e.preventDefault(); }
+    else if (k === "ArrowLeft") { go(show.i - 1); e.preventDefault(); }
+    else if (k === "ArrowDown") { cmd({ scroll: "line", dir: 1 }); e.preventDefault(); }
+    else if (k === "ArrowUp") { cmd({ scroll: "line", dir: -1 }); e.preventDefault(); }
+    else if (k === "PageDown" || (k === " " && !e.shiftKey)) { cmd({ scroll: "page", dir: 1 }); e.preventDefault(); }
+    else if (k === "PageUp" || (k === " " && e.shiftKey)) { cmd({ scroll: "page", dir: -1 }); e.preventDefault(); }
+    else if (k === "Home") { cmd({ scroll: "top" }); e.preventDefault(); }
+    else if (k === "End") { cmd({ scroll: "end" }); e.preventDefault(); }
+    else if (k === "+" || k === "=") { cmd({ zoom: 1 }); e.preventDefault(); }
+    else if (k === "-" || k === "_") { cmd({ zoom: -1 }); e.preventDefault(); }
     else if ((k === "f" || k === "F") && DISPLAY) { fullscreen(); }
   });
-  if (bus) bus.onmessage = function (m) { if (m.data && m.data.set) { show = m.data; save(); render(); } };
+  // Scroll and size commands go to the chart display, wherever the key was pressed.
+  function cmd(c) { if (DISPLAY) doCmd(c); if (bus) bus.postMessage({ cmd: c }); }
+  function doCmd(c) {
+    if (!DISPLAY) return;
+    var stage = $("stage"), line = parseFloat($("chart").style.fontSize || "20") * 1.25;
+    if (c.scroll === "line") stage.scrollBy(0, c.dir * line * 4);
+    else if (c.scroll === "page") stage.scrollBy(0, c.dir * stage.clientHeight * 0.85);
+    else if (c.scroll === "top") stage.scrollTo(0, 0);
+    else if (c.scroll === "end") stage.scrollTo(0, stage.scrollHeight);
+    if (c.zoom) { zoom = Math.max(0.6, Math.min(2.2, zoom * (c.zoom > 0 ? 1.1 : 1 / 1.1))); try { localStorage.setItem("nlb-show-zoom", zoom); } catch (_) {} fit(); }
+  }
+  if (bus) bus.onmessage = function (m) {
+    if (m.data && m.data.cmd) { doCmd(m.data.cmd); return; }
+    if (m.data && m.data.set) { show = m.data; save(); render(); }
+  };
   window.addEventListener("storage", function (e) { if (e.key === "nlb-show") { var s = load(); if (s) { show = s; render(); } } });
 
   // ---------- controller ----------
@@ -224,21 +243,21 @@
            lines[0].trim().toLowerCase() === t || (a && lines[0].trim().toLowerCase() === a) || /^(bruce springsteen|by )/i.test(lines[0].trim()))) lines.shift();
     return linesHTML(lines);
   }
+  var zoom = parseFloat((function () { try { return localStorage.getItem("nlb-show-zoom"); } catch (_) { return null; } })()) || 1;
+  // One column, as wide as the screen: the widest line that keeps its spacing (chords, lyrics under chords, tab)
+  // sets the size, so nothing wraps that shouldn't; the rest of the song scrolls. + / − scale it.
   function fit() {
-    var stage = $("stage"), pre = $("chart");
-    var probe = $("probe");
-    var fits = function (px, cols) {
-      pre.classList.toggle("cols", cols); pre.style.fontSize = px + "px"; probe.style.fontSize = px + "px";
-      var gap = cols ? parseFloat(getComputedStyle(pre).columnGap) || 0 : 0;
-      var colW = cols ? (stage.clientWidth - gap) / 2 : stage.clientWidth;
-      pre.style.setProperty("--colw", Math.floor(colW) + "px");
-      if (maxch * (probe.getBoundingClientRect().width / 20) > colW) return false;   // a kept line would run into the next column
-      return pre.scrollHeight <= stage.clientHeight + 1 && pre.scrollWidth <= stage.clientWidth + 1;
-    };
-    var best = function (cols) { var lo = 8, hi = 90; while (hi - lo > 0.5) { var mid = (lo + hi) / 2; if (fits(mid, cols)) lo = mid; else hi = mid; } return lo; };
-    var one = best(false), two = one < 26 ? best(true) : 0;
-    if (two > one * 1.15) fits(two, true); else fits(one, false);
+    var stage = $("stage"), pre = $("chart"), probe = $("probe");
+    var width = stage.clientWidth - 4;
+    pre.style.setProperty("--colw", Math.floor(width) + "px");
+    probe.style.fontSize = "100px";
+    var charW = probe.getBoundingClientRect().width / 20 / 100;           // width of one monospace character per px of font
+    probe.style.fontSize = "1px";                                          // the ruler must not widen the page
+    var px = maxch ? width / (Math.max(maxch, 28) * charW) : 32;          // short songs don't balloon past ~28 columns
+    px = Math.max(14, Math.min(54, px)) * zoom;
+    pre.style.fontSize = px.toFixed(1) + "px";
   }
+  var shownSlug = null;
   function renderDsp() {
     var set = currentSet(), list = items(set), x = list[show.i];
     if (!x) { $("dTitle").textContent = set ? "No songs in " + (set.name || "this setlist") : "Loading…"; $("chart").innerHTML = ""; return; }
@@ -248,7 +267,12 @@
     $("dFacts").textContent = facts(x.s);
     var notes = [f.notes, x.note].filter(Boolean).join(" · ");
     $("dNotes").textContent = notes; $("dNotes").classList.toggle("hidden", !notes);
-    $("chart").innerHTML = text ? chartHTML(text, x.s) : '<div class="empty">No chart for this song yet.<br>Add one in the songbook and it appears here.</div>';
+    var html = text ? chartHTML(text, x.s) : '<div class="empty">No chart for this song yet.<br>Add one in the songbook and it appears here.</div>';
+    var stage = $("stage"), keepAt = shownSlug === x.s ? stage.scrollTop : 0;
+    if ($("chart").innerHTML !== html) $("chart").innerHTML = html;
+    if (shownSlug !== x.s) { stage.style.scrollBehavior = "auto"; stage.scrollTop = 0; stage.style.scrollBehavior = ""; }
+    else stage.scrollTop = keepAt;
+    shownSlug = x.s;
     $("dSet").textContent = set.name || "";
     $("dNext").innerHTML = next ? "Next: <b>" + (show.i + 2) + ". " + esc(title(next.s)) + "</b>" : "<b>End of set</b>";
     setTimeout(fit, 0);
